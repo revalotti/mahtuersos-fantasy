@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Guía 2026/27 de Mahtuersos Fantasy: 20 participantes repartidos por draft en dos ligas gemelas —Mahtuliga y Mahtwoliga— con el mismo reglamento, unidas por la MahtuChampions." />
+  <meta name="theme-color" content="#101010" />
+  <title>Mahtuersos Fantasy · Guía 2026/27 | Mahtuliga · Mahtwoliga</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #101010;
+      --paper: #f4f3ef;
+      --surface: #ffffff;
+      --graphite: #55534d;
+      --silver: #8f8d86;
+      --hairline: #e2e0d9;
+      --mist: #eae8e1;
+
+      --liga: #ff4b44;
+      --woliga: #00d4d6;
+      --champ-from: #061a5c;
+      --champ-mid: #3a2bb8;
+      --champ-to: #e040fb;
+
+      --on-dark: #f4f3ef;
+      --on-dark-muted: #a4a29a;
+      --on-dark-line: #34332f;
+
+      --radius: 14px;
+      --radius-sm: 10px;
+      --page-pad: 24px;
+      --topbar-h: 60px;
+      --max: 680px;
+
+      --display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+      --body: "Inter", ui-sans-serif, system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--topbar-h) + 12px);
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--paper);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; }
+    button, input { font: inherit; color: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    ::selection { background: var(--ink); color: var(--paper); }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--silver);
+    }
+
+    .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 0;
+    }
+
+    .icon svg {
+      width: 1em;
+      height: 1em;
+      stroke: currentColor;
+      stroke-width: 1.75;
+    }
+
+    .icon-sm { font-size: 14px; }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(244, 243, 239, 0.86);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      border-bottom: 1px solid var(--hairline);
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px var(--page-pad);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand {
+      font-family: var(--display);
+      font-size: 0.9375rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+      min-width: 0;
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--silver);
+      pointer-events: none;
+      font-size: 15px;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--hairline);
+      background: var(--surface);
+      padding: 11px 40px 11px 38px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-size: 16px;
+      color: var(--ink);
+      transition: border-color 0.15s ease, background 0.15s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .search-box input::-webkit-search-decoration,
+    .search-box input::-webkit-search-cancel-button,
+    .search-box input::-webkit-search-results-button,
+    .search-box input::-webkit-search-results-decoration {
+      -webkit-appearance: none;
+      appearance: none;
+      display: none;
+    }
+
+    .search-box input:focus {
+      border-color: var(--ink);
+      background: var(--paper);
+    }
+
+    .search-box input::placeholder {
+      color: var(--silver);
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: var(--silver);
+      cursor: pointer;
+      padding: 8px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      z-index: 2;
+    }
+
+    .clear-btn:hover { color: var(--ink); background: var(--mist); }
+
+    .search-suggest {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 130;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 14px 32px rgba(16, 16, 16, 0.12);
+      max-height: min(340px, 55vh);
+      overflow-y: auto;
+      padding: 6px;
+    }
+    .search-suggest[hidden] { display: none; }
+    .search-suggest-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.35;
+    }
+    .search-suggest-item:hover,
+    .search-suggest-item.is-active {
+      background: var(--paper);
+    }
+    .search-suggest-item .sg-section {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--silver);
+      margin-bottom: 3px;
+    }
+    .search-suggest-item .sg-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .search-suggest-empty {
+      padding: 12px;
+      font-size: 0.875rem;
+      color: var(--graphite);
+    }
+    .search-flash {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+      transition: outline-color 0.3s ease;
+    }
+
+    /* Layout */
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 var(--page-pad) calc(80px + env(safe-area-inset-bottom));
+    }
+
+    /* Hero */
+    .hero {
+      padding: 60px 0 36px;
+    }
+
+    .hero .eyebrow { display: block; margin-bottom: 20px; }
+
+    h1 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(2.9rem, 13vw, 4.75rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+
+    h1 .thin {
+      display: block;
+      font-weight: 500;
+      -webkit-text-stroke: 1px var(--ink);
+      color: transparent;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-lead {
+      margin: 24px 0 0;
+      font-size: 1.0625rem;
+      color: var(--graphite);
+      line-height: 1.6;
+      max-width: 33em;
+    }
+
+    .hero-lead strong { color: var(--ink); font-weight: 600; }
+
+    /* ── Signature: the draft structure ─────────────────── */
+    .structure {
+      background: var(--ink);
+      color: var(--on-dark);
+      border-radius: var(--radius);
+      padding: 30px 24px 32px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .structure::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(244, 243, 239, 0.12) 1px, transparent 1px);
+      background-size: 16px 16px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .structure > * { position: relative; }
+
+    .structure-head { margin-bottom: 28px; }
+    .structure-head .eyebrow { color: var(--on-dark-muted); display: block; margin-bottom: 10px; }
+    .structure-head h2 {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      font-size: 1.25rem;
+      line-height: 1.15;
+    }
+    .structure-lead {
+      margin: 14px 0 0;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      color: var(--on-dark-muted);
+      max-width: 46ch;
+    }
+    .structure-lead b { color: var(--on-dark); font-weight: 600; }
+    .draft-dates {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .draft-date {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--on-dark-line);
+      border-radius: var(--radius-sm);
+      background: rgba(244, 243, 239, 0.03);
+      font-size: 0.875rem;
+      line-height: 1.45;
+      color: var(--on-dark-muted);
+      min-width: 0;
+    }
+    .draft-date .icon { font-size: 18px; color: var(--on-dark); flex-shrink: 0; margin-top: 1px; }
+    .draft-date .dd-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .draft-date b { color: var(--on-dark); font-weight: 600; }
+    .draft-date .dd-note { font-size: 0.8125rem; color: var(--on-dark-muted); line-height: 1.4; }
+
+    .tier { display: flex; justify-content: center; }
+
+    .node {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 12px 20px;
+      border: 1px solid var(--on-dark-line);
+      border-radius: 999px;
+      background: rgba(244, 243, 239, 0.03);
+    }
+    .node .n { font-family: var(--mono); font-weight: 700; font-size: 1.5rem; letter-spacing: -0.02em; }
+    .node .n-label { font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-dark-muted); font-family: var(--mono); }
+
+    .connector { width: 1px; height: 26px; background: var(--on-dark-line); margin: 0 auto; transform-origin: top; }
+
+    .leagues {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .league {
+      border: 1px solid var(--on-dark-line);
+      border-radius: var(--radius-sm);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .league.is-liga {
+      border-top: 2px solid var(--liga);
+    }
+    .league.is-woliga {
+      border-top: 2px solid var(--woliga);
+    }
+    .league .lg-name {
+      font-family: var(--display);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      font-size: clamp(0.95rem, 4.4vw, 1.2rem);
+      line-height: 1.05;
+    }
+    .league.is-liga .lg-name { color: var(--liga); }
+    .league.is-woliga .lg-name { color: var(--woliga); }
+    .league .lg-count {
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      color: var(--on-dark);
+      margin-top: 8px;
+      white-space: nowrap;
+    }
+    .league .lg-tag {
+      display: inline-block;
+      margin-top: auto;
+      padding-top: 12px;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--on-dark-muted);
+    }
+
+    /* labeled connector from leagues into the cup */
+    .flow-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 auto;
+    }
+    .flow-label .fl-line { width: 1px; height: 16px; background: var(--on-dark-line); }
+    .flow-label .fl-chip {
+      margin: 8px 0;
+      padding: 7px 14px;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--on-dark-muted);
+      border: 1px solid var(--on-dark-line);
+      border-radius: 999px;
+      background: rgba(244, 243, 239, 0.03);
+      text-align: center;
+    }
+
+    .champ {
+      border: 0;
+      background:
+        radial-gradient(90% 120% at 100% 110%, rgba(224, 64, 251, 0.45) 0%, transparent 55%),
+        linear-gradient(135deg, var(--champ-from) 0%, var(--champ-mid) 48%, var(--champ-to) 100%);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      text-align: center;
+    }
+    .champ .cp-name {
+      font-family: var(--display);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      font-size: clamp(1.1rem, 5.4vw, 1.5rem);
+      line-height: 1;
+      color: #fff;
+    }
+    .champ .cp-sub {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.72);
+      margin-top: 8px;
+    }
+    .node .n, .money .value, .cc-prize .big { word-spacing: -0.12em; }
+
+    /* reveal animation */
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+
+    .anim .tier, .anim .connector, .anim .flow-label { opacity: 0; }
+    .anim.go .tier { animation: rise 0.5s ease forwards; }
+    .anim.go .connector { animation: grow 0.35s ease forwards, rise 0.01s linear forwards; }
+    .anim.go .flow-label { animation: rise 0.4s ease forwards; }
+    .anim.go .t0 { animation-delay: 0.05s; }
+    .anim.go .c0 { animation-delay: 0.28s; }
+    .anim.go .t1 { animation-delay: 0.42s; }
+    .anim.go .fl { animation-delay: 0.72s; }
+    .anim.go .cp { animation-delay: 0.92s; }
+
+    /* Intro note */
+    .intro {
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-left: 3px solid var(--ink);
+      border-radius: var(--radius-sm);
+      padding: 18px 18px 18px 20px;
+      margin-bottom: 44px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .intro .icon { margin-top: 2px; color: var(--ink); font-size: 18px; }
+    .intro p { margin: 0; font-size: 0.9375rem; color: var(--graphite); line-height: 1.6; }
+    .intro strong { color: var(--ink); font-weight: 600; }
+
+    /* Mobile menu */
+    .menu-toggle {
+      display: none;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .menu-toggle .icon { font-size: 20px; }
+    .menu-toggle .icon-close { display: none; }
+    body.menu-open .menu-toggle .icon-open { display: none; }
+    body.menu-open .menu-toggle .icon-close { display: inline-flex; }
+
+    .menu-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: rgba(16, 16, 16, 0.4);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    body.menu-open .menu-backdrop { display: block; opacity: 1; }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: calc(var(--topbar-h) + env(safe-area-inset-top));
+      right: var(--page-pad);
+      left: var(--page-pad);
+      z-index: 110;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 20px 44px rgba(16, 16, 16, 0.16);
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    body.menu-open .mobile-nav { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+    .mobile-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 0.975rem;
+      font-weight: 500;
+      color: var(--ink);
+      min-height: 48px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-nav a:active, .mobile-nav a:hover { background: var(--paper); }
+    .mobile-nav a .icon { font-size: 18px; color: var(--silver); }
+
+    /* Divider between structure and rules */
+    .section-divider {
+      height: 1px;
+      background: var(--hairline);
+      border: 0;
+      margin: 40px 0 36px;
+    }
+
+    /* Accordions */
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .accordion {
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      overflow: clip;
+      transition: border-color 0.15s ease;
+    }
+    .accordion[open] { border-color: var(--ink); }
+
+    .accordion > summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      min-height: 64px;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s ease;
+    }
+    .accordion > summary::-webkit-details-marker { display: none; }
+    .accordion > summary:hover { background: rgba(16, 16, 16, 0.02); }
+
+    .accordion-summary-text { min-width: 0; display: flex; align-items: center; gap: 14px; }
+
+    .sum-tag {
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      color: var(--silver);
+      border: 1px solid var(--hairline);
+      border-radius: 6px;
+      padding: 4px 0;
+      width: 74px;
+      text-align: center;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .accordion-summary-text h2 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 1.0625rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+    .accordion-summary-text .sum-desc {
+      margin: 3px 0 0;
+      font-size: 0.8125rem;
+      color: var(--graphite);
+      line-height: 1.35;
+      font-family: var(--body);
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .sum-text-block { min-width: 0; }
+
+    .accordion > summary::after {
+      content: "";
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(var(--graphite), var(--graphite)),
+        linear-gradient(var(--graphite), var(--graphite));
+      background-size: 11px 1.5px, 1.5px 11px;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-color 0.15s ease, background-image 0.15s ease;
+    }
+    .accordion[open] > summary::after {
+      background-color: var(--ink);
+      background-image: linear-gradient(var(--paper), var(--paper));
+      background-size: 11px 1.5px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .accordion-body {
+      padding: 0 20px 20px;
+      border-top: 1px solid var(--mist);
+    }
+    .accordion-body .card:first-child { margin-top: 16px; }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 18px 16px;
+      margin-bottom: 10px;
+    }
+    .card:last-child { margin-bottom: 0; }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-family: var(--display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .card h3 .icon { font-size: 16px; color: var(--ink); }
+
+    .card p { margin: 0; font-size: 0.9375rem; color: var(--graphite); line-height: 1.6; }
+    .card p + p { margin-top: 10px; }
+    .card p strong, .card li strong { color: var(--ink); font-weight: 600; }
+
+    .card ul { margin: 12px 0 0; padding: 0; list-style: none; }
+    .card li {
+      position: relative;
+      padding: 9px 0 9px 16px;
+      font-size: 0.9375rem;
+      color: var(--graphite);
+      line-height: 1.55;
+      border-top: 1px solid var(--mist);
+    }
+    .card li:first-child { border-top: 0; padding-top: 0; }
+    .card li:last-child { padding-bottom: 0; }
+    .card li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 1.15em;
+      width: 6px;
+      height: 6px;
+      background: var(--ink);
+    }
+    .card li:first-child::before { top: 0.6em; }
+
+    /* Abono y premios — cascada + ritmo interno */
+    #dinero .accordion-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 16px;
+    }
+    #dinero .accordion-body .card {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 1px solid var(--hairline);
+      background: var(--surface);
+      padding: 18px;
+    }
+    #dinero .accordion-body .card:first-child { margin-top: 0; }
+    #dinero .card h3 { margin: 0; flex-shrink: 0; }
+    #dinero .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Money split */
+    .split-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+    #dinero .split-3 {
+      margin-top: 0;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .money {
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+    #dinero .money {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 14px;
+      background: var(--paper);
+      min-height: 58px;
+    }
+    .money-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      min-width: 0;
+      flex: 1;
+    }
+    .money .label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--silver);
+      line-height: 1.3;
+    }
+    .money .value {
+      display: block;
+      margin-top: 6px;
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+    }
+    .money .note {
+      display: block;
+      margin-top: 0;
+      font-size: 0.8125rem;
+      color: var(--graphite);
+      line-height: 1.35;
+    }
+    #dinero .money .value {
+      margin-top: 0;
+      flex-shrink: 0;
+      width: 4.75rem;
+      font-size: 1.25rem;
+      line-height: 1;
+      text-align: right;
+    }
+    .money.is-total { background: var(--ink); border-color: var(--ink); }
+    .money.is-total .label { color: var(--on-dark-muted); }
+    .money.is-total .value { color: var(--on-dark); }
+    .money.is-total .note { color: var(--on-dark-muted); }
+    #dinero .money.is-total { background: var(--ink); border-color: var(--ink); }
+
+    /* Prize rows */
+    .rows { margin-top: 6px; }
+    #dinero .rows { margin-top: 0; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 12px 0;
+      border-top: 1px solid var(--mist);
+      font-size: 0.9375rem;
+    }
+    .row:first-child { border-top: 0; padding-top: 0; }
+    .row:last-child { padding-bottom: 0; }
+    .row span { color: var(--graphite); }
+    .row strong { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink); white-space: nowrap; }
+    .row.total { border-top: 2px solid var(--ink); margin-top: 4px; padding-top: 14px; }
+    .row.total span, .row.total strong { color: var(--ink); font-weight: 700; }
+
+    .tip {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      color: var(--graphite);
+      line-height: 1.5;
+    }
+    #dinero .tip {
+      margin-top: 0;
+      background: var(--paper);
+    }
+    .tip strong { color: var(--ink); font-weight: 600; }
+    .tip .num { color: var(--ink); font-weight: 600; }
+
+    .pay {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: var(--ink);
+      color: var(--on-dark);
+      border-radius: var(--radius-sm);
+    }
+    #dinero .pay { margin-top: 0; }
+    #dinero .card ul { margin: 0; }
+    .pay-label {
+      font-family: var(--mono);
+      font-size: 0.625rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--on-dark-muted);
+    }
+    .pay-number {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.01em;
+      user-select: all;
+    }
+
+    /* Cláusulas — ritmo interno */
+    .card-clauses {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card-clauses h3 { margin-bottom: 0; }
+    .card-clauses .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card-clauses .card-body > p { margin: 0; }
+    .card-clauses ul { margin: 0; }
+    .card-clauses .rows { margin: 0; }
+    .card-clauses .tip { margin: 0; }
+    .clause-rates {
+      padding: 4px 0;
+    }
+    .clause-rates .row {
+      padding: 10px 0;
+    }
+    .clause-rates .row:first-child { padding-top: 0; }
+    .clause-rates .row:last-child { padding-bottom: 0; }
+
+    /* Champions callout inside its accordion */
+    .champ-callout {
+      background:
+        radial-gradient(90% 120% at 100% 110%, rgba(224, 64, 251, 0.45) 0%, transparent 55%),
+        linear-gradient(135deg, var(--champ-from) 0%, var(--champ-mid) 48%, var(--champ-to) 100%);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 20px 18px;
+      margin-bottom: 10px;
+      border: 0;
+    }
+    .champ-callout h3 {
+      margin: 0 0 10px;
+      font-family: var(--display);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      font-size: 1.35rem;
+      line-height: 1;
+      color: #fff;
+    }
+    .champ-callout p { margin: 0; color: rgba(255, 255, 255, 0.72); font-size: 0.9375rem; line-height: 1.6; }
+    .champ-callout p strong { color: #fff; font-weight: 600; }
+    .champ-callout .cc-prize {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .champ-callout .cc-prize .big {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 1.75rem;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+      color: #fff;
+    }
+    .champ-callout .cc-prize .cc-note {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* FAQ */
+    .faq details {
+      background: var(--surface);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-sm);
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+    .faq details:last-child { margin-bottom: 0; }
+    .faq summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 0;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      min-height: 48px;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: "+"; color: var(--silver); font-weight: 400; font-size: 1.125rem; flex-shrink: 0; }
+    .faq details[open] summary::after { content: "−"; color: var(--ink); }
+    .faq details p { margin: 0 0 14px; font-size: 0.9375rem; color: var(--graphite); line-height: 1.6; }
+    .faq details p strong { color: var(--ink); font-weight: 600; }
+    .accordion-body .faq { margin-top: 16px; }
+
+    .help-note {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--ink);
+      color: var(--on-dark);
+      border-radius: var(--radius-sm);
+    }
+    .help-note .icon { margin-top: 2px; font-size: 17px; flex-shrink: 0; }
+    .help-note p { margin: 0; font-size: 0.875rem; color: var(--on-dark-muted); line-height: 1.55; }
+    .help-note a {
+      color: var(--on-dark);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .help-note a:hover { color: var(--paper); }
+
+    footer {
+      margin-top: 44px;
+      padding-top: 22px;
+      border-top: 1px solid var(--hairline);
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--silver);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 640px) {
+      :root { --page-pad: 16px; }
+      .brand { display: none; }
+      .topbar-inner { padding-top: 10px; padding-bottom: 10px; }
+      .hero { padding: 40px 0 26px; }
+      h1 { font-size: clamp(2.15rem, 11.2vw, 3.2rem); letter-spacing: -0.035em; }
+      .hero-lead { font-size: 1rem; margin-top: 20px; }
+
+      .structure { padding: 24px 16px 26px; }
+
+      .draft-dates { grid-template-columns: 1fr; gap: 8px; }
+
+      .menu-toggle { display: inline-flex; }
+      .mobile-nav { display: block; }
+      body.menu-open { overflow: hidden; }
+
+      .accordion > summary { padding: 15px 16px; min-height: 60px; gap: 12px; }
+      .accordion-summary-text { gap: 11px; }
+      .accordion-summary-text h2 { font-size: 0.975rem; }
+      .accordion-summary-text .sum-desc { font-size: 0.78rem; }
+      .accordion-body { padding: 0 12px 14px; }
+
+      .card { padding: 16px 14px; margin-bottom: 8px; }
+      .card h3 { font-size: 0.9rem; margin-bottom: 12px; }
+      .card li, .card p, .faq details p { font-size: 0.9rem; }
+
+      #dinero .accordion-body {
+        gap: 8px;
+        padding-top: 14px;
+      }
+      #dinero .accordion-body .card { padding: 16px 14px; }
+      #dinero .card h3 { margin-bottom: 0; }
+
+      .split-3 { grid-template-columns: 1fr; gap: 8px; }
+      .money { padding: 13px 14px; }
+      #dinero .money { min-height: 56px; gap: 12px; }
+      #dinero .money .value { font-size: 1.2rem; width: 4.5rem; }
+
+      .row { padding: 11px 0; gap: 12px; font-size: 0.9rem; }
+      .tip { margin-top: 12px; padding: 12px; font-size: 0.8125rem; }
+      #dinero .tip { margin-top: 0; }
+
+      .faq summary { font-size: 0.9rem; padding: 15px 0; align-items: flex-start; line-height: 1.35; }
+
+      footer { flex-direction: column; gap: 6px; margin-top: 32px; }
+    }
+
+    @media (max-width: 380px) {
+      :root { --page-pad: 14px; }
+      .sum-tag { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .anim .tier, .anim .connector, .anim .merge, .anim .champ { opacity: 1; animation: none !important; }
+    }
+
+    @media print {
+      .topbar, .menu-toggle, .mobile-nav, .menu-backdrop { display: none !important; }
+      body { background: #fff; }
+      .structure { background: #fff; color: #000; border: 1px solid #000; }
+      .structure::before { display: none; }
+      .card, .intro, .accordion { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Mahtuersos</div>
+      <div class="search-box">
+        <span class="icon search-icon" aria-hidden="true"><i data-lucide="search"></i></span>
+        <input id="ruleSearch" type="text" autocomplete="off" role="combobox"
+          aria-autocomplete="list" aria-controls="searchSuggest" aria-expanded="false"
+          placeholder="Buscar en la guía…" aria-label="Buscar" />
+        <button class="clear-btn" id="clearSearch" type="button" aria-label="Limpiar" hidden>
+          <span class="icon icon-sm"><i data-lucide="x"></i></span>
+        </button>
+        <div class="search-suggest" id="searchSuggest" role="listbox" hidden></div>
+      </div>
+      <button class="menu-toggle" id="menuToggle" type="button"
+        aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileNav">
+        <span class="icon icon-open" aria-hidden="true"><i data-lucide="menu"></i></span>
+        <span class="icon icon-close" aria-hidden="true"><i data-lucide="x"></i></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="menu-backdrop" id="menuBackdrop" hidden></div>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="Secciones" hidden>
+    <a href="#estructura"><span class="icon" aria-hidden="true"><i data-lucide="git-fork"></i></span> Estructura</a>
+    <a href="#dinero"><span class="icon" aria-hidden="true"><i data-lucide="wallet"></i></span> Abono y premios</a>
+    <a href="#juego"><span class="icon" aria-hidden="true"><i data-lucide="book-open"></i></span> Reglamento</a>
+    <a href="#fichajes"><span class="icon" aria-hidden="true"><i data-lucide="store"></i></span> Mercado</a>
+    <a href="#champions"><span class="icon" aria-hidden="true"><i data-lucide="trophy"></i></span> MahtuChampions</a>
+    <a href="#extras"><span class="icon" aria-hidden="true"><i data-lucide="star"></i></span> Normas propias</a>
+    <a href="#faq"><span class="icon" aria-hidden="true"><i data-lucide="circle-question-mark"></i></span> Preguntas frecuentes</a>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <span class="eyebrow">Guía 2026/27 · Biwenger</span>
+      <h1>Mahtuersos<span class="thin">Fantasy</span></h1>
+      <p class="hero-lead">
+        <strong>20 participantes</strong> que un draft reparte en dos ligas gemelas
+        —<strong>Mahtuliga</strong> y <strong>Mahtwoliga</strong>—, con exactamente el mismo
+        reglamento. Corren en paralelo y solo una competición las enfrenta: la
+        <strong>MahtuChampions</strong>.
+      </p>
+    </header>
+
+    <!-- SIGNATURE: draft structure -->
+    <section class="structure anim" id="estructura" aria-label="Estructura de la competición">
+      <div class="structure-head">
+        <span class="eyebrow">El draft</span>
+        <h2>Un grupo, dos ligas, una copa</h2>
+        <p class="structure-lead">
+          El <b>draft</b> es el sorteo aleatorio con el que se forman las dos ligas: los 20
+          inscritos se reparten al azar hasta dejar <b>10 en cada una</b>. Una vez definidas,
+          Mahtuliga y Mahtwoliga se juegan por separado.
+        </p>
+        <div class="draft-dates">
+          <div class="draft-date">
+            <span class="icon" aria-hidden="true"><i data-lucide="calendar-days"></i></span>
+            <div class="dd-text">
+              <b>Domingo 9 de agosto</b>
+              <span class="dd-note">Sorteo del draft: se definen las dos ligas.</span>
+            </div>
+          </div>
+          <div class="draft-date">
+            <span class="icon" aria-hidden="true"><i data-lucide="play"></i></span>
+            <div class="dd-text">
+              <b>Lunes 10 de agosto</b>
+              <span class="dd-note">Reinicio y arranque: desde ese día se puede jugar.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tier t0">
+        <div class="node">
+          <span class="n">20</span>
+          <span class="n-label">participantes</span>
+        </div>
+      </div>
+
+      <div class="connector c0"></div>
+
+      <div class="tier t1">
+        <div class="leagues">
+          <div class="league is-liga">
+            <div class="lg-name">Mahtuliga</div>
+            <div class="lg-count">10 participantes</div>
+            <span class="lg-tag">Mismo reglamento</span>
+          </div>
+          <div class="league is-woliga">
+            <div class="lg-name">Mahtwoliga</div>
+            <div class="lg-count">10 participantes</div>
+            <span class="lg-tag">Mismo reglamento</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-label fl">
+        <span class="fl-line"></span>
+        <span class="fl-chip">Top 4 por liga · tras la J19</span>
+        <span class="fl-line"></span>
+      </div>
+
+      <div class="tier cp">
+        <div class="champ" style="width:100%">
+          <div class="cp-name">MahtuChampions</div>
+          <div class="cp-sub">8 clasificados · única competición común</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <div class="accordion-list">
+      <details class="accordion" id="dinero">
+        <summary>
+          <span class="accordion-summary-text">
+            <span class="sum-tag">Economía</span>
+            <span class="sum-text-block">
+              <h2>Abono y premios</h2>
+              <p class="sum-desc">Condiciones económicas de cada liga.</p>
+            </span>
+          </span>
+        </summary>
+        <div class="accordion-body">
+          <article class="card searchable" data-keywords="pago 40 inscripción 30 fianza 10 premium 50 premios abono por liga">
+            <h3><span class="icon"><i data-lucide="banknote"></i></span> Abono por participante</h3>
+            <div class="card-body">
+              <div class="split-3">
+                <div class="money">
+                  <div class="money-text">
+                    <span class="label">Inscripción</span>
+                    <span class="note">Premios y Premium</span>
+                  </div>
+                  <span class="value">30 €</span>
+                </div>
+                <div class="money">
+                  <div class="money-text">
+                    <span class="label">Fianza</span>
+                    <span class="note">Devolución al final</span>
+                  </div>
+                  <span class="value">10 €</span>
+                </div>
+                <div class="money is-total">
+                  <div class="money-text">
+                    <span class="label">Total</span>
+                    <span class="note">Por persona</span>
+                  </div>
+                  <span class="value">40 €</span>
+                </div>
+              </div>
+              <p class="tip">
+                En <strong>cada liga</strong>, con <span class="num">10</span> participantes se recaudan
+                <strong class="num">300 €</strong> de inscripción. <strong class="num">50 €</strong> cubren
+                el Premium de Biwenger y quedan <strong class="num">250 €</strong> para premios.
+              </p>
+            </div>
+          </article>
+
+          <article class="card searchable" data-keywords="bizum pago abono numero telefono revalotti 695 752 476 admin impago expulsion primera jornada">
+            <h3><span class="icon"><i data-lucide="smartphone"></i></span> Cómo se paga</h3>
+            <div class="card-body">
+              <p>El abono se realiza por <strong>Bizum</strong> al número del administrador (Revalotti):</p>
+              <div class="pay">
+                <span class="pay-label">Bizum · Revalotti</span>
+                <span class="pay-number">+34 695 752 476</span>
+              </div>
+              <p class="tip">
+                <strong>Importante:</strong> si al comenzar la <strong>primera jornada</strong> de tu liga
+                no has hecho el abono, se te <strong>expulsa de esa liga</strong>.
+              </p>
+            </div>
+          </article>
+
+          <article class="card searchable" data-keywords="premios 120 60 30 40 19 250 mahtuchampions campeón por liga mejor jornada fianza">
+            <h3><span class="icon"><i data-lucide="trophy"></i></span> Distribución de premios</h3>
+            <div class="card-body">
+              <div class="rows">
+                <div class="row"><span>1.º clasificado</span><strong>120 €</strong></div>
+                <div class="row"><span>2.º clasificado</span><strong>60 €</strong></div>
+                <div class="row"><span>3.º clasificado</span><strong>30 €</strong></div>
+                <div class="row"><span>Aporte a la MahtuChampions</span><strong>40 €</strong></div>
+                <div class="row total"><span>Total por liga</span><strong>250 €</strong></div>
+                <div class="row"><span>Mejor jornada puntuada</span><strong>hasta 19 €</strong></div>
+              </div>
+              <p class="tip">
+                Cada liga reparte su propio bote de <strong class="num">250 €</strong> entre sus 10
+                participantes. Los <strong class="num">40 €</strong> del último tramo de cada liga
+                forman los <strong class="num">80 €</strong> del premio de la MahtuChampions.
+                El premio a la <strong>mejor jornada</strong> sale de lo descontado a los últimos
+                clasificados (<strong class="num">0,50 €</strong> por jornada) y es de
+                <strong class="num">hasta 19 €</strong>, según si el ganador ha quedado último
+                en alguna jornada.
+              </p>
+            </div>
+          </article>
+
+          <article class="card searchable" data-keywords="fianza último 0,50 devolución mejor jornada bote">
+            <h3><span class="icon"><i data-lucide="shield"></i></span> Funcionamiento de la fianza</h3>
+            <div class="card-body">
+              <ul>
+                <li>Cada participante deja <strong>10 €</strong> en depósito al inicio.</li>
+                <li>Quedar último en una jornada descuenta <strong>0,50 €</strong>.</li>
+                <li>Al finalizar la temporada se devuelve el saldo restante.</li>
+                <li>Lo descontado forma el premio a la <strong>mejor puntuación en una sola jornada</strong>.</li>
+              </ul>
+              <p class="tip">Ejemplo: 4 últimas posiciones → devolución de <strong class="num">8 €</strong>.</p>
+            </div>
+          </article>
+        </div>
+      </details>
+
+      <details class="accordion" id="juego">
+        <summary>
+          <span class="accordion-summary-text">
+            <span class="sum-tag">Juego</span>
+            <span class="sum-text-block">
+              <h2>Reglamento</h2>
+              <p class="sum-desc">Configuración de la liga y alineaciones.</p>
+            </span>
+          </span>
+        </summary>
+        <div class="accordion-body">
+          <article class="card searchable" data-keywords="liga biwenger puntuación as sofascore plantilla 22 20 millones 10 agosto reinicio arranque inicio">
+            <h3><span class="icon"><i data-lucide="settings"></i></span> Configuración general</h3>
+            <ul>
+              <li>Arranque el <strong>10 de agosto</strong>: ese día se hace un reinicio y se empieza a jugar.</li>
+              <li>Cada liga es privada en Biwenger, <strong>acceso solo por invitación</strong>.</li>
+              <li>Puntuación: media entre <strong>AS y SofaScore</strong>.</li>
+              <li><strong>Plantilla inicial aleatoria</strong> + <strong>20 M€</strong> de presupuesto · máximo <strong>22 jugadores</strong>.</li>
+            </ul>
+          </article>
+
+          <article class="card searchable" data-keywords="alineación capitán ariete cambios jornada suplentes">
+            <h3><span class="icon"><i data-lucide="layout-grid"></i></span> Alineaciones</h3>
+            <ul>
+              <li><strong>Capitán:</strong> puntuación doble · valor máximo 3 M€.</li>
+              <li><strong>Ariete:</strong> bonus por gol · valor máximo 3 M€.</li>
+              <li>Cambios libres entre jornadas; no permitidos durante los partidos.</li>
+              <li>Suplentes y jugadores multiposición permitidos.</li>
+            </ul>
+          </article>
+
+          <article class="card searchable" data-keywords="bonificaciones dinero virtual puntos once ideal mvp">
+            <h3><span class="icon"><i data-lucide="coins"></i></span> Ingresos virtuales</h3>
+            <p>Presupuesto dentro de Biwenger para fichar. No es dinero real.</p>
+            <ul>
+              <li><strong>100.000 €</strong> por cada punto (las puntuaciones negativas no restan).</li>
+              <li><strong>1 M€</strong> por jugador en el once ideal, si está alineado.</li>
+              <li><strong>2 M€</strong> por el MVP de la jornada, si está alineado.</li>
+              <li>Bonus del <strong>7.º al 10.º</strong> en la jornada: el 7.º recibe <strong>50k</strong> y cada puesto por debajo suma <strong>50k</strong> más (hasta <strong>200k</strong> el 10.º).</li>
+            </ul>
+          </article>
+        </div>
+      </details>
+
+      <details class="accordion" id="fichajes">
+        <summary>
+          <span class="accordion-summary-text">
+            <span class="sum-tag">Mercado</span>
+            <span class="sum-text-block">
+              <h2>Mercado</h2>
+              <p class="sum-desc">Fichajes, pujas y cláusulas.</p>
+            </span>
+          </span>
+        </summary>
+        <div class="accordion-body">
+          <article class="card searchable" data-keywords="mercado pujas libres ventas intercambios">
+            <h3><span class="icon"><i data-lucide="shopping-bag"></i></span> Mercado de fichajes</h3>
+            <ul>
+              <li><strong>9 jugadores libres</strong> simultáneos, disponibles durante <strong>1 día</strong>.</li>
+              <li>El número de pujas por jugador es visible.</li>
+              <li>Permitidas las compras entre usuarios, los intercambios y las pujas fuera de mercado.</li>
+              <li>Ventas instantáneas al mercado <strong>desactivadas</strong>.</li>
+            </ul>
+          </article>
+
+          <article class="card card-clauses searchable" data-keywords="cláusula subasta 14 días porcentaje">
+            <h3><span class="icon"><i data-lucide="gavel"></i></span> Cláusulas</h3>
+            <div class="card-body">
+              <p>Permiten fichar a un jugador de otro participante abonando el porcentaje correspondiente.</p>
+              <ul>
+                <li>Ejecutables a partir de <strong>14 días</strong> desde la compra.</li>
+                <li>Máximo <strong>2 cláusulas realizadas y 2 recibidas</strong> por semana.</li>
+                <li>Si te ejecutan una cláusula, recuperas el <strong>100 %</strong> de lo invertido.</li>
+              </ul>
+              <div class="clause-rates">
+                <div class="rows">
+                  <div class="row"><span>Hasta 500.000 €</span><strong>300 %</strong></div>
+                  <div class="row"><span>500.000 € – 1 M€</span><strong>250 %</strong></div>
+                  <div class="row"><span>1 M€ – 5 M€</span><strong>200 %</strong></div>
+                  <div class="row"><span>5 M€ – 10 M€</span><strong>175 %</strong></div>
+                  <div class="row"><span>Más de 10 M€</span><strong>150 %</strong></div>
+                </div>
+              </div>
+              <p class="tip">Ejemplo: un jugador valorado en 1 M€ tiene una cláusula de <strong class="num">2 M€</strong> (200 %).</p>
+            </div>
+          </article>
+        </div>
+      </details>
+
+      <details class="accordion" id="champions">
+        <summary>
+          <span class="accordion-summary-text">
+            <span class="sum-tag">Copa</span>
+            <span class="sum-text-block">
+              <h2>MahtuChampions</h2>
+              <p class="sum-desc">La única competición común a las dos ligas.</p>
+            </span>
+          </span>
+        </summary>
+        <div class="accordion-body">
+          <div class="champ-callout searchable" data-keywords="mahtuchampions común copa torneo campeón formato clasificados jornada 19">
+            <h3>MahtuChampions</h3>
+            <p>
+              La <strong>única competición común</strong> a las dos ligas. Se disputa al margen de
+              la clasificación de cada una: da igual en qué liga te toque jugar, todos compiten por
+              la misma copa.
+            </p>
+            <div class="cc-prize">
+              <span class="big">80 €</span>
+              <span class="cc-note">para el campeón · formato por confirmar</span>
+            </div>
+          </div>
+
+          <article class="card searchable" data-keywords="clasificación top 4 primeros jornada 19 corte clasificados ocho">
+            <h3><span class="icon"><i data-lucide="list-ordered"></i></span> Cómo se clasifica</h3>
+            <ul>
+              <li>Se clasifican los <strong>4 primeros de cada liga</strong>: <strong>8 equipos</strong> en total.</li>
+              <li>El corte se hace al terminar la <strong>jornada 19</strong> de liga.</li>
+              <li>La clasificación de cada liga en ese momento decide quién entra.</li>
+            </ul>
+          </article>
+
+          <article class="card searchable" data-keywords="champions comun aporte ligas cruzado formato bote 40 80">
+            <h3><span class="icon"><i data-lucide="git-merge"></i></span> Cómo se conecta con las ligas</h3>
+            <ul>
+              <li>Cada liga <strong>aporta 40 €</strong> de su reparto al bote de la copa — <strong>80 € en total</strong>.</li>
+              <li>Los enfrentamientos cruzan a los clasificados de <strong>Mahtuliga y Mahtwoliga</strong>.</li>
+              <li>El formato exacto (grupos, eliminatorias y calendario) se publicará más adelante.</li>
+            </ul>
+          </article>
+        </div>
+      </details>
+
+      <details class="accordion" id="extras">
+        <summary>
+          <span class="accordion-summary-text">
+            <span class="sum-tag">Extras</span>
+            <span class="sum-text-block">
+              <h2>Normas propias</h2>
+              <p class="sum-desc">Particularidades de cada liga.</p>
+            </span>
+          </span>
+        </summary>
+        <div class="accordion-body">
+          <article class="card searchable" data-keywords="reinicio mitad temporada mejor jornada">
+            <h3><span class="icon"><i data-lucide="star"></i></span> Reglas especiales</h3>
+            <ul>
+              <li>Cada liga se <strong>reinicia a mitad de temporada</strong>.</li>
+              <li>Las penalizaciones de fianza premian la <strong>mejor jornada del año</strong>.</li>
+              <li>Ambas ligas aplican estas mismas normas de forma independiente.</li>
+            </ul>
+          </article>
+        </div>
+      </details>
+
+      <details class="accordion" id="faq">
+        <summary>
+          <span class="accordion-summary-text">
+            <span class="sum-tag">Dudas</span>
+            <span class="sum-text-block">
+              <h2>Preguntas frecuentes</h2>
+              <p class="sum-desc">Respuestas rápidas a las dudas habituales.</p>
+            </span>
+          </span>
+        </summary>
+        <div class="accordion-body">
+          <div class="faq">
+            <details class="searchable" data-keywords="20 draft dos ligas reparto mahtuliga mahtwoliga aleatorio sorteo 9 agosto domingo azar">
+              <summary>¿Qué es el draft y cómo se reparten las 20 personas?</summary>
+              <p>El <strong>draft</strong> es un sorteo aleatorio: las 20 inscripciones se reparten al azar hasta dejar 10 en Mahtuliga y 10 en Mahtwoliga. Se celebra el <strong>domingo 9 de agosto</strong> y ese día quedan definidas las dos ligas. Después, cada una juega con el mismo reglamento y su propio bote, de forma independiente.</p>
+            </details>
+            <details class="searchable" data-keywords="clasificar champions top 4 jornada 19 clasificados">
+              <summary>¿Cómo se entra en la MahtuChampions?</summary>
+              <p>Se clasifican los <strong>4 primeros de cada liga</strong> (8 equipos en total) según cómo estén al terminar la <strong>jornada 19</strong>. El formato de la copa se publicará más adelante.</p>
+            </details>
+            <details class="searchable" data-keywords="comun comparten ligas champions diferencia">
+              <summary>¿Qué comparten las dos ligas?</summary>
+              <p>Solo la <strong>MahtuChampions</strong>. El resto —clasificación, premios, mercado y fianza— es independiente en cada liga.</p>
+            </details>
+            <details class="searchable" data-keywords="fianza premios bote">
+              <summary>¿La fianza forma parte de los premios de liga?</summary>
+              <p>No. Se gestiona por separado y se devuelve al final. Solo los descuentos por últimas posiciones alimentan el premio a la mejor jornada.</p>
+            </details>
+            <details class="searchable" data-keywords="pago bizum como pagar numero revalotti impago expulsion no pagar plazo">
+              <summary>¿Cómo y cuándo se paga el abono?</summary>
+              <p>Por <strong>Bizum</strong> al número del administrador (Revalotti): <strong>+34 695 752 476</strong>. Si al comenzar la <strong>primera jornada</strong> de tu liga no has pagado, se te <strong>expulsa de esa liga</strong>.</p>
+            </details>
+            <details class="searchable" data-keywords="40 30 por qué pago">
+              <summary>¿Por qué el abono es de 40 € si la inscripción es 30 €?</summary>
+              <p>Los <strong>10 €</strong> restantes son un depósito. Así se cubren las penalizaciones de 0,50 € sin tener que solicitar pagos semanales.</p>
+            </details>
+            <details class="searchable" data-keywords="biwenger qué es app">
+              <summary>¿Qué es Biwenger?</summary>
+              <p>La plataforma donde se disputa la liga: alineaciones, fichajes y clasificación. El Premium (<strong>50 €</strong> por liga) es la suscripción de pago que usamos.</p>
+            </details>
+          </div>
+
+          <div class="help-note">
+            <span class="icon" aria-hidden="true"><i data-lucide="message-circle"></i></span>
+            <p>
+              ¿Sigue sin resolverse tu duda? Pregunta lo que falte en el
+              <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener noreferrer">grupo de WhatsApp</a>.
+            </p>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <footer>
+      <span>Mahtuersos Fantasy · 2026/27</span>
+    </footer>
+  </main>
+
+  <script>
+    const input = document.getElementById('ruleSearch');
+    const clearBtn = document.getElementById('clearSearch');
+    const suggest = document.getElementById('searchSuggest');
+    const cards = [...document.querySelectorAll('.searchable')];
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+
+    function normalize(text) {
+      return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    const searchIndex = cards.map((el, index) => {
+      const h3 = el.querySelector('h3');
+      const summary = el.querySelector('summary');
+      const label = (h3 || summary)?.textContent.replace(/\s+/g, ' ').trim()
+        || el.textContent.replace(/\s+/g, ' ').trim().slice(0, 72);
+      const section = el.closest('.accordion')?.querySelector('h2')?.textContent.trim() || '';
+      const haystack = normalize(label + ' ' + section + ' ' + el.textContent + ' ' + (el.dataset.keywords || ''));
+      return { el, label, section, haystack, index };
+    });
+
+    let activeSuggest = -1;
+
+    function setClearVisible(show) {
+      clearBtn.hidden = !show;
+      clearBtn.style.display = show ? 'flex' : 'none';
+    }
+
+    function hideSuggest() {
+      suggest.hidden = true;
+      suggest.innerHTML = '';
+      activeSuggest = -1;
+      input.setAttribute('aria-expanded', 'false');
+    }
+
+    function showSuggest(matches, query) {
+      if (!query) {
+        hideSuggest();
+        return;
+      }
+
+      if (!matches.length) {
+        suggest.innerHTML = '<div class="search-suggest-empty">Sin coincidencias</div>';
+        suggest.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+        activeSuggest = -1;
+        return;
+      }
+
+      suggest.innerHTML = matches.slice(0, 8).map((item, i) => `
+        <button type="button" class="search-suggest-item" role="option" data-index="${item.index}" id="sg-${i}">
+          ${item.section ? `<span class="sg-section">${item.section}</span>` : ''}
+          <span class="sg-label">${item.label}</span>
+        </button>
+      `).join('');
+      suggest.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      activeSuggest = -1;
+    }
+
+    function setActiveSuggest(next) {
+      const items = [...suggest.querySelectorAll('.search-suggest-item')];
+      if (!items.length) return;
+      activeSuggest = (next + items.length) % items.length;
+      items.forEach((item, i) => item.classList.toggle('is-active', i === activeSuggest));
+      items[activeSuggest].scrollIntoView({ block: 'nearest' });
+    }
+
+    function goToResult(el) {
+      const parent = el.closest('.accordion');
+      if (parent) {
+        document.querySelectorAll('.accordion').forEach(item => {
+          if (item !== parent) item.open = false;
+        });
+        parent.open = true;
+      }
+      if (el.matches('details')) el.open = true;
+
+      hideSuggest();
+      requestAnimationFrame(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('search-flash');
+        window.setTimeout(() => el.classList.remove('search-flash'), 1400);
+      });
+    }
+
+    function applySearch() {
+      const query = normalize(input.value.trim());
+      setClearVisible(Boolean(query));
+
+      if (!query) {
+        hideSuggest();
+        return;
+      }
+
+      const matches = searchIndex.filter(item => item.haystack.includes(query));
+      showSuggest(matches, query);
+    }
+
+    function openAccordion(id) {
+      const target = document.getElementById(id);
+      if (!target || !target.classList.contains('accordion')) return false;
+      document.querySelectorAll('.accordion').forEach(item => {
+        if (item !== target) item.open = false;
+      });
+      target.open = true;
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      return true;
+    }
+
+    function scrollToId(id) {
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function setMenuOpen(open) {
+      document.body.classList.toggle('menu-open', open);
+      menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menuToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      mobileNav.hidden = !open;
+      menuBackdrop.hidden = !open;
+    }
+    function closeMenu() { setMenuOpen(false); }
+
+    menuToggle.addEventListener('click', () => {
+      setMenuOpen(!document.body.classList.contains('menu-open'));
+    });
+    menuBackdrop.addEventListener('click', closeMenu);
+
+    mobileNav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', event => {
+        const id = link.getAttribute('href')?.slice(1);
+        if (id) {
+          event.preventDefault();
+          closeMenu();
+          if (!openAccordion(id)) scrollToId(id);
+          history.replaceState(null, '', '#' + id);
+        }
+      });
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      if (link.closest('#mobileNav')) return;
+      link.addEventListener('click', event => {
+        const id = link.getAttribute('href')?.slice(1);
+        const target = id && document.getElementById(id);
+        if (target && target.classList.contains('accordion')) {
+          event.preventDefault();
+          openAccordion(id);
+          history.replaceState(null, '', '#' + id);
+        }
+      });
+    });
+
+    if (location.hash) openAccordion(location.hash.slice(1));
+
+    input.addEventListener('input', applySearch);
+    input.addEventListener('focus', () => {
+      if (input.value.trim()) applySearch();
+    });
+
+    suggest.addEventListener('click', event => {
+      const btn = event.target.closest('.search-suggest-item');
+      if (!btn) return;
+      const item = searchIndex[Number(btn.dataset.index)];
+      if (item) goToResult(item.el);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      applySearch();
+      input.focus();
+    });
+
+    document.addEventListener('pointerdown', event => {
+      if (!event.target.closest('.search-box')) hideSuggest();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === '/' && document.activeElement !== input) {
+        event.preventDefault();
+        input.focus();
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        if (document.body.classList.contains('menu-open')) { closeMenu(); return; }
+        if (!suggest.hidden) { hideSuggest(); return; }
+        if (document.activeElement === input) {
+          input.value = '';
+          applySearch();
+          input.blur();
+        }
+        return;
+      }
+
+      if (document.activeElement !== input || suggest.hidden) return;
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        setActiveSuggest(activeSuggest + 1);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        setActiveSuggest(activeSuggest - 1);
+      } else if (event.key === 'Enter' && activeSuggest >= 0) {
+        event.preventDefault();
+        const btn = suggest.querySelectorAll('.search-suggest-item')[activeSuggest];
+        const item = btn && searchIndex[Number(btn.dataset.index)];
+        if (item) goToResult(item.el);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 640 && document.body.classList.contains('menu-open')) closeMenu();
+    });
+
+    applySearch();
+
+    // Reveal the draft structure once it enters view
+    const structure = document.getElementById('estructura');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (structure && !reduce && 'IntersectionObserver' in window) {
+      const obs = new IntersectionObserver((entries, o) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('go'); o.unobserve(e.target); }
+        });
+      }, { threshold: 0.35 });
+      obs.observe(structure);
+    } else if (structure) {
+      structure.classList.add('go');
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.525.0/dist/umd/lucide.min.js"></script>
+  <script>
+    lucide.createIcons({ attrs: { 'stroke-width': '1.75', 'aria-hidden': 'true' } });
+  </script>
+</body>
+</html>
