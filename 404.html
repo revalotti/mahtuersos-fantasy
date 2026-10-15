@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta name="static-base" content="/mahtuersos-fantasy">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1b2433">
+  <meta name="description" content="Mahtuersos Fantasy. Sigue Mahtuliga, Mahtwoliga y MahtuChampions: clasificaciones, jornadas, récords y palmarés.">
+  <title>Mahtuersos Fantasy</title>
+  <link rel="icon" href="/mahtuersos-fantasy/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/mahtuersos-fantasy/styles.css">
+  <script type="module" src="/mahtuersos-fantasy/app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Ir al contenido</a>
+  <header class="topbar">
+    <div class="nav-wrap">
+      <a class="brand" href="/mahtuersos-fantasy/" data-route aria-label="Mahtuersos Fantasy, inicio"><img class="brand-logo" src="/mahtuersos-fantasy/assets/mahtuersos-fantasy-logo.svg" alt="Mahtuersos Fantasy" width="643" height="365"></a>
+      <nav id="navigation" aria-label="Navegación principal">
+        <a href="/mahtuersos-fantasy/" data-route data-nav="inicio"><i data-lucide="house"></i><span>Inicio</span></a>
+        <a href="/mahtuersos-fantasy/mahtuliga" data-route data-nav="mahtuliga" style="--accent:#ed4b3f;--dot:linear-gradient(155deg,#ff6b5c,#a82219)"><span class="crest sm league" style="background-image:url(/mahtuersos-fantasy/assets/mahtuliga.png)" aria-hidden="true"></span><span>Mahtuliga</span></a>
+        <a href="/mahtuersos-fantasy/mahtwoliga" data-route data-nav="mahtwoliga" style="--accent:#078782;--dot:linear-gradient(155deg,#18dcd4,#066461)"><span class="crest sm league" style="background-image:url(/mahtuersos-fantasy/assets/mahtwoliga.png)" aria-hidden="true"></span><span>Mahtwoliga</span></a>
+        <a href="/mahtuersos-fantasy/mahtuchampions" data-route data-nav="mahtuchampions" style="--accent:#8b6dff;--dot:linear-gradient(155deg,#0004f4,#5703f6 55%,#ac04f7)"><span class="crest sm cup" style="background-image:url(/mahtuersos-fantasy/assets/mahtuchampions.png)" aria-hidden="true"></span><span>Champions</span></a>
+      </nav>
+      <span class="season-label">Temporada <b>26/27</b></span>
+    </div>
+  </header>
+  <main id="main" tabindex="-1"><div class="loading">Cargando competiciones…</div></main>
+  <footer class="footer"></footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <noscript>Activa JavaScript para consultar las clasificaciones y las jornadas.</noscript>
+</body>
+</html>

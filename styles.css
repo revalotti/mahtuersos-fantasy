@@ -1,0 +1,627 @@
+/* Mahtuersos Fantasy — sistema de diseño.
+   Base: estilo Biwenger (cabecera oscura, listas compactas, tarjetas blancas).
+   Tema MahtuChampions: body[data-theme=champions] redefine las variables para una pantalla de copa nocturna. */
+:root{
+  --navy:#1b2433;--navy-2:#2a3447;
+  --bg:#eef0f4;--surface:#fff;--surface-2:#f6f7fa;--chip:#e6e9f0;
+  --ink:#1b2433;--muted:#6b7385;--line:#e2e5ec;--accent:#ed4b3f;--gold:#d9a521;
+  --head-bg:var(--navy);--head-line:transparent;
+  --display:'Barlow Condensed','Inter',system-ui,sans-serif;--font:'Inter',system-ui,-apple-system,sans-serif;
+  --radius:12px;--nav-h:60px;--tabs-h:46px;--tabs-fade:var(--bg);
+  --champ:#5a2df6; /* color único de la zona MahtuChampions (violeta del escudo), igual en todas las ligas */
+}
+body[data-theme=champions]{
+  /* Paleta de los carteles de MahtuChampions: azul eléctrico #0004f4 → violeta #5703f6 → magenta #ac04f7, bandas más oscuras y casillas blancas. */
+  --bg:#0004f4;--surface:rgba(0,0,100,.30);--surface-2:rgba(0,0,100,.22);--chip:rgba(0,0,110,.38);
+  --ink:#fff;--muted:#c4c6ff;--line:rgba(255,255,255,.16);--gold:#fbbc2f;--radius:4px;
+  --head-bg:#00008f;--head-line:#ac04f7;
+  --accent-ink:#d6d8ff;--grad:linear-gradient(135deg,#0004f4,#5703f6 55%,#ac04f7);--grad-h:linear-gradient(90deg,#0004f4,#5703f6 55%,#ac04f7);
+  --band:#0206d4;--band-dark:#0104b1;--out:#8a3a1d;--vs:#3634ef;--white:#f7f7f7;--dim:#b0aef7;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(var(--nav-h) + var(--tabs-h) + 16px)}
+html:has(body[data-theme=champions]){background:#5703f6}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased;min-height:100dvh;display:flex;flex-direction:column}
+body[data-theme=champions]{
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1400' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M-40 820C180 660 300 330 560 40' stroke='%23ffffff' stroke-opacity='.10' stroke-width='2'/%3E%3Cpath d='M300 -20C640 140 1080 520 1010 1000' stroke='%23ffffff' stroke-opacity='.10' stroke-width='2'/%3E%3Cpath d='M1040 780C880 1080 760 1180 480 1260' stroke='%23ff2bd6' stroke-opacity='.55' stroke-width='3'/%3E%3Cpath d='M-30 1210C240 1170 520 1260 760 1390' stroke='%23ff2bd6' stroke-opacity='.35' stroke-width='2'/%3E%3C/svg%3E") center/100% 100% no-repeat,
+    linear-gradient(180deg,#0004f4 0%,#0004f4 48%,#5703f6 80%,#9303f6 93%,#ac04f7 100%);
+  background-attachment:fixed;
+}
+button,input,select,textarea{font:inherit;color:inherit;border-radius:8px}
+button{border:0;cursor:pointer;background:none}
+button:disabled{opacity:.5;cursor:wait}
+a{color:inherit;text-decoration:none}
+a,button,input,select,summary,textarea{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid #3b82f6;outline-offset:2px}
+h1,h2,h3,p{margin-top:0}
+h1{font:800 40px/1 var(--display);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+h2{font-size:16px;line-height:1.3;margin-bottom:0}
+h3{font-size:15px;margin-bottom:0}
+small{font-size:12px;color:var(--muted)}
+[hidden]{display:none!important}
+.icon{flex:none;vertical-align:middle}
+.skip{position:fixed;left:12px;top:-100px;background:#fff;color:#000;padding:10px;z-index:99;border-radius:8px}
+.skip:focus{top:10px}
+.subtle,.muted-note{color:var(--muted)}
+.muted-note{padding:16px;margin:0;font-size:14px}
+.grow{flex:1;min-width:0}
+
+/* Cabecera */
+.topbar{position:sticky;top:0;z-index:20;background:var(--head-bg);color:#fff;border-bottom:2px solid var(--head-line)}
+body[data-theme=champions] .topbar{border-image:var(--grad-h) 1}
+.nav-wrap{max-width:1100px;height:calc(var(--nav-h) - 2px);margin:auto;padding:0 20px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:28px}
+.brand{display:flex;align-items:center;justify-self:start}
+.brand-logo{display:block;height:46px;width:auto;filter:brightness(0) invert(1)}
+#navigation{display:flex;gap:4px;height:100%}
+#navigation a{display:flex;align-items:center;gap:8px;padding:0 14px;height:100%;font-weight:600;font-size:14px;color:#b8c0d0;border-bottom:3px solid transparent;border-top:3px solid transparent}
+#navigation a:hover{color:#fff}
+#navigation a.active{color:#fff;border-bottom-color:#fff}
+#navigation .icon{width:20px;height:20px}
+.season-label{justify-self:end;font-size:12px;color:#9aa4b8;white-space:nowrap}
+.season-label b{color:#fff}
+
+main{flex:1;width:100%}
+.page{max-width:1100px;margin:auto;padding:24px 20px 40px}
+.loading{padding:80px 20px;text-align:center;color:var(--muted)}
+
+/* Portada: tres puertas de entrada, sin datos. Misma identidad que el resto: fondo claro, radio y tipografía del site. */
+.home{max-width:1100px;margin:0 auto;padding:44px 20px 24px}
+.home-title{margin:0 0 30px;font:800 clamp(56px,9vw,112px)/.94 var(--display);letter-spacing:.01em;text-transform:uppercase;color:var(--ink)}
+.home-title span,.home-title em{display:block}
+.home-title em{display:inline-block;font-style:normal;padding:0 .1em 0 0;background:linear-gradient(transparent 66%,#fbbc2f 66%,#fbbc2f 94%,transparent 94%)}
+.portals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.portal{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;container-type:inline-size;min-height:220px;padding:24px;border-radius:var(--radius);overflow:hidden;color:#fff;isolation:isolate;transition:transform .25s ease,box-shadow .25s ease}
+.portal-mahtuchampions{grid-column:1/-1;min-height:200px}
+.portal::before{content:'';position:absolute;inset:0;z-index:-2}
+.portal::after{content:'';position:absolute;right:-6%;top:50%;height:130%;aspect-ratio:1;transform:translateY(-50%);border-radius:50%;z-index:-1;background:var(--crest) center/118% no-repeat;opacity:.2;transition:transform .35s ease,opacity .25s ease}
+.portal-mahtuliga{--crest:url(./assets/mahtuliga.png)}.portal-mahtwoliga{--crest:url(./assets/mahtwoliga.png)}.portal-mahtuchampions{--crest:url(./assets/mahtuchampions.png)}
+.portal-mahtuliga::before{background:linear-gradient(155deg,#ff6b5c,#d23a2e 55%,#a82219)}
+.portal-mahtwoliga::before{background:linear-gradient(155deg,#18dcd4,#0a9a94 55%,#066461)}
+.portal-mahtuchampions::before{background:linear-gradient(110deg,#0004f4,#5703f6 58%,#ac04f7)}
+.portal:hover,.portal:focus-visible{transform:translateY(-4px);box-shadow:0 16px 40px #1b243333}
+.portal:hover::after,.portal:focus-visible::after{transform:translateY(-50%) scale(1.06) rotate(-4deg);opacity:.3}
+.portal-name{margin:0;font:800 min(11cqw,62px)/1 var(--display);letter-spacing:.5px;white-space:nowrap;text-transform:uppercase}
+.portal-mahtuchampions .portal-name{font-size:min(8.4cqw,62px)}
+.portal-go{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:999px;background:#fff;color:#111;transition:transform .2s ease}
+.portal:hover .portal-go{transform:translateX(3px)}
+.home-updated{display:flex;align-items:center;gap:7px;margin:22px 0 0;font-size:13px;color:var(--muted)}
+
+/* Escudo (liga o copa) */
+.crest{display:inline-block;flex:none;border-radius:50%;background-repeat:no-repeat;background-color:var(--chip);box-shadow:0 0 0 2px var(--line)}
+.crest.league{background-size:118%;background-position:50% 36%}
+.crest.cup{background-size:cover;background-position:center;box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+.crest.sm{width:28px;height:28px}.crest.md{width:40px;height:40px}.crest.lg{width:56px;height:56px}.crest.xl{width:80px;height:80px}
+
+/* Panel estándar */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.panel-head h2,.panel-head h3{display:flex;align-items:center;gap:8px}
+.panel-head h2 .icon{color:var(--muted)}
+.panel-link{display:flex;align-items:center;justify-content:center;gap:6px;padding:13px 16px;border-top:1px solid var(--line);font-size:14px;font-weight:600;color:var(--accent)}
+.panel-link:hover{background:var(--surface-2)}
+.league-head{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.league-head h2{font:800 22px/1 var(--display);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.league-head small{display:block}
+.stack{display:flex;flex-direction:column;gap:16px}
+.avatar.photo{object-fit:cover;background:var(--chip)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--chip);color:var(--muted);display:grid;place-content:center;font-size:11px;font-weight:700;flex:none}
+.player{display:flex;align-items:center;gap:10px;min-width:0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px 12px;color:var(--muted)}
+.eyebrow{display:block;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+
+/* Filas estándar (clasificaciones, récords, listas) */
+.rank-row,.list-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);box-shadow:inset 4px 0 0 transparent}
+.rank-row:last-child,.list-row:last-child{border-bottom:0}
+.rank-row.qualifying{box-shadow:inset 4px 0 0 var(--champ)}
+.rank-row .pos{width:22px;text-align:center;font-weight:700;color:var(--muted)}
+.rank-row.qualifying .pos,.rank-row:nth-child(-n+3) .pos{color:var(--ink)}
+.rank-row .name{flex:1;min-width:0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-row .name small,.rank-row .pts small{display:block;font-weight:400}
+.rank-row .pts{font-weight:800;font-size:16px;font-variant-numeric:tabular-nums;text-align:right}
+.list-row{justify-content:space-between}
+.list-row.link:hover{background:var(--surface-2)}
+.list-row strong{display:block;font-size:14px}
+.list-row small{display:block}
+.list-row .value{display:flex;align-items:baseline;gap:10px}
+.list-row .value b{font-weight:800}
+.chev{color:var(--muted)}
+.table-note{padding:12px 16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.hint{font-size:13px;color:var(--muted);padding:0 16px 14px;margin:10px 0 0}
+.accordion-body .hint{padding:0}
+
+
+
+/* Página de competición */
+.competition-heading{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+.competition-title{flex:1;min-width:0}
+.competition-title p{margin:0;color:var(--muted);font-size:14px}
+.tabs-bar{position:sticky;top:var(--nav-h);z-index:15;margin:0 -20px 20px;padding:0 20px;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tabs-bar::before,.tabs-bar::after{content:'';position:absolute;top:0;bottom:0;width:34px;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s}
+.tabs-bar::before{left:0;background:linear-gradient(90deg,var(--tabs-fade),transparent)}
+.tabs-bar::after{right:0;background:linear-gradient(270deg,var(--tabs-fade),transparent)}
+.tabs-bar.fade-l::before,.tabs-bar.fade-r::after{opacity:1}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;overscroll-behavior-x:contain;margin:0 0 -1px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:11px 14px;font-weight:600;font-size:14px;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab:focus-visible{outline-offset:-3px;border-radius:6px}
+.tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px;min-width:0}
+.stat-body{min-width:0;flex:1}
+.stat-icon{display:grid;place-content:center;width:44px;height:44px;border-radius:12px;flex:none;background:color-mix(in srgb,var(--tone) 16%,transparent);color:var(--tone-ink)}
+.stat.t-leader{--tone:#d9a521;--tone-ink:#b8860b}
+.stat.t-round{--tone:#2563eb;--tone-ink:#2563eb}
+.stat.t-best{--tone:#16a34a;--tone-ink:#15803d}
+body[data-theme=champions] .stat.t-leader{--tone-ink:#ffd666}body[data-theme=champions] .stat.t-round{--tone-ink:#bfd0ff}body[data-theme=champions] .stat.t-best{--tone-ink:#86efac}
+.stat small{display:block}
+.stat strong{font-size:22px;font-weight:800;line-height:1.3}
+.stat-sub{display:block;font-size:12px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat .player-stat{font-size:17px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat em{font-style:normal;color:var(--muted);font-size:13px;margin-left:4px}
+.notice{display:flex;gap:10px;align-items:flex-start;background:#fff8e1;border:1px solid #f1e0a6;color:#6a5514;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px}
+.notice .icon{margin-top:2px}
+body[data-theme=champions] .notice{background:rgba(255,214,102,.1);border-color:rgba(255,214,102,.3);color:#ffe29a}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.two-col{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.section-heading h2{font-size:20px}
+.text-link{display:inline-flex;align-items:center;gap:2px;font-size:13px;font-weight:600;color:var(--accent)}
+
+/* Jornadas: clasificación + alineaciones */
+.round-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}
+.round-pick{display:flex;align-items:center;gap:8px;min-width:0}
+.round-step{display:grid;place-content:center;flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);transition:border-color .15s,background .15s}
+a.round-step:hover{border-color:color-mix(in srgb,var(--ink) 28%,var(--line))}
+.round-step.disabled{opacity:.4}
+/* Desplegable */
+.dropdown{--dd-bg:#fff;position:relative;display:inline-flex;min-width:190px}
+.dd-trigger{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:9px 12px 9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-weight:700;font-size:15px;line-height:1.2;font-family:inherit;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.dd-trigger:hover{border-color:color-mix(in srgb,var(--ink) 28%,var(--line))}
+.dd-trigger:focus-visible,.dropdown.open .dd-trigger{outline:0;border-color:var(--accent,var(--ink));box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,var(--ink)) 22%,transparent)}
+.dd-value{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-chevron{flex:none;color:var(--muted);transition:transform .2s}
+.dropdown.open .dd-chevron{transform:rotate(180deg)}
+.dd-note{flex:none;padding:2px 8px;border-radius:99px;background:var(--chip);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.dd-menu{position:absolute;left:0;min-width:100%;width:max-content;max-width:min(340px,calc(100vw - 32px));top:calc(100% + 6px);z-index:30;max-height:300px;margin:0;padding:6px;overflow-y:auto;list-style:none;background:var(--dd-bg);color:#1b2433;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px #0003;outline:0;overscroll-behavior:contain;animation:dd-in .14s ease}
+.dropdown.up .dd-menu{top:auto;bottom:calc(100% + 6px)}
+@keyframes dd-in{from{opacity:0;transform:translateY(-4px)}}
+.dd-menu[hidden]{display:none}
+.dd-menu [role=option]{display:flex;align-items:center;gap:10px;min-height:42px;padding:8px 10px;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer}
+.dd-menu [role=option] .dd-label{flex:1;min-width:0;white-space:nowrap}
+.dd-menu [role=option] .dd-note{background:#eef0f4;color:#5b6577}
+.dd-menu [role=option].active,.dd-menu [role=option]:hover{background:#eef0f4}
+.dd-check{flex:none;opacity:0;color:var(--accent,#1b2433)}
+.dd-menu [role=option][aria-selected=true]{font-weight:800}
+.dd-menu [role=option][aria-selected=true] .dd-check{opacity:1}
+body[data-theme=champions] .dropdown{--dd-bg:#06057a}
+body[data-theme=champions] .dd-menu{color:#fff;border-color:rgba(255,255,255,.25)}
+body[data-theme=champions] .dd-menu [role=option] .dd-note{background:rgba(255,255,255,.14);color:#dfe0ff}
+body[data-theme=champions] .dd-menu [role=option].active,body[data-theme=champions] .dd-menu [role=option]:hover{background:rgba(255,255,255,.12)}
+body[data-theme=champions] .dd-check{color:#fbbc2f}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.view-tabs{display:none}
+/* Etiqueta de estado: pastilla tonal con icono, un tono por estado */
+.status-badge{--sb:#b45309;flex:none;display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px 0 9px;border-radius:99px;font-size:12px;font-weight:700;letter-spacing:.2px;white-space:nowrap;color:var(--sb);background:color-mix(in srgb,var(--sb) 13%,transparent);border:1px solid color-mix(in srgb,var(--sb) 30%,transparent)}
+.status-badge.is-pending{--sb:#2563eb}
+.status-badge.is-final{--sb:#15803d}
+body[data-theme=champions] .status-badge.is-final{--sb:#6ee7a0}body[data-theme=champions] .status-badge.is-pending{--sb:#9db4ff}
+.status-wrap{position:relative;display:inline-flex}
+.status-badge{cursor:pointer;font-family:inherit}
+.status-badge .status-info{opacity:.6;margin-left:1px}
+.status-hint{position:absolute;left:0;top:calc(100% + 8px);z-index:25;width:min(300px,calc(100vw - 32px));padding:10px 12px;border-radius:10px;background:#1b2433;color:#e8ecf4;font-size:13px;line-height:1.45;box-shadow:0 10px 30px #0004;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;pointer-events:none}
+.status-wrap.open .status-hint,.status-badge:focus-visible+.status-hint{opacity:1;visibility:visible;transform:none}
+@media (hover:hover){.status-badge:hover+.status-hint{opacity:1;visibility:visible;transform:none}}
+.round-split{display:grid;gap:16px;align-items:start}
+.round-split.with-lineup{grid-template-columns:minmax(0,1fr) 440px}
+.rank-row.link:hover{background:var(--surface-2)}
+.rank-row.active{background:var(--surface-2);box-shadow:inset 0 -3px 0 var(--ink)}
+.rank-row.active .name{font-weight:700}
+.rank-row.active .chev{color:var(--ink)}
+.rank-row.is-first.active,.rank-row.is-last.active{box-shadow:inset 4px 0 0 var(--tone),inset 0 -3px 0 var(--ink)}
+.rank-row .chev{margin-left:-4px}
+.mark{display:grid;place-content:center;width:24px;height:24px;border-radius:50%;flex:none}
+/* Primero y último comparten formato; solo cambia el color y el icono. */
+.rank-row.is-first{--tone:#d9a521;--tone-ink:#b8860b}
+.rank-row.is-last{--tone:#d64545;--tone-ink:#d64545}
+.rank-row.is-first,.rank-row.is-last{background:linear-gradient(90deg,color-mix(in srgb,var(--tone) 12%,transparent),transparent 70%);box-shadow:inset 4px 0 0 var(--tone)}
+.mark.first,.mark.last{background:color-mix(in srgb,var(--tone) 16%,transparent);color:var(--tone-ink)}
+body[data-theme=champions] .rank-row.is-first{--tone-ink:var(--gold)}
+body[data-theme=champions] .rank-row.is-last{--tone-ink:#ff7a7a}
+.lineup-pane{position:sticky;top:calc(var(--nav-h) + var(--tabs-h) + 16px)}
+.lineup-head{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.lineup-title{flex:1;min-width:0;text-align:center;order:2}
+.lineup-title strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lineup-head .prev{order:1}
+.lineup-head .next{order:3}
+.icon-btn{display:grid;place-content:center;width:36px;height:36px;border-radius:50%;background:var(--chip);color:var(--ink);flex:none}
+a.icon-btn:hover{filter:brightness(.95)}
+.icon-btn.disabled{opacity:.35}
+.field-link{display:block;background:#0b1220}
+.lineup-facts{display:grid;grid-template-columns:repeat(3,1fr);margin:0;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.lineup-facts>div{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 6px}
+.lineup-facts>div+div{border-left:1px solid var(--line)}
+.lineup-facts dt{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.lineup-facts dd{margin:0;font:800 20px/1.1 var(--display);letter-spacing:.3px}
+.crop{position:relative;overflow:hidden;background:#0b1220}
+.crop img{position:absolute;display:block;max-width:none;height:auto}
+.bench-title{padding:12px 16px 8px;font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted)}
+.bench{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 12px 14px}
+.bench-slot{border-radius:10px;border:1px solid var(--line)}
+.no-bench{margin:0;padding:0 16px 16px;font-size:14px;color:var(--muted)}
+.spaced{margin-top:16px}
+
+/* Champions: clasificados */
+.fact-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+@media (max-width:760px){.fact-strip{grid-template-columns:1fr 1fr}.fact-strip .fact:last-child:nth-child(odd){grid-column:1/-1}}
+.fact{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px}
+.fact .icon{color:#b6b3ff}
+.fact.gold{background:linear-gradient(135deg,#ffd666,var(--gold));border:0;color:#3b2800;box-shadow:0 6px 18px #fbbc2f40}
+.fact.gold .icon{color:#7a5200}
+.fact.gold small{color:#6b4800}
+.fact strong{display:block;font-size:15px}
+.fact small{display:block}
+.qualifiers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.league-head.static h2{font-size:20px}
+.gold{color:var(--gold)}
+
+/* Botones */
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;padding:10px 18px;border-radius:9px;min-height:42px;border:1px solid transparent}
+.button:hover{filter:brightness(.94)}
+.button.secondary{background:var(--surface);color:var(--ink);border-color:var(--line)}
+
+/* Estados vacíos */
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-size:15px}
+.empty p{margin:4px 0 0;font-size:14px}
+.empty-symbol{display:grid;place-content:center;margin-bottom:8px;opacity:.7}
+
+/* Reglas */
+.rules-layout{max-width:none}
+.rules-grid{display:block}
+.rules-side{display:block}
+.rules-index{display:none}
+.rule-group{scroll-margin-top:110px}
+.rule-group.flat>summary{display:none}
+.rule-group.flat .accordion-body{border-top:0}
+.accordion-body .notice{margin:0 0 16px}
+.row strong.neg{color:#dc2626}
+
+/* Escritorio: el índice lateral es un selector de sección y el contenido se ve directamente, a dos columnas y sin acordeones */
+@media (min-width:901px){
+  .rules-grid.with-index{display:grid;grid-template-columns:240px minmax(0,1fr);gap:20px;align-items:start}
+  .rules-grid.with-index .rules-side{position:sticky;top:calc(var(--nav-h) + var(--tabs-h) + 16px);display:flex;flex-direction:column;gap:12px}
+  .rules-grid.with-index .rules-search{position:static;margin:0}
+  .rules-grid.with-index .search-status{margin:6px 4px 0}
+  .rules-index{display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+  .rules-index a{position:relative;display:grid;grid-template-columns:1fr auto;column-gap:8px;align-items:center;padding:10px 12px 10px 14px;border-radius:8px;font-size:14px;font-weight:600}
+  .rules-index a:hover{background:var(--surface-2)}
+  .rules-index a.active{background:var(--chip)}
+  .rules-index a.active::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--ink)}
+  .rules-index .idx-tag{grid-column:1;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+  .rules-index .idx-title{grid-column:1}
+  .rules-index .idx-count{grid-column:2;grid-row:1/3;min-width:22px;text-align:center;padding:2px 7px;border-radius:99px;background:var(--ink);color:var(--surface);font-size:12px;font-weight:700}
+  .rules-index .idx-count:empty{display:none}
+  body[data-theme=champions] .rules-index{border:0}
+  body[data-theme=champions] .rules-index .idx-count{color:#0004f4;background:#fff}
+  /* La sección se muestra abierta y su cabecera deja de ser un botón */
+  .accordion.rule-group>summary{pointer-events:none;cursor:default;padding:14px 20px}
+  .accordion.rule-group>summary::after{display:none}
+  .rule-group .accordion-summary-text{gap:18px}
+  /* Sin caja envolvente: las tarjetas se apoyan directamente en la página */
+  .accordion.rule-group{background:none;border:0;border-radius:0;overflow:visible;margin-bottom:0}
+  .rule-group .accordion-body{columns:2;column-gap:16px;padding:0;border-top:0}
+  .rule-group .card{break-inside:avoid;margin:0 0 16px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+  .rule-group .card:last-child{margin-bottom:16px;padding-bottom:16px;border:1px solid var(--line)}
+  .rule-group .accordion-body .notice{column-span:all;margin-bottom:14px;padding:8px 12px;font-size:13px}
+
+  /* Buscando: las secciones con resultados fluyen en dos columnas, cada una con un título pequeño */
+  #rules-groups[data-searching="1"]{columns:2;column-gap:16px}
+  #rules-groups[data-searching="1"] .rule-group{break-inside:avoid;margin:0 0 18px}
+  #rules-groups[data-searching="1"] .rule-group .accordion-body{columns:1}
+  #rules-groups[data-searching="1"] .accordion.rule-group>summary{display:flex;padding:0 2px 8px}
+  #rules-groups[data-searching="1"] .accordion-summary-text{gap:10px;align-items:baseline}
+  #rules-groups[data-searching="1"] .sum-tag{width:auto;font-size:10px}
+  #rules-groups[data-searching="1"] .sum-text-block h2{font-size:15px}
+  #rules-groups[data-searching="1"] .sum-desc{display:none}
+  #rules-groups[data-searching="1"] .accordion-body .notice{display:none}
+  .rule-group.flat .accordion-body{padding-top:0;columns:3}
+  body[data-theme=champions] .accordion.rule-group,body[data-theme=champions] .rule-group .accordion-body{background:none}
+  /* Con índice lateral, la cabecera de la sección repite lo que ya dice el índice: se oculta para ahorrar altura */
+  .rules-grid.with-index .accordion.rule-group>summary{display:none}
+  /* Tarjetas más compactas */
+  .rule-group .card{margin-bottom:14px;padding:14px 16px}
+  .rule-group .card h3{margin-bottom:10px;font-size:14.5px}
+  .rule-group .card p,.rule-group .card li{font-size:13.5px;line-height:1.5}
+  .rule-group .card li+li{margin-top:4px}
+  .rule-group .row{padding:7px 0;font-size:13.5px}
+  .rule-group .money{padding:10px}
+  .rule-group .money .value{font-size:20px;margin-top:4px}
+  .rule-group .tip{margin-top:10px}
+  .rule-group .pay{padding:11px 14px}
+}
+.accordion{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
+.accordion>summary{padding:16px;display:flex;align-items:center;justify-content:space-between;list-style:none;gap:12px;cursor:pointer}
+.accordion>summary::-webkit-details-marker{display:none}
+.accordion>summary:after{content:'+';font-size:22px;color:var(--muted);line-height:1}
+.accordion[open]>summary:after{content:'−'}
+.accordion-summary-text{display:flex;align-items:center;gap:14px}
+.sum-tag{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--accent);width:74px;flex:none}
+.sum-text-block h2{display:flex;align-items:center;gap:8px;font-size:16px;margin:0}
+.sum-desc{font-size:13px;margin:2px 0 0;color:var(--muted)}
+.accordion-body{border-top:1px solid var(--line);padding:18px 16px}
+.card{padding:0 0 18px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.card:last-child{margin-bottom:0;padding-bottom:0;border:0}
+.card h3{display:flex;align-items:center;gap:8px;font-size:15px;margin:0 0 12px}
+.card h3 .icon{color:var(--accent)}
+.card .icon:not(h3 .icon){color:inherit}
+.card p,.card li{font-size:14px;color:var(--muted)}
+.card ul{padding-left:18px;margin:0}
+.card li+li{margin-top:6px}
+.card strong{color:var(--ink)}
+.row{display:flex;justify-content:space-between;gap:15px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.split-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.money{padding:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px}
+.money .label{font-size:13px;font-weight:600;display:block}
+.money .note{display:block;font-size:12px;color:var(--muted)}
+.money .value{font-size:22px;font-weight:800;display:block;margin-top:6px}
+.tip{margin-top:14px}
+.pay{background:var(--surface-2);border:1px solid var(--line);padding:14px;border-radius:10px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pay-number{font-weight:800}
+.custom-rules{white-space:pre-wrap;font-size:14px;padding:16px}
+
+/* Clasificación general: columnas repartidas para que ninguna zona quede vacía ni saturada */
+.standings-panel .rank-row.standing{display:grid;grid-template-columns:52px minmax(160px,1.5fr) repeat(3,minmax(112px,1fr)) 96px;column-gap:8px;align-items:center;padding:9px 16px 9px 12px}
+.standing-head .cell{white-space:nowrap}
+.standing-head{padding-top:8px!important;padding-bottom:8px!important;background:var(--surface-2);font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.standing-head .pos-cell,.standing-head .who,.standing-head .pts-col{font-weight:700}
+.standing-head .pts-col{align-items:flex-end}
+.who{display:flex;align-items:center;gap:12px;min-width:0}
+.who .name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.pos-cell{width:auto;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1}
+.pos-cell b{font-weight:700;font-size:15px}
+.cell{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;font-variant-numeric:tabular-nums}
+.cell b{font-weight:600;font-size:15px}
+.cell small{font-size:11px;color:var(--muted)}
+.cell.muted,.cell.muted b{color:var(--muted);font-weight:500}
+.cell .mark{width:20px;height:20px}
+.move{display:inline-flex;align-items:center;gap:1px;font-style:normal;font-size:11px;font-weight:700;line-height:1}
+.move.up{color:#15803d}.move.down{color:#dc2626}.move.same{color:var(--muted)}
+body[data-theme=champions] .move.up{color:#86efac}body[data-theme=champions] .move.down{color:#fca5a5}
+.pts-col{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}
+.pts-col b{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.gap{font-size:12px;font-weight:600;color:#dc2626;font-variant-numeric:tabular-nums}
+.gap.leader{color:var(--muted);font-weight:500}
+.legend-note{flex-wrap:wrap;gap:6px 18px}
+.legend-note span{display:inline-flex;align-items:center;gap:6px}
+.legend-note .move{margin-right:-4px}
+.dot.champ{background:var(--champ)}
+.lbl-short{display:none}
+@media (max-width:900px){.two-col{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .standings-panel .rank-row.standing{grid-template-columns:34px minmax(0,1fr) 46px 62px;column-gap:6px;padding:9px 12px 9px 6px}
+  .standing .c-best,.standing .c-lost{display:none}
+  .standings-panel .panel-head .subtle{display:none}
+  .standings-panel .who{gap:8px}
+  .standings-panel .avatar{width:26px;height:26px;font-size:10px}
+  .standing-head{letter-spacing:.3px;font-size:10px}
+  .lbl-long{display:none}.lbl-short{display:inline}
+  .pos-cell b{font-size:14px}
+}
+
+/* Buscador de reglas */
+.rules-search{position:sticky;top:calc(var(--nav-h) + var(--tabs-h) + 8px);z-index:6;margin-bottom:14px}
+.search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0 12px;min-height:48px;box-shadow:0 2px 10px #0000000d}
+body[data-theme=champions] .search{background:var(--band);border-color:rgba(255,255,255,.25)}
+.search:focus-within{border-color:var(--ink);box-shadow:0 0 0 3px #3b82f640}
+.search .icon{color:var(--muted)}
+.search input{flex:1;min-width:0;border:0;background:transparent;font-size:16px;color:var(--ink);padding:12px 0;outline:none}
+.search input::placeholder{color:var(--muted)}
+.search input::-webkit-search-cancel-button{display:none}
+.search .clear{display:grid;place-content:center;width:30px;height:30px;border-radius:50%;background:var(--chip);color:var(--ink)}
+.search-status{margin:6px 4px 0;font-size:13px;color:var(--muted)}
+.search-status:empty{display:none}
+mark.hit{background:#fde68a;color:#1b2433;border-radius:3px;padding:0 2px}
+body[data-theme=champions] mark.hit{background:#fbbc2f;color:#1b1500}
+.help-note{margin:18px 4px 0;font-size:14px;color:var(--muted)}
+.help-note a{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.card h3 .icon{flex:none}
+.accordion[hidden],.card[hidden]{display:none}
+
+/* Palmarés */
+.hall-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hall-card{text-align:center;background:var(--surface);border:1px solid var(--line);padding:22px 16px;border-radius:var(--radius)}
+.hall-card .icon{margin:0 auto 10px}
+.hall-card strong{display:block;font:800 40px/1.1 var(--display)}
+.hall-timeline{margin-top:16px}
+
+/* Pie */
+.footer{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:1100px;width:100%;margin:0 auto;padding:22px 20px 26px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);text-align:center}
+.footer p{margin:0;letter-spacing:.3px}
+
+.toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);border-radius:10px;background:#1b2433;color:#fff;border:1px solid #ffffff22;padding:12px 22px;box-shadow:0 6px 24px #0004;z-index:100;max-width:calc(100% - 24px);width:max-content;font-size:14px}
+
+/* ---- Tema MahtuChampions: pantalla de copa ---- */
+body[data-theme=champions] .page{--accent:#fff!important}
+body[data-theme=champions] .competition-heading{flex-direction:column;text-align:center;gap:8px;padding:6px 0 12px}
+body[data-theme=champions] .competition-heading .crest.xl{width:96px;height:96px;filter:drop-shadow(0 0 30px #ffffff40)}
+body[data-theme=champions] .competition-title{flex:none}
+body[data-theme=champions] .competition-title .eyebrow{color:var(--accent-ink);margin-bottom:6px}
+body[data-theme=champions] h1{font-size:46px;letter-spacing:3px}
+body[data-theme=champions] .competition-title p{font-size:15px}
+body[data-theme=champions]{--tabs-fade:#0300a6}
+body[data-theme=champions] .tabs-bar{background:rgba(3,0,150,.55);border-bottom-color:rgba(255,255,255,.18)}
+@media (min-width:761px){body[data-theme=champions] .tabs-bar{width:fit-content;max-width:100%;margin:0 auto 20px;padding:0 12px;border-radius:0;border:1px solid rgba(255,255,255,.18);border-top:0}body[data-theme=champions] .tabs{margin-bottom:0}body[data-theme=champions] .tab{margin-bottom:0}}
+body[data-theme=champions] .tabs>.tab:first-child{margin-left:auto}
+body[data-theme=champions] .tabs>.tab:last-child{margin-right:auto}
+body[data-theme=champions] .tab{color:#ffffffb3}body[data-theme=champions] .tab:hover{color:#fff}
+body[data-theme=champions] .tab.active{color:#fff;border-bottom-color:#fff}
+body[data-theme=champions] .panel{border:0}
+body[data-theme=champions] body[data-theme=champions] .panel-head{background:var(--band)}
+body[data-theme=champions] .panel-head h2,body[data-theme=champions] .panel-head h3,body[data-theme=champions] .league-head h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.8px;font-size:20px;font-weight:700}
+body[data-theme=champions] .rank-row .pos{color:#fff;background:var(--band-dark);border-radius:3px;padding:2px 0;width:28px}
+body[data-theme=champions] .rank-row{border-bottom-color:rgba(255,255,255,.1)}
+body[data-theme=champions] .button{background:var(--white);color:#0004f4}
+body[data-theme=champions] .button.secondary{background:transparent;color:#fff;border-color:var(--line)}
+body[data-theme=champions] .text-link,body[data-theme=champions] .panel-link{color:var(--accent-ink)}
+body[data-theme=champions] .footer{border-top-color:var(--line)}
+body[data-theme=champions] .avatar{color:#fff}
+body[data-theme=champions] .accordion-body,body[data-theme=champions] .accordion{background:var(--surface)}
+body[data-theme=champions] .card strong{color:#fff}
+body[data-theme=champions] .pay-number,body[data-theme=champions] .money .value{color:#fff}
+
+/* MahtuChampions: formato (fases) y cuadro de eliminatorias, con la paleta de los carteles de la edición anterior */
+.phases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.phase{display:flex;flex-direction:column;background:var(--surface);border-radius:var(--radius);overflow:hidden}
+.phase>header{display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;padding:14px 18px;background:var(--band)}
+.phase-n{grid-column:1;font:700 14px/1 var(--display);letter-spacing:1.6px;text-transform:uppercase;color:var(--accent-ink)}
+.phase-name{grid-column:1;margin-top:4px;font:700 28px/1 var(--display);text-transform:uppercase;letter-spacing:.3px}
+.phase-flow{grid-column:2;grid-row:1/3;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--band-dark);font:700 24px/1 var(--display)}
+.phase-flow i{font-style:normal;color:var(--accent-ink);font-size:18px}
+.phase-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 18px;text-align:center}
+.phase-body strong{font:600 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.4px}
+.phase-body small{color:var(--muted);font-size:13px}
+.tiles,.pairs{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.tile{display:inline-grid;place-content:center;min-width:40px;height:44px;padding:0 10px;background:var(--band-dark);color:#fff;font:600 24px/1 var(--display)}
+.tile.out{background:var(--out)}
+.tile.wide{min-width:132px;height:auto;padding:8px 14px;font-size:20px;line-height:1.05;text-transform:uppercase}
+.tile.sm{min-width:14px;width:14px;height:14px;padding:0;vertical-align:-2px;margin-right:6px}
+.pair{display:inline-flex;align-items:stretch;margin:0 6px}
+.vs{display:inline-grid;place-content:center;min-width:42px;padding:0 6px;background:var(--vs);color:#fff;font:600 20px/1 var(--display)}
+.legend{margin:14px 2px 0;font-size:13px;color:var(--muted)}
+
+/* Estado de las fases */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font:700 11px/1.2 var(--font);letter-spacing:.4px;text-transform:uppercase;background:var(--band-dark);color:var(--accent-ink)}
+.chip.active{background:var(--white);color:#0004f4}
+.chip.done{background:rgba(255,255,255,.14);color:#fff}
+.chip.start{background:var(--band-dark);color:var(--accent-ink);text-transform:none;letter-spacing:0}
+.live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 #22c55e99;animation:pulse 1.8s infinite;vertical-align:middle}
+.tab .live-dot{margin-left:6px}
+@keyframes pulse{70%{box-shadow:0 0 0 7px #22c55e00}100%{box-shadow:0 0 0 0 #22c55e00}}
+.phase.state-active{outline:2px solid #fff;outline-offset:-2px;box-shadow:0 8px 26px #0004f466}
+.phase.state-done{opacity:.8}
+.phase-n{display:flex;align-items:center;gap:10px}
+.phase-name{text-decoration:none}
+.phase-name:hover{text-decoration:underline;text-underline-offset:4px}
+.phase-hero{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:18px 20px;background:var(--surface);border-radius:var(--radius)}
+.phase-hero.active{background:var(--band);outline:2px solid rgba(255,255,255,.7);outline-offset:-2px}
+.phase-hero.done{background:linear-gradient(160deg,#ffd666,var(--gold));color:#3b2800}
+.phase-hero>div{flex:1;min-width:0}
+.phase-hero small{display:block;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--accent-ink)}
+.phase-hero.done small{color:#6b4800}
+.phase-hero strong{display:block;font:700 28px/1.1 var(--display);text-transform:uppercase}
+.phase-hero span:not(.chip):not(.hero-icon){display:block;font-size:14px;color:var(--muted)}
+.hero-icon{display:grid;place-content:center;width:52px;height:52px;border-radius:14px;flex:none;background:rgba(255,255,255,.14)}
+.phase-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.phase-intro h2{font:700 34px/1.05 var(--display);text-transform:uppercase;letter-spacing:.4px;margin:2px 0 6px}
+.phase-intro p{margin:0;color:var(--muted);font-size:14px}
+.phase-rounds{margin-top:24px}
+.rank-row.out{box-shadow:inset 4px 0 0 var(--out);background:linear-gradient(90deg,#8a3a1d33,transparent 60%)}
+.dot.out{background:var(--out)}
+
+/* Cuadro: semifinales → final → campeón (mismos paneles y filas que el resto de la web) */
+.bracket{display:grid;grid-template-columns:minmax(0,1.2fr) 44px minmax(0,1.2fr) 44px minmax(0,.9fr);grid-template-rows:auto 1fr;row-gap:12px;align-items:stretch}
+.stage-title{display:flex;align-items:center;gap:10px;margin:0;font:700 20px/1.2 var(--display);letter-spacing:.8px;text-transform:uppercase}
+.stage-title.c1{grid-column:1;grid-row:1}.stage-title.c3{grid-column:3;grid-row:1}.stage-title.c5{grid-column:5;grid-row:1}
+.semis{grid-column:1;grid-row:2;display:grid;grid-template-rows:1fr 1fr;gap:0}
+.semis .match{align-self:center;margin:10px 0}
+.final-cell{grid-column:3;grid-row:2;align-self:center}
+.champion{grid-column:5;grid-row:2;align-self:center}
+.conn{position:relative;grid-row:2}
+.conn-semis{grid-column:2}.conn-final{grid-column:4}
+.conn-semis::before{content:'';position:absolute;left:0;right:50%;top:25%;bottom:25%;border:2px solid rgba(255,255,255,.45);border-left:0}
+.conn-semis::after{content:'';position:absolute;left:50%;right:0;top:50%;border-top:2px solid rgba(255,255,255,.45)}
+.conn-final::after{content:'';position:absolute;left:0;right:0;top:50%;border-top:2px solid rgba(255,255,255,.45)}
+.match .rank-row{min-height:52px}
+.match .rank-row:last-child{border-bottom:0}
+.team.tbd .name{color:var(--muted)}
+.avatar.ghost{background:transparent;border:2px dashed rgba(255,255,255,.35);color:var(--muted)}
+.muted-row{color:var(--muted)}
+.muted-row .avatar.ghost{border-color:var(--line)}
+.team.win .name{font-weight:700}
+.team.dim{opacity:.6}
+.win-check{color:#86efac;flex:none}
+.champion .rank-row{border:0;min-height:56px;font-size:17px;font-weight:700}
+.champion .icon{color:var(--accent-ink)}
+.champion:not(.set) .name{color:var(--muted);font-weight:500}
+.champion.set{background:linear-gradient(160deg,#ffd666,var(--gold))}
+.champion.set .rank-row{color:#3b2800}.champion.set .icon{color:#7a5200}
+@media (max-width:900px){
+  .phases{grid-template-columns:1fr}
+  .bracket{grid-template-columns:1fr;grid-template-rows:none;row-gap:14px}
+  .stage-title.c1,.stage-title.c3,.stage-title.c5,.semis,.final-cell,.champion{grid-column:1;grid-row:auto}
+  .semis{gap:14px}
+  .semis .match{margin:0}
+  .conn{display:none}
+  .semis .match,.final-cell,.champion{align-self:stretch}
+  .stage-title.c3,.stage-title.c5{margin-top:10px}
+  .stage-title.c1{order:1}.semis{order:2}.stage-title.c3{order:3}.final-cell{order:4}.stage-title.c5{order:5}.champion{order:6}
+}
+@media (max-width:760px){
+  .phase-hero{flex-wrap:wrap}.phase-hero>div{flex:1 1 150px}.phase-hero strong{font-size:22px}.phase-intro h2{font-size:28px}
+  .phase-name{font-size:24px}.phase-flow{font-size:20px;padding:6px 10px}
+  .tile{min-width:36px;height:40px;font-size:22px}.tile.wide{min-width:110px;font-size:18px}
+  .tiles{flex-wrap:nowrap;gap:6px;width:100%}.tiles .tile{flex:1 1 0;min-width:0;max-width:42px;padding:0;height:auto;aspect-ratio:1/1;font-size:21px}
+}
+
+/* Móvil: navegación inferior como en Biwenger */
+@media (max-width:760px){
+  .home{padding:24px 16px 12px}
+  .home-title{font-size:clamp(46px,15.6vw,70px);margin-bottom:22px}
+  .portals{grid-template-columns:1fr;gap:12px}
+  .portal,.portal-mahtuchampions{min-height:112px;align-items:center;padding:20px}
+  .portal-name,.portal-mahtuchampions .portal-name{font-size:min(10cqw,40px)}
+  .portal-go{width:40px;height:40px}
+  .portal::after{height:150%;right:-10%}
+  :root{--nav-h:54px}
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  h1{font-size:32px}
+  body[data-theme=champions] h1{font-size:38px;letter-spacing:2px}
+  .nav-wrap{padding:0 16px;gap:12px;grid-template-columns:auto 1fr}
+  .brand-logo{height:38px}
+  #navigation{position:fixed;left:0;right:0;bottom:0;z-index:30;height:auto;margin:0;background:var(--head-bg);border-top:1px solid #2f3a50;padding-bottom:env(safe-area-inset-bottom);gap:0}
+  body[data-theme=champions] #navigation{border-top-color:#ac04f7}
+  #navigation a{flex:1;flex-direction:column;gap:3px;padding:8px 2px 7px;height:auto;font-size:11px;border:0;border-top:3px solid transparent}
+  #navigation a.active{border-top-color:#fff;border-bottom-color:transparent}
+  #navigation .icon{width:24px;height:24px}
+  #navigation .crest{width:24px;height:24px;background-image:var(--dot)!important;box-shadow:inset 0 0 0 2px #ffffff40}
+  .page{padding:16px 16px 28px}
+  .league-grid,.content-grid,.qualifiers{grid-template-columns:1fr}
+  .fact-strip{grid-template-columns:1fr 1fr;gap:8px}
+  .stat-grid{gap:8px;grid-template-columns:1fr 1fr}
+  .stat:first-child{grid-column:1/-1}
+  .stat{padding:10px 12px}
+  .stat strong{font-size:19px}
+  .competition-heading .crest.xl{width:64px;height:64px}
+  .competition-heading>.pill{display:none}
+  body[data-theme=champions] .competition-heading .crest.xl{width:80px;height:80px}
+  .tabs-bar{margin:0 -16px 16px;padding:0 16px}
+  body[data-theme=champions] .tabs>.tab:first-child,body[data-theme=champions] .tabs>.tab:last-child{margin:0}
+  .round-toolbar{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:10px}
+  .round-pick{flex-wrap:wrap;position:relative}.round-pick .dropdown{flex:1;min-width:0;position:static}.round-pick .dd-menu{top:50px;left:0;right:0;min-width:0}.round-pick .status-wrap{flex:1 1 100%}.dd-menu{width:auto;right:0;max-width:none}
+  .view-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:var(--chip);border-radius:12px}
+  .view-tabs a{display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 8px;border-radius:9px;font-weight:700;font-size:14px;color:var(--muted)}
+  .view-tabs a.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px #0002}
+  body[data-theme=champions] .view-tabs a.active{background:var(--white);color:#0004f4}
+  .round-split.with-lineup{grid-template-columns:1fr}
+  .round-split[data-view=list] .lineup-pane,.round-split[data-view=lineup] .ranking-pane{display:none}
+  .round-split[data-view=list] .rank-row.active{box-shadow:none}
+  .round-split[data-view=list] .rank-row.is-first.active,.round-split[data-view=list] .rank-row.is-last.active{box-shadow:inset 4px 0 0 var(--tone)}
+  .round-split[data-view=list] .rank-row.active:not(.is-first):not(.is-last){background:none}
+  .round-split[data-view=list] .rank-row.active .name{font-weight:500}
+  .lineup-pane{position:static}
+  .bench{gap:6px;padding:0 10px 12px}
+  .hall-grid{grid-template-columns:1fr}
+  .sum-tag{display:none}
+  .split-3{gap:6px}
+  .money{padding:10px 8px}
+  .money .value{font-size:18px}
+  .pay{flex-direction:column}
+  .footer{padding:20px 16px}
+  .rank-row,.list-row{padding:10px 12px}
+  .panel-head,.league-head{padding:12px}
+  .toast{bottom:84px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
