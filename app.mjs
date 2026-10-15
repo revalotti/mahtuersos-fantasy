@@ -12,8 +12,10 @@ const initials = name => name.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUp
 const STATIC_BASE=document.querySelector('meta[name=static-base]'),BASE=(STATIC_BASE?.content||'').replace(/\/$/,'');
 const withBase=u=>BASE&&u.startsWith('/')&&!(u===BASE||u.startsWith(BASE+'/')||u.startsWith(BASE+'?'))?BASE+u:u;
 const unbase=u=>BASE&&(u===BASE||u.startsWith(BASE+'/')||u.startsWith(BASE+'?'))?u.slice(BASE.length)||'/':u;
-const assetUrl=u=>STATIC_BASE&&u.startsWith('/api/lineups/')?`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.jpg`:withBase(u);
+const assetUrl=u=>STATIC_BASE&&u.startsWith('/api/lineups/')?`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.webp`:withBase(u);
 const rebase=root=>{if(BASE)$$('a[data-route]',root).forEach(a=>a.setAttribute('href',withBase(a.getAttribute('href'))));};
+let gallery={title:'',items:[]};   // alineaciones de la jornada abierta, para el visor de imágenes
+let preferredView='list';   // última vista elegida en Jornadas (Tabla o Alineaciones)
 let photos={};   // nombre normalizado → foto de perfil de Biwenger (public/avatares.json)
 const avatar = name => photos[normalize(name)]?`<img class="avatar photo" src="${withBase(photos[normalize(name)])}" alt="" loading="lazy">`:`<span class="avatar" aria-hidden="true">${esc(initials(name))}</span>`;
 const CRESTS = {mahtuliga:withBase('/assets/mahtuliga.png'),mahtwoliga:withBase('/assets/mahtwoliga.png'),mahtuchampions:withBase('/assets/mahtuchampions.png')};
@@ -38,11 +40,11 @@ function getRoute() {
   currentPlayer=new URLSearchParams(location.search).get('jugador');
   currentView=new URLSearchParams(location.search).get('vista')==='alineacion'?'lineup':'list';
 }
-function navigate(url,keepScroll=false) {
-  const previous=currentId,y0=scrollY;rulesQuery='';rulesActive=null;url=unbase(url);history.pushState({},'',withBase(url));getRoute();render();
-  const bar=$('.tabs-bar');
-  if(keepScroll&&matchMedia('(min-width:761px)').matches){/* se mantiene la posición */}
-  else if(previous&&previous===currentId&&bar){const top=bar.getBoundingClientRect().top+scrollY-$('.topbar').offsetHeight;if(y0>top)window.scrollTo({top});}   // misma competición: se queda bajo las pestañas
+function navigate(url,noScroll=false) {
+  const previous=currentId;rulesQuery='';rulesActive=null;url=unbase(url);history.pushState({},'',withBase(url));getRoute();render();
+  const bar=$('.tabs-bar'),smooth=matchMedia('(prefers-reduced-motion: no-preference)').matches?'smooth':'instant';
+  if(noScroll){/* teclado: la posición no cambia */}
+  else if(previous&&previous===currentId&&bar)window.scrollTo({top:$('.tabs-anchor').getBoundingClientRect().top+scrollY-$('.topbar').offsetHeight,behavior:smooth});   // misma competición: al inicio del contenido nuevo, justo bajo las pestañas
   else window.scrollTo({top:0});
   main.focus({preventScroll:true});
 }
@@ -65,7 +67,7 @@ function rankRows(rows,{meta,qualify=0,unit='',href,activeId,mark,outFrom=0}={})
 function home() {
   const portal=id=>{const m=META[id];return `<a class="portal portal-${id}" href="/${id}" data-route style="--accent:${m.color}"><strong class="portal-name">${m.name}</strong><span class="portal-go" aria-hidden="true">${icon('arrow-right',20)}</span></a>`;};
   const when=state.updatedAt?new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}).format(new Date(state.updatedAt)):'';
-  return `<div class="home"><h1 class="home-title"><span>Aquí no hay</span><em>amigos.</em></h1><div class="portals">${IDS.map(portal).join('')}</div>${when?`<p class="home-updated">${icon('refresh-cw',14)}Actualizado el ${when.replace(',',' ·')}</p>`:''}</div>`;
+  return `<section class="home-hero"><div class="home-hero-in"><h1 class="home-title"><span>Aquí no hay</span><em>amigos.</em></h1></div></section><div class="home"><div class="portals">${IDS.map(portal).join('')}</div>${when?`<p class="home-updated">${icon('refresh-cw',14)}Actualizado el ${when.replace(',',' ·')}</p>`:''}</div>`;
 }
 function table(c,rows=standings(c),options={}) {
   if(!rows.length)return empty('Plazas por decidir','Los participantes aparecerán cuando se confirmen los clasificados.');
@@ -299,7 +301,7 @@ function competition() {
     content=`${sectionHeading('Palmarés')}${hall.length?`<div class="hall-grid">${hall.map(r=>`<article class="hall-card">${icon('trophy',26,'gold')}<h3>${esc(r.name)}</h3><strong>${r.count}</strong><div class="subtle">${r.count===1?'título':'títulos'}</div></article>`).join('')}</div>${timeline(c)}`:`<div class="panel">${empty('La historia está por escribir','Los campeones de cada temporada tendrán su sitio aquí.','trophy')}</div>`}`;
   }
   const status=`<span class="pill"><i class="dot"></i>${isChamp?(progress.finished?'Finalizada':progress.current?`Fase ${progress.current} en curso`:'Próximamente'):(maxRound(c)?'En juego':'Próximamente')}</span>`;
-  return `<div class="page" style="--accent:${m.color}"><header class="competition-heading">${crest(currentId,'xl')}<div class="competition-title">${isChamp?'':'<span class="eyebrow">Liga</span>'}<h1>${m.name}</h1></div>${isChamp?status:''}</header><div class="tabs-bar"><nav class="tabs" aria-label="Secciones de ${m.name}">${tabs.map(([id,label,live])=>`<a class="tab ${id===currentTab?'active':''}" href="/${currentId}?tab=${id}" data-route ${id===currentTab?'aria-current="page"':''}>${label}${live?'<i class="live-dot" title="Fase en curso"></i>':''}</a>`).join('')}</nav></div><div class="section-space">${content}</div></div>`;
+  return `<div class="page" style="--accent:${m.color}"><header class="competition-heading">${crest(currentId,'xl')}<div class="competition-title">${isChamp?'':'<span class="eyebrow">Liga</span>'}<h1>${m.name}</h1></div>${isChamp?status:''}</header><span class="tabs-anchor"></span><div class="tabs-bar"><nav class="tabs" aria-label="Secciones de ${m.name}">${tabs.map(([id,label,live])=>`<a class="tab ${id===currentTab?'active':''}" href="/${currentId}?tab=${id}" data-route ${id===currentTab?'aria-current="page"':''}>${label}${live?'<i class="live-dot" title="Fase en curso"></i>':''}</a>`).join('')}</nav></div><div class="section-space">${content}</div></div>`;
 }
 // Recortes de la imagen de alineación de Biwenger (1080×1080): solo el campo y los 4 suplentes.
 const LINEUP_IMG=1080;
@@ -311,8 +313,9 @@ function lineupPane(c,round,ranks,selected) {
   const withLineup=ranks.filter(r=>round.lineups.includes(r.id)),i=withLineup.indexOf(selected);
   const prev=withLineup[i-1],next=withLineup[i+1];
   const src=assetUrl(`/api/lineups/${currentId}/${roundKey(round)}/${selected.id}`);
+  gallery={title:roundLabel(round),items:withLineup.map(r=>({name:r.name,rank:r.rank,points:r.points,src:assetUrl(`/api/lineups/${currentId}/${roundKey(round)}/${r.id}`)}))};
   const nav=(r,dir,label)=>r?`<a class="icon-btn ${dir}" data-route data-keep data-${dir} href="${roundUrl(roundKey(round),r.id,true)}" aria-label="${label}: ${esc(r.name)}">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</a>`:`<span class="icon-btn disabled ${dir}" aria-hidden="true">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</span>`;
-  return `<section class="panel lineup-pane" aria-label="Alineación de ${esc(selected.name)}"><div class="lineup-head">${nav(prev,'prev','Anterior')}<div class="lineup-title"><strong>${esc(selected.name)}</strong></div>${nav(next,'next','Siguiente')}</div><dl class="lineup-facts"><div><dt>Puesto</dt><dd>${selected.rank}.º</dd></div><div><dt>Puntos</dt><dd>${num(selected.points)}</dd></div><div><dt>Jornada</dt><dd>${round.number}${round.postponed?'a':''}</dd></div></dl><a class="field-link" href="${src}" target="_blank" rel="noopener" title="Ver imagen completa">${crop(src,FIELD_CROP,'field',`Alineación de ${selected.name} en la ${roundLabel(round).toLowerCase()}`)}</a><h3 class="bench-title">Suplentes</h3>${round.noBench?.includes(selected.id)?'<p class="no-bench">Sin suplentes en esta jornada.</p>':`<div class="bench">${BENCH_CROPS.map(([pos,box])=>crop(src,box,`bench-slot pos-${pos}`)).join('')}</div>`}</section>`;
+  return `<section class="panel lineup-pane" aria-label="Alineación de ${esc(selected.name)}"><div class="lineup-head">${nav(prev,'prev','Anterior')}<div class="lineup-title"><strong>${esc(selected.name)}</strong></div>${nav(next,'next','Siguiente')}</div><dl class="lineup-facts"><div><dt>Puesto</dt><dd>${selected.rank}.º</dd></div><div><dt>Puntos</dt><dd>${num(selected.points)}</dd></div><div><dt>Jornada</dt><dd>${round.number}${round.postponed?'a':''}</dd></div></dl><button type="button" class="field-link" data-gallery="${i}" aria-haspopup="dialog" aria-label="Ver la alineación completa de ${esc(selected.name)}" title="Ver imagen completa">${crop(src,FIELD_CROP,'field','')}<span class="field-zoom" aria-hidden="true">${icon('maximize-2',16)}</span></button><h3 class="bench-title">Suplentes</h3>${round.noBench?.includes(selected.id)?'<p class="no-bench">Sin suplentes en esta jornada.</p>':`<div class="bench">${BENCH_CROPS.map(([pos,box])=>crop(src,box,`bench-slot pos-${pos}`)).join('')}</div>`}</section>`;
 }
 // Desplegable propio (patrón listbox de WAI-ARIA): sustituye al <select> nativo para controlar su aspecto en todos los navegadores.
 // options: [{value, label, note?, selected?}]. Al elegir una opción se navega a su `value` (una URL).
@@ -320,11 +323,41 @@ function dropdown({id,label,options}) {
   const current=options.find(o=>o.selected)||options[0];
   return `<div class="dropdown" data-dropdown><button type="button" class="dd-trigger" id="${id}" aria-haspopup="listbox" aria-expanded="false" aria-label="${esc(label)}: ${esc(current.label)}"><span class="dd-value">${esc(current.label)}</span>${current.note?`<span class="dd-note">${esc(current.note)}</span>`:''}${icon('chevron-down',18,'dd-chevron')}</button><ul class="dd-menu" role="listbox" tabindex="-1" aria-label="${esc(label)}" hidden>${options.map((o,i)=>`<li role="option" id="${id}-o${i}" data-value="${esc(o.value)}" aria-selected="${o===current}"><span class="dd-label">${esc(o.label)}</span>${o.note?`<span class="dd-note">${esc(o.note)}</span>`:''}${icon('check',16,'dd-check')}</li>`).join('')}</ul></div>`;
 }
+// Visor de imágenes (diálogo modal nativo): ver la alineación completa y recorrer las de la jornada con flechas, teclado o deslizando.
+let galleryIndex=0,galleryOpener=null,touchX=null;
+function galleryDialog() {
+  let dlg=$('#gallery');if(dlg)return dlg;
+  dlg=document.createElement('dialog');dlg.id='gallery';dlg.className='gallery';dlg.setAttribute('aria-label','Alineación completa');
+  dlg.innerHTML=`<div class="gallery-bar"><div class="gallery-title"><strong></strong><small></small></div><button type="button" class="gallery-btn" data-close aria-label="Cerrar">${icon('x',22)}</button></div><div class="gallery-stage"><button type="button" class="gallery-btn gallery-nav prev" data-step="-1" aria-label="Alineación anterior">${icon('chevron-left',26)}</button><img alt=""><button type="button" class="gallery-btn gallery-nav next" data-step="1" aria-label="Alineación siguiente">${icon('chevron-right',26)}</button></div><p class="gallery-count" aria-live="polite"></p>`;
+  document.body.appendChild(dlg);
+  dlg.addEventListener('click',e=>{if(!e.target.closest('img,button,.gallery-title'))dlg.close();const step=e.target.closest('[data-step]');if(step)galleryShow(galleryIndex+Number(step.dataset.step));if(e.target.closest('[data-close]'))dlg.close();});
+  dlg.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();e.stopPropagation();galleryShow(galleryIndex+(e.key==='ArrowRight'?1:-1));}});
+  dlg.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX;},{passive:true});
+  dlg.addEventListener('touchend',e=>{if(touchX===null)return;const dx=e.changedTouches[0].clientX-touchX;touchX=null;if(Math.abs(dx)>50)galleryShow(galleryIndex+(dx<0?1:-1));});
+  dlg.addEventListener('close',()=>{document.documentElement.classList.remove('gallery-open');galleryOpener?.focus({preventScroll:true});});
+  return dlg;
+}
+function galleryShow(i) {
+  const items=gallery.items;if(!items.length)return;
+  galleryIndex=(i+items.length)%items.length;
+  const dlg=galleryDialog(),it=items[galleryIndex],img=$('img',dlg);
+  dlg.classList.add('loading');img.onload=img.onerror=()=>dlg.classList.remove('loading');
+  img.src=it.src;img.alt=`Alineación de ${it.name} en la ${gallery.title.toLowerCase()}`;
+  $('.gallery-title strong',dlg).textContent=it.name;$('.gallery-title small',dlg).textContent=`${gallery.title} · ${it.rank}.º · ${num(it.points)} pts`;
+  $('.gallery-count',dlg).textContent=`${galleryIndex+1} de ${items.length}`;
+  $$('.gallery-nav',dlg).forEach(b=>b.hidden=items.length<2);
+  for(const k of [1,-1]){const n=items[(galleryIndex+k+items.length)%items.length];if(n)new Image().src=n.src;}   // precarga las vecinas
+}
+function galleryOpen(i,opener) {
+  const dlg=galleryDialog();galleryOpener=opener;galleryShow(i);
+  document.documentElement.classList.add('gallery-open');if(!dlg.open)dlg.showModal();
+}
 function roundSelect(c,round) {
   const asc=[...c.rounds].sort((a,b)=>roundOrder(a)-roundOrder(b)),i=asc.findIndex(r=>roundKey(r)===roundKey(round));
+  const keep=[null,preferredView==='lineup'];   // al cambiar de jornada se mantiene la vista; el participante pasa a ser el primero
   const label=r=>roundLabel(r)+(r.incomplete&&!r.postponed?' · pendiente':'');
-  const step=(r,dir,text)=>r?`<a class="round-step" data-route href="${roundUrl(roundKey(r))}" aria-label="${text}: ${esc(label(r))}" title="${text}">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</a>`:`<span class="round-step disabled" aria-hidden="true">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</span>`;
-  const menu=dropdown({id:'round-dd',label:'Jornada',options:[...asc].reverse().map(r=>({value:roundUrl(roundKey(r)),label:label(r),selected:roundKey(r)===roundKey(round)}))});
+  const step=(r,dir,text)=>r?`<a class="round-step" data-route href="${roundUrl(roundKey(r),...keep)}" aria-label="${text}: ${esc(label(r))}" title="${text}">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</a>`:`<span class="round-step disabled" aria-hidden="true">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</span>`;
+  const menu=dropdown({id:'round-dd',label:'Jornada',options:[...asc].reverse().map(r=>({value:roundUrl(roundKey(r),...keep),label:label(r),selected:roundKey(r)===roundKey(round)}))});
   return `${step(asc[i-1],'prev','Jornada anterior')}${menu}${step(asc[i+1],'next','Jornada siguiente')}`;
 }
 function roundsView(c) {
@@ -334,6 +367,7 @@ function roundsView(c) {
   const hasLineups=ranks.some(r=>round.lineups.includes(r.id));
   const selected=hasLineups?(ranks.find(r=>r.id===currentPlayer&&round.lineups.includes(r.id))||ranks.find(r=>round.lineups.includes(r.id))):null;
   const view=selected&&currentView==='lineup'?'lineup':'list';
+  if(selected)preferredView=view;
   const tabs=selected?`<div class="view-tabs" role="tablist" aria-label="Vista de la jornada"><a role="tab" data-route data-keep href="${roundUrl(roundKey(round))}" class="${view==='list'?'active':''}" aria-selected="${view==='list'}">${icon('list-ordered',16)}Tabla</a><a role="tab" data-route data-keep href="${roundUrl(roundKey(round),selected.id,true)}" class="${view==='lineup'?'active':''}" aria-selected="${view==='lineup'}">${icon('users',16)}Alineaciones</a></div>`:'';
   // Una sola etiqueta de estado: pendientes de partidos, o cierre de una jornada aplazada ya disputada entera.
   const state=round.incomplete?'pending':round.postponed?'final':'';
@@ -341,11 +375,11 @@ function roundsView(c) {
   const badge=state?`<span class="status-wrap"><button type="button" class="status-badge is-${state}" aria-expanded="false" aria-controls="round-hint">${icon(state==='final'?'check':'clock',14)}${state==='final'?'Clasificación final':'Partidos pendientes'}${icon('info',13,'status-info')}</button><span class="status-hint" id="round-hint" role="tooltip">${hint}</span></span>`:'';
   return `<div class="round-toolbar"><div class="round-pick">${roundSelect(c,round)}${badge}</div>${tabs}</div><div class="round-split ${selected?'with-lineup':''}" data-view="${view}"><section class="panel ranking-pane">${rankRows(ranks,{href:selected?r=>round.lineups.includes(r.id)?roundUrl(roundKey(round),r.id,true):null:null,activeId:selected?.id,mark:r=>round.incomplete?null:r.id===round.lastPlayerId?'last':r.rank===1?'first':null})}</section>${selected?lineupPane(c,round,ranks,selected):''}</div>`;
 }
-// Pie de página: sin enlaces ni datos, solo el nombre, el número de participantes y la temporada.
+// Pie de página: sin enlaces ni datos, solo el nombre y el número de participantes (la temporada ya va en la cabecera).
 function renderFooter() {
   const footer=document.querySelector('.footer');if(!footer||!state)return;
   const seen=new Set();for(const id of ['mahtuliga','mahtwoliga'])for(const p of state.competitions[id]?.players||[])seen.add(normalize(p.name));
-  footer.innerHTML=`<p>Mahtuersos Fantasy · ${seen.size} participantes · Temporada ${esc(String(state.season).replace(/^20/,''))}</p>`;
+  footer.innerHTML=`<p>Mahtuersos Fantasy · ${seen.size} participantes</p>`;
 }
 function render() {
   renderFooter();
@@ -360,8 +394,9 @@ function render() {
   $$('[data-nav]').forEach(a=>{const active=a.dataset.nav===(currentId||'inicio');a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
 }
 document.addEventListener('click',e=>{
+  const gal=e.target.closest('[data-gallery]');if(gal){galleryOpen(Number(gal.dataset.gallery),gal);return;}
   const link=e.target.closest('a[data-route]');
-  if(link&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey&&e.button===0){e.preventDefault();navigate(link.getAttribute('href'),link.hasAttribute('data-keep'));}
+  if(link&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey&&e.button===0){e.preventDefault();navigate(link.getAttribute('href'));}
 });
 document.addEventListener('click',e=>{
   const open=document.querySelector('.status-wrap.open'),btn=e.target.closest('.status-badge');
