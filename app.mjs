@@ -67,7 +67,7 @@ function rankRows(rows,{meta,qualify=0,unit='',href,activeId,mark,outFrom=0}={})
 function home() {
   const portal=id=>{const m=META[id];return `<a class="portal portal-${id}" href="/${id}" data-route style="--accent:${m.color}"><strong class="portal-name">${m.name}</strong><span class="portal-go" aria-hidden="true">${icon('arrow-right',20)}</span></a>`;};
   const when=state.updatedAt?new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}).format(new Date(state.updatedAt)):'';
-  return `<section class="home-hero"><div class="home-hero-in"><h1 class="home-title"><span>Aquí no hay</span><em>amigos.</em></h1></div></section><div class="home"><div class="portals">${IDS.map(portal).join('')}</div>${when?`<p class="home-updated">${icon('refresh-cw',14)}Actualizado el ${when.replace(',',' ·')}</p>`:''}</div>`;
+  return `<div class="home-page"><section class="home-hero"><div class="home-hero-in"><h1 class="home-title"><span>Aquí no hay</span><em>amigos.</em></h1></div></section><div class="home"><div class="portals">${IDS.map(portal).join('')}</div>${when?`<p class="home-updated">${icon('refresh-cw',14)}Actualizado el ${when.replace(',',' ·')}</p>`:''}</div></div>`;
 }
 function table(c,rows=standings(c),options={}) {
   if(!rows.length)return empty('Plazas por decidir','Los participantes aparecerán cuando se confirmen los clasificados.');

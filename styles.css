@@ -66,18 +66,27 @@ main{flex:1;width:100%}
 
 /* Portada: tres puertas de entrada, sin datos. Misma identidad que el resto: fondo claro, radio y tipografía del site. */
 /* Cabecera de la portada: franja azul marino (como la barra superior) a todo el ancho, con luces de las tres competiciones, líneas de campo y las estrellas del logo */
-.home-hero{position:relative;overflow:hidden;background:var(--navy);color:#fff;padding:56px 0 118px;isolation:isolate}
-.home-hero::before{content:'';position:absolute;inset:0;z-index:-2;background:radial-gradient(50% 90% at 6% 0%,#ed4b3f55,transparent 70%),radial-gradient(45% 90% at 52% 115%,#5703f666,transparent 70%),radial-gradient(50% 90% at 100% 0%,#07878055,transparent 70%)}
-.home-hero::after{content:'';position:absolute;right:max(-120px,calc(50% - 700px));top:-60px;width:620px;height:620px;z-index:-1;border-radius:50%;border:2px solid #ffffff17;box-shadow:inset 0 0 0 70px transparent,0 0 0 90px transparent;background:radial-gradient(circle,transparent 0 24%,#ffffff14 24% calc(24% + 2px),transparent calc(24% + 2px)),linear-gradient(#ffffff17,#ffffff17) center/100% 2px no-repeat}
+.home-hero{position:relative;color:#fff;padding:clamp(20px,5vh,56px) 0 clamp(16px,3.4vh,34px)}
+/* Portada: un único fondo azul marino a toda la pantalla, con luces de las tres competiciones y las líneas de campo */
+body[data-theme=home]{--bg:var(--navy);--ink:#fff;--muted:#a8b1c7;--line:rgba(255,255,255,.12);
+  background:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1600 1100%22 fill=%22none%22 stroke=%22%238b97ad%22 stroke-opacity=%22.3%22 stroke-width=%223%22%3E%3Cpath d=%22M1060 0V1100%22/%3E%3Ccircle cx=%221060%22 cy=%22330%22 r=%22270%22/%3E%3Ccircle cx=%221060%22 cy=%22330%22 r=%227%22 fill=%22%238b97ad%22 fill-opacity=%22.4%22 stroke=%22none%22/%3E%3C/svg%3E") right max(-260px,calc(50% - 900px)) top 60px/1500px auto no-repeat,radial-gradient(45% 420px at 6% 0%,#ed4b3f45,transparent 75%),radial-gradient(40% 420px at 100% 0%,#07878045,transparent 75%),radial-gradient(60% 520px at 50% 100%,#5703f655,transparent 75%),var(--navy);
+  background-attachment:fixed}
+html:has(body[data-theme=home]){background:var(--navy)}
+body[data-theme=home] .footer{border-top-color:transparent}
+body[data-theme=home] main{display:flex;flex-direction:column}
+.home-page{position:relative;overflow:hidden;flex:1}
+
+.home-page>*{position:relative}
+.home-hero-in,.home{z-index:2}
 .home-hero-in{position:relative;max-width:1100px;margin:0 auto;padding:0 20px}
-.home-hero-in::before{content:'★ ★ ★ ★ ★';display:block;margin-bottom:14px;font-size:15px;letter-spacing:.5em;color:#fbbc2f}
-.home-title{margin:0;font:800 clamp(56px,9vw,112px)/.94 var(--display);letter-spacing:.01em;text-transform:uppercase;color:#fff}
+.home-hero-in::before{content:'★ ★ ★ ★ ★';display:block;margin-bottom:clamp(6px,1.6vh,14px);font-size:15px;letter-spacing:.5em;color:#fbbc2f}
+.home-title{margin:0;font:800 clamp(48px,min(9vw,11.6vh),112px)/.94 var(--display);letter-spacing:.01em;text-transform:uppercase;color:#fff}
 .home-title span,.home-title em{display:block}
 .home-title em{font-style:normal;color:#fbbc2f}
-.home{position:relative;max-width:1100px;margin:-72px auto 0;padding:0 20px 24px}
+.home{position:relative;max-width:1100px;margin:0 auto;padding:0 20px clamp(8px,2vh,24px)}
 .portals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.portal{box-shadow:0 18px 40px #1b243340;position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;container-type:inline-size;min-height:220px;padding:24px;border-radius:var(--radius);overflow:hidden;color:#fff;isolation:isolate;transition:transform .25s ease,box-shadow .25s ease}
-.portal-mahtuchampions{grid-column:1/-1;min-height:200px}
+.portal{box-shadow:0 18px 40px #0000004d;position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;container-type:inline-size;min-height:clamp(104px,19vh,220px);padding:clamp(16px,3vh,24px) 24px;border-radius:var(--radius);overflow:hidden;color:#fff;isolation:isolate;transition:transform .25s ease,box-shadow .25s ease}
+.portal-mahtuchampions{grid-column:1/-1;min-height:clamp(92px,15vh,200px)}
 .portal::before{content:'';position:absolute;inset:0;z-index:-2}
 .portal::after{content:'';position:absolute;right:-6%;top:50%;height:130%;aspect-ratio:1;transform:translateY(-50%);border-radius:50%;z-index:-1;background:var(--crest) center/118% no-repeat;opacity:.2;transition:transform .35s ease,opacity .25s ease}
 .portal-mahtuliga{--crest:url(./assets/mahtuliga.png)}.portal-mahtwoliga{--crest:url(./assets/mahtwoliga.png)}.portal-mahtuchampions{--crest:url(./assets/mahtuchampions.png)}
@@ -90,7 +99,7 @@ main{flex:1;width:100%}
 .portal-mahtuchampions .portal-name{font-size:min(8.4cqw,62px)}
 .portal-go{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:999px;background:#fff;color:#111;transition:transform .2s ease}
 .portal:hover .portal-go{transform:translateX(3px)}
-.home-updated{display:flex;align-items:center;justify-content:center;gap:7px;margin:22px 0 0;font-size:13px;color:var(--muted)}
+.home-updated{display:flex;align-items:center;justify-content:center;gap:7px;margin:clamp(10px,2.4vh,22px) 0 0;font-size:13px;color:var(--muted)}
 
 /* Escudo (liga o copa) */
 .crest{display:inline-block;flex:none;border-radius:50%;background-repeat:no-repeat;background-color:var(--chip);box-shadow:0 0 0 2px var(--line)}
@@ -601,12 +610,13 @@ body[data-theme=champions] .pay-number,body[data-theme=champions] .money .value{
   .gallery-bar{padding:10px 12px}.gallery-title strong{font-size:19px}
   .gallery-stage{padding:0 8px}.gallery-nav{top:auto;bottom:6px;transform:none;background:rgba(7,10,18,.6)}.gallery-nav.prev{left:12px}.gallery-nav.next{right:12px}
   .gallery-count{padding:14px 70px 18px}
-  .home-hero{padding:32px 0 84px}.home-hero-in{padding:0 16px}.home-hero::after{width:380px;height:380px;right:-140px;top:-40px}
-  .home{margin-top:-52px;padding:0 16px 12px}
+  .home-hero{padding:clamp(14px,3.4vh,32px) 0 clamp(10px,2.2vh,24px)}.home-hero-in{padding:0 16px}
+  body[data-theme=home]{background-size:900px auto,auto,auto,auto,auto;background-position:right -330px top 54px,0 0,0 0,0 0,0 0}
+  .home{margin-top:0;padding:0 16px 12px}
   .home-hero-in::before{font-size:12px;margin-bottom:10px}
-  .home-title{font-size:clamp(46px,15.6vw,70px)}
-  .portals{grid-template-columns:1fr;gap:12px}
-  .portal,.portal-mahtuchampions{min-height:112px;align-items:center;padding:20px}
+  .home-title{font-size:clamp(36px,min(15.6vw,8.6vh),70px)}
+  .portals{grid-template-columns:1fr;gap:clamp(8px,1.4vh,12px)}
+  .portal,.portal-mahtuchampions{min-height:clamp(68px,11vh,112px);align-items:center;padding:clamp(12px,2vh,20px) 20px}
   .portal-name,.portal-mahtuchampions .portal-name{font-size:min(10cqw,40px)}
   .portal-go{width:40px;height:40px}
   .portal::after{height:150%;right:-10%}
