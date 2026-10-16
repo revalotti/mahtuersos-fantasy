@@ -228,8 +228,7 @@ body[data-theme=champions] .status-badge.is-final{--sb:#6ee7a0}body[data-theme=c
 .status-badge{cursor:pointer;font-family:inherit}
 .status-badge .status-info{opacity:.6;margin-left:1px}
 .status-hint{position:absolute;left:0;top:calc(100% + 8px);z-index:25;width:min(300px,calc(100vw - 32px));padding:10px 12px;border-radius:10px;background:#1b2433;color:#e8ecf4;font-size:13px;line-height:1.45;box-shadow:0 10px 30px #0004;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;pointer-events:none}
-.status-wrap.open .status-hint,.status-badge:focus-visible+.status-hint{opacity:1;visibility:visible;transform:none}
-@media (hover:hover){.status-badge:hover+.status-hint{opacity:1;visibility:visible;transform:none}}
+.status-wrap.open .status-hint{opacity:1;visibility:visible;transform:none}
 .round-split{display:grid;gap:16px;align-items:start}
 .round-split.with-lineup{grid-template-columns:minmax(0,1fr) 440px}
 .rank-row.link:hover{background:var(--surface-2)}
