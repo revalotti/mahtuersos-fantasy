@@ -13,8 +13,8 @@
     {
      "title": "Dos ligas y una copa",
      "icon": "layers",
-     "keywords": "draft sorteo 20 inscritos 10 ligas independientes diferencias entre ligas mahtuliga mahtwoliga champions",
-     "html": "<p>Somos <strong>20 inscritos</strong> repartidos por sorteo (el <em>draft</em>) en dos ligas de 10: <strong>Mahtuliga</strong> y <strong>Mahtwoliga</strong>.</p><ul><li>Cada liga se juega por separado, con su propia clasificación, mercado, fianza y bote.</li><li>Las reglas son prácticamente las mismas. Donde hay diferencias (las subastas y las primas por posición), te lo indicamos en cada apartado.</li><li>La única competición común es la <strong>MahtuChampions</strong>: la juegan los 4 primeros de cada liga al terminar la jornada 19.</li></ul>"
+     "keywords": "draft sorteo inscritos participantes ligas independientes diferencias entre ligas mahtuliga mahtwoliga champions",
+     "html": "<p>Somos <strong>{{total}} inscritos</strong> repartidos por sorteo (el <em>draft</em>) en <strong>{{split}}</strong>.</p><ul><li>Cada liga se juega por separado, con su propia clasificación, mercado, fianza y bote.</li><li>Las reglas son prácticamente las mismas. Donde hay diferencias (las subastas y las primas por posición), te lo indicamos en cada apartado.</li><li>La única competición común es la <strong>MahtuChampions</strong>: la juegan los 4 primeros de cada liga al terminar la jornada 19.</li></ul>"
     },
     {
      "title": "Calendario",
@@ -246,8 +246,8 @@
     {
      "title": "Configuración de la copa",
      "icon": "settings",
-     "keywords": "configuración fantasy sin mercado cualquier jugador presupuesto 300 millones capitán ariete 14 valor de mercado créditos vídeos premium canjear",
-     "html": "<ul><li>Modalidad <strong>fantasy, sin mercado</strong>: no hay fichajes.</li><li>Todos los participantes pueden elegir <strong>cualquier jugador</strong>.</li><li><strong>Presupuesto máximo: 300 M€.</strong></li><li><strong>Capitán y Ariete</strong> se pueden usar con jugadores de hasta <strong>14 M€</strong> de valor de mercado (en las ligas el máximo es de 3 M€).</li><li>Sin Biwenger Premium, para activarlos hay que <strong>canjear créditos</strong>, que se consiguen viendo vídeos dentro de la app.</li></ul>"
+     "keywords": "configuración fantasy sin mercado cláusulas cualquier jugador presupuesto 800 millones plantilla 25 jugadores puntos sofascore suplentes multiposición formaciones extra capitán ariete 14 valor de mercado créditos vídeos premium canjear",
+     "html": "<ul><li>Modalidad <strong>fantasy, sin mercado</strong>: no hay fichajes ni cláusulas.</li><li>Todos los participantes pueden elegir <strong>cualquier jugador</strong>.</li><li><strong>Presupuesto máximo: 800 M€</strong>, con hasta <strong>25 jugadores</strong> en la plantilla.</li><li>Los puntos son los de <strong>SofaScore</strong> (en las ligas es la media entre AS y SofaScore).</li><li>Solo juegan los <strong>11 titulares</strong>: no hay suplentes ni jugadores multiposición. Sí se permiten las formaciones extra.</li><li><strong>Capitán y Ariete</strong> se pueden usar con jugadores de hasta <strong>14 M€</strong> de valor de mercado (en las ligas el máximo es de 3 M€).</li><li>Sin Biwenger Premium, para activarlos hay que <strong>canjear créditos</strong>, que se consiguen viendo vídeos dentro de la app.</li></ul>"
     }
    ]
   },
