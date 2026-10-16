@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvaxm1ld';
-import { mountField } from './lineup-field.mjs?v=mvaxm1ld';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvaxm1ld';
+import { icon, hydrateIcons } from './icons.mjs?v=mvay9heb';
+import { mountField } from './lineup-field.mjs?v=mvay9heb';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvay9heb';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -470,6 +470,7 @@ async function mountFields() {
 }
 function render() {
   renderFooter();
+  const season=$('.season-label b');if(season&&state?.season)season.textContent=`${state.season.slice(2,4)}/${state.season.slice(5)}`;   // 2026/27 → 26/27
   document.title=currentId?`${META[currentId].name} · Mahtuersos Fantasy`:'Mahtuersos Fantasy';
   // Entrada de página solo al cambiar de pantalla o pestaña; al pasar de jornada o de participante no se vuelve a animar todo.
   // 'page': otra liga o la portada (entra todo, encabezado incluido) · 'tab': otra pestaña de la misma liga (el encabezado con el logo se queda quieto) · 'swap': otra jornada o participante.
