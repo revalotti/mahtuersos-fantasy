@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvassq8x';
-import { mountField } from './lineup-field.mjs?v=mvassq8x';
-import { normalize, IDS, META, CHAMPIONS_PHASES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvassq8x';
+import { icon, hydrateIcons } from './icons.mjs?v=mvawt3oi';
+import { mountField } from './lineup-field.mjs?v=mvawt3oi';
+import { normalize, IDS, META, CHAMPIONS_PHASES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvawt3oi';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -166,7 +166,7 @@ function rulesView(c,isChamp) {
   const ctx={n:pt.n,collected:pt.collected,pot:pt.pot,p1:pt.first,p2:pt.second,p3:pt.third,cc:pt.champions,cp,contrib};
   const cuentas=!isChamp&&pt.shortfall!==0?ruleCard({title:`Cuentas con los ${pt.n} participantes actuales`,icon:'calculator',keywords:`participantes actuales ${pt.n} cuentas recaudación inscripciones premium diferencia reparto reajuste premios previstos 10 proporción`,html:`<div class="rows"><div class="row"><span>Inscripciones (${pt.n} × 30 €)</span><strong>${euro(pt.collected)}</strong></div><div class="row"><span>Premium de Biwenger</span><strong>−${euro(50)}</strong></div><div class="row total"><span>Disponible para premios</span><strong>${euro(pt.pot)}</strong></div><div class="row"><span>Previsto con 10 participantes</span><strong>${euro(pt.expected)}</strong></div><div class="row"><span>Diferencia (no se cubre)</span><strong class="neg">${pt.shortfall<0?'−':'+'}${euro(Math.abs(pt.shortfall))}</strong></div></div><p class="tip">Con 10 participantes eran 120 / 60 / 30 € y 40 € para la copa. Con ${pt.n}: <strong>${pt.first} / ${pt.second} / ${pt.third} €</strong> y <strong>${pt.champions} €</strong> para la copa. La fianza (10 € por participante) va aparte y no cuenta en este reparto.</p>`}):'';
   const index=withIndex?`<nav class="rules-index" aria-label="Secciones de las reglas">${groups.map(g=>`<a href="#rules-${g.id}" data-group="rules-${g.id}"><span class="idx-tag">${g.tag}</span><span class="idx-title">${g.title}</span><span class="idx-count"></span></a>`).join('')}</nav>`:'';
-  const search=`<div class="rules-search"><label class="search">${icon('search',18)}<input id="rules-search" type="search" placeholder="Buscar en las reglas…" autocomplete="off" spellcheck="false" aria-label="Buscar en las reglas" value="${esc(rulesQuery)}"><button type="button" class="clear" id="rules-clear" aria-label="Borrar búsqueda" hidden>${icon('x',16)}</button></label><p class="search-status" id="rules-status" role="status" aria-live="polite"></p></div>`;
+  const search=`<div class="rules-search"><label class="search">${icon('search',18)}<input id="rules-search" type="search" placeholder="Busca: ${isChamp?'fases, presupuesto…':'capitán, cláusulas…'}" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Buscar en las reglas" value="${esc(rulesQuery)}"><button type="button" class="clear" id="rules-clear" aria-label="Borrar búsqueda" hidden>${icon('x',16)}</button></label><div class="rules-chips" role="group" aria-label="Temas frecuentes">${(rules.quick?.[isChamp?'champions':'liga']||[]).map(([label,q])=>`<button type="button" class="rules-chip" data-q="${esc(q)}" aria-pressed="false">${esc(label)}</button>`).join('')}</div><p class="search-status" id="rules-status" role="status" aria-live="polite"></p></div>`;
   return `<div class="rules-layout"><div class="rules-grid ${withIndex?'with-index':''}"><aside class="rules-side">${search}${index}</aside><div class="rules-content"><div id="rules-groups">${groups.map((g,i,all)=>ruleGroup(g,i,all,g.id==='dinero'?cuentas:'',ctx)).join('')}</div><div id="rules-empty" hidden>${empty('Sin resultados','Prueba con otra palabra o con menos palabras.','search')}</div>${c.customRules?`<section class="panel spaced"><div class="panel-head"><h3>Notas de la competición</h3></div><div class="custom-rules">${esc(c.customRules)}</div></section>`:''}<p class="help-note">${esc(rules.help.text)}</p></div></div></div>`;
 }
 function highlight(el,tokens) {
@@ -186,7 +186,8 @@ function highlight(el,tokens) {
 }
 function applyRulesSearch() {
   const root=$('#rules-groups');if(!root)return;
-  const tokens=fold(rulesQuery).trim().split(/\s+/).filter(Boolean),desktop=DESKTOP.matches;
+  // Se busca por la raíz de cada palabra (pagar → «pag»): así «pagar», «pago» y «pagan» encuentran lo mismo, y da igual escribir con o sin tildes o mayúsculas.
+  const stem=t=>t.length>=5?t.slice(0,-2):t,tokens=fold(rulesQuery).trim().split(/\s+/).filter(Boolean).map(stem),desktop=DESKTOP.matches;
   $$('mark.hit',root).forEach(m=>m.replaceWith(document.createTextNode(m.textContent)));root.normalize();
   const groups=$$('.rule-group',root),first=groups[0]?.id.replace('rules-','');
   if(!groups.some(g=>g.id==='rules-'+rulesActive))rulesActive=first;
@@ -211,6 +212,7 @@ function applyRulesSearch() {
   // Al volver de escritorio a móvil, los acordeones recuperan su estado inicial.
   if(!tokens.length&&!desktop&&root.dataset.mode==='d')groups.forEach(g=>{g.open=g.dataset.default==='1';});
   root.dataset.mode=desktop?'d':'m';
+  $$('.rules-chip').forEach(b=>b.setAttribute('aria-pressed',String(tokens.length>0&&fold(rulesQuery).trim()===fold(b.dataset.q))));
   $('#rules-empty').hidden=!(tokens.length&&!total);
   $('#rules-status').textContent=tokens.length?`${total} ${total===1?'resultado':'resultados'}`:'';
   $('#rules-clear').hidden=!rulesQuery;
@@ -243,6 +245,8 @@ window.addEventListener('resize',()=>$('.tabs')?.dispatchEvent(new Event('scroll
 function initRulesSearch() {
   const input=$('#rules-search');if(!input)return;
   input.oninput=()=>{rulesQuery=input.value;applyRulesSearch();};
+  // Temas frecuentes: un toque busca ese tema y otro toque sobre el mismo lo quita.
+  $$('.rules-chip').forEach(b=>b.onclick=()=>{rulesQuery=fold(rulesQuery).trim()===fold(b.dataset.q)?'':b.dataset.q;input.value=rulesQuery;applyRulesSearch();});
   input.onkeydown=e=>{if(e.key==='Escape'&&rulesQuery){e.preventDefault();rulesQuery='';input.value='';applyRulesSearch();}};
   // Escritorio: el índice cambia de sección (y sale de la búsqueda si la hubiera).
   $$('.rules-index a').forEach(a=>a.onclick=e=>{e.preventDefault();rulesQuery='';input.value='';rulesActive=a.dataset.group.replace('rules-','');applyRulesSearch();});

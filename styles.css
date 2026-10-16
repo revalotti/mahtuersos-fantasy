@@ -858,3 +858,13 @@ body[data-theme=champions] .fv-note{color:#d6d8ff;background:rgba(0,0,100,.3)}bo
 .fv-swap{position:absolute;left:-7px;top:-3px;z-index:2;display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.45)}
 .fv-swap svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .fv-swap.in{background:#16a34a}.fv-swap.out{background:#dc2626}
+
+/* Reglas: temas frecuentes para buscar con un toque */
+.rules-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.rules-chip{height:32px;padding:0 13px;border-radius:999px;background:var(--chip);color:var(--ink);font-size:13px;font-weight:600;transition:background .15s,color .15s,transform .12s}
+.rules-chip:hover{background:color-mix(in srgb,var(--ink) 14%,var(--chip))}
+.rules-chip:active{transform:scale(.96)}
+.rules-chip[aria-pressed=true]{background:var(--ink);color:var(--surface)}
+body[data-theme=champions] .rules-chip{background:rgba(255,255,255,.14);color:#fff}
+body[data-theme=champions] .rules-chip[aria-pressed=true]{background:#fff;color:#0004f4}
+@media (max-width:760px){.rules-chips{flex-wrap:nowrap;overflow-x:auto;margin:10px -16px 0;padding:0 16px 2px;scrollbar-width:none}.rules-chips::-webkit-scrollbar{display:none}.rules-chip{flex:none}}

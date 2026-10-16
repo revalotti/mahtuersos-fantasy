@@ -7,14 +7,14 @@
    "id": "formato",
    "tag": "Formato",
    "title": "Cómo funciona",
-   "desc": "Ligas, calendario y configuración general.",
+   "desc": "Cómo se organizan las ligas, el calendario y la configuración.",
    "open": true,
    "cards": [
     {
      "title": "Dos ligas y una copa",
      "icon": "layers",
-     "keywords": "draft sorteo 20 inscritos 10 ligas independientes mahtuliga mahtwoliga champions nueve 9 participantes actuales",
-     "html": "<ul><li>El <strong>draft</strong> es un sorteo aleatorio: las 20 inscripciones se reparten al azar hasta dejar 10 en <strong>Mahtuliga</strong> y 10 en <strong>Mahtwoliga</strong>.</li><li>Cada liga se juega por separado, con el mismo reglamento y con su propia clasificación, mercado, fianza y bote.</li><li>La única competición común es la <strong>MahtuChampions</strong>: la juegan los 4 primeros de cada liga al terminar la jornada 19.</li></ul>"
+     "keywords": "draft sorteo 20 inscritos 10 ligas independientes diferencias entre ligas mahtuliga mahtwoliga champions",
+     "html": "<p>Somos <strong>20 inscritos</strong> repartidos por sorteo (el <em>draft</em>) en dos ligas de 10: <strong>Mahtuliga</strong> y <strong>Mahtwoliga</strong>.</p><ul><li>Cada liga se juega por separado, con su propia clasificación, mercado, fianza y bote.</li><li>Las reglas son prácticamente las mismas. Donde hay diferencias (las subastas y las primas por posición), te lo indicamos en cada apartado.</li><li>La única competición común es la <strong>MahtuChampions</strong>: la juegan los 4 primeros de cada liga al terminar la jornada 19.</li></ul>"
     },
     {
      "title": "Calendario",
@@ -25,8 +25,8 @@
     {
      "title": "Configuración de la liga",
      "icon": "settings",
-     "keywords": "privada invitación puntuación as sofascore plantilla 22 jugadores presupuesto 20 millones reinicio mitad temporada plantilla saldo puntos la liga primera division 38 jornadas",
-     "html": "<ul><li>Cada liga es privada en Biwenger y el acceso es solo por invitación.</li><li>Se juega con <strong>La Liga (Primera División)</strong>: 38 jornadas.</li><li>Puntuación: <strong>media entre AS y SofaScore</strong>.</li><li>Plantilla inicial aleatoria, <strong>20 M€</strong> de presupuesto y un máximo de <strong>22 jugadores</strong>.</li><li><strong>A mitad de temporada</strong> se reinician la plantilla y el saldo, como empezar desde el principio, pero se mantienen los puntos acumulados hasta ese momento.</li></ul>"
+     "keywords": "privada invitación puntuación as sofascore media 38 jornadas plantilla 22 jugadores 20 millones presupuesto salarios entrenador mitad temporada reinicio rivales ver alineaciones",
+     "html": "<ul><li>Cada liga es <strong>privada</strong> en Biwenger y se entra solo por invitación.</li><li>Se juega con <strong>La Liga (Primera División)</strong>: 38 jornadas.</li><li>Los puntos son la <strong>media entre AS y SofaScore</strong>.</li><li>Plantilla inicial aleatoria, <strong>20 M€</strong> de presupuesto y <strong>22 jugadores</strong> como máximo. No hay límite de jugadores del mismo club, ni salarios, ni entrenador.</li><li>Las alineaciones y los puntos de los rivales se ven <strong>cuando empieza la jornada</strong>.</li><li><strong>A mitad de temporada</strong> se reinician la plantilla y el saldo, como empezar de cero, pero se mantienen los puntos acumulados.</li></ul>"
     },
     {
      "title": "Desempates",
@@ -40,19 +40,37 @@
    "id": "alineaciones",
    "tag": "Juego",
    "title": "Alineaciones y puntos",
-   "desc": "Cómo se alinea y cómo se gana presupuesto.",
+   "desc": "Cómo montar tu once y cómo se puntúa.",
    "cards": [
     {
-     "title": "Alineaciones",
+     "title": "Cómo montar tu once",
      "icon": "users",
-     "keywords": "capitán doble ariete gol cambios suplentes multiposición once alineación sustitución automática titular no juega suplente entra banquillo",
-     "html": "<ul><li><strong>Capitán:</strong> puntúa el doble. Valor máximo 3 M€.</li><li><strong>Ariete:</strong> bonus por gol. Valor máximo 3 M€.</li><li>Cambios libres entre jornadas; no están permitidos durante los partidos.</li><li>Se permiten suplentes y jugadores multiposición.</li><li><strong>Sustitución automática:</strong> si un titular no juega, entra el suplente de la posición de ese hueco de la formación, siempre que sí haya jugado.</li></ul>"
+     "keywords": "alineación once titulares suplentes formación formaciones extra multiposición posiciones 3-6-1 4-2-4 puntos media as sofascore",
+     "html": "<ul><li>Eliges <strong>11 titulares</strong> y hasta <strong>4 suplentes</strong>, uno por línea (portero, defensa, centrocampista y delantero).</li><li>Puedes usar las formaciones de siempre y también <strong>formaciones extra</strong>, como la 3-6-1 o la 4-2-4.</li><li>Los jugadores con <strong>varias posiciones</strong> puntúan según el hueco en el que los pongas.</li><li>Los puntos son la <strong>media entre AS y SofaScore</strong>.</li></ul>"
     },
     {
-     "title": "Ingresos virtuales",
+     "title": "Capitán y ariete",
+     "icon": "crown",
+     "keywords": "capitán capitan doble ariete gol bonus extra 3 millones valor de mercado máximo pierde ventaja no juega",
+     "html": "<ul><li><strong>Capitán:</strong> sus puntos cuentan <strong>doble</strong>.</li><li><strong>Ariete:</strong> suma <strong>3 puntos extra por cada gol</strong> que marque.</li><li>Pueden ser de cualquier posición, pero con un <strong>valor de mercado máximo de 3 M€</strong>.</li><li>Si el capitán o el ariete <strong>no juega</strong> y entra un suplente, se pierde esa ventaja: el suplente no la hereda. La web lo indica junto al portero.</li></ul>"
+    },
+    {
+     "title": "Cambios durante la jornada",
+     "icon": "lock",
+     "keywords": "cambios cambiar alineación durante jornada bloqueo progresivo bloqueado partido empieza aplazado",
+     "html": "<p>Entre jornadas puedes cambiar tu alineación las veces que quieras.</p><p>Durante la jornada funciona el <strong>bloqueo progresivo</strong>: cada jugador se bloquea cuando empieza su partido. Hasta ese momento su hueco sigue abierto, también cuando un partido se aplaza.</p>"
+    },
+    {
+     "title": "Suplentes y huecos vacíos",
+     "icon": "refresh-cw",
+     "keywords": "suplentes sustitución automática cambio entra sale hueco vacío posición vacía resta 4 puntos penalización partido pendiente aplazado",
+     "html": "<ul><li><strong>Sustitución automática:</strong> si un titular no juega, entra el suplente de la posición de ese hueco, siempre que él sí haya jugado.</li><li>Si el partido de un titular <strong>aún no se ha jugado</strong> (por ejemplo, uno aplazado), todavía no se le sustituye.</li><li>Cada <strong>hueco vacío</strong>, es decir, una posición sin jugador, resta <strong>4 puntos</strong>.</li><li>Un suplente que no entra no suma puntos.</li></ul>"
+    },
+    {
+     "title": "Primas (presupuesto virtual)",
      "icon": "coins",
-     "keywords": "dinero virtual presupuesto puntos mvp once ideal bonus ingresos millones",
-     "html": "<p>Es presupuesto dentro de Biwenger para fichar. <strong>No es dinero real.</strong></p><ul><li><strong>100.000 €</strong> por cada punto (las puntuaciones negativas no restan).</li><li><strong>1 M€</strong> por cada jugador del once ideal, si está alineado.</li><li><strong>2 M€</strong> por el MVP de la jornada, si está alineado.</li><li>Bonus por posición en la jornada, del 7.º al 10.º: el 7.º recibe 50.000 € y cada puesto por debajo suma otros 50.000 € (hasta 200.000 € el 10.º).</li></ul>"
+     "keywords": "primas ingresos dinero virtual presupuesto puntos mvp once ideal rentable posición jornada 100000 100.000 2 millones premio posición",
+     "html": "<p>Es presupuesto dentro de Biwenger para fichar. <strong>No es dinero real.</strong></p><ul><li><strong>100.000 €</strong> por cada punto (las puntuaciones negativas no restan).</li><li><strong>1 M€</strong> por cada jugador del once ideal que tengas alineado.</li><li><strong>100.000 €</strong> por cada MVP de un partido alineado y <strong>2 M€</strong> por alinear al MVP de la jornada.</li><li>Solo en Mahtuliga: <strong>100.000 €</strong> por cada jugador del once ideal rentable.</li></ul><p><strong>Premio por tu posición en la jornada</strong> (cambia según la liga):</p><ul><li><strong>Mahtuliga:</strong> 6.º 50.000 €, 7.º 100.000 €, 8.º 150.000 € y el último 200.000 €.</li><li><strong>Mahtwoliga:</strong> 6.º 50.000 €, 7.º 100.000 €, el antepenúltimo 150.000 € y el penúltimo 200.000 €.</li></ul>"
     }
    ]
   },
@@ -60,19 +78,37 @@
    "id": "mercado",
    "tag": "Mercado",
    "title": "Mercado y cláusulas",
-   "desc": "Fichajes, pujas y cláusulas de rescisión.",
+   "desc": "Fichajes, subastas, cesiones y cláusulas.",
    "cards": [
     {
      "title": "Mercado de fichajes",
      "icon": "shopping-bag",
-     "keywords": "fichajes pujas intercambios compra venta libres mercado",
-     "html": "<ul><li>Hay <strong>9 jugadores libres</strong> a la vez, disponibles durante 1 día.</li><li>El número de pujas por jugador es visible.</li><li>Se permiten compras entre usuarios, intercambios y pujas fuera de mercado.</li><li>Las ventas instantáneas al mercado están desactivadas.</li></ul>"
+     "keywords": "fichajes mercado pujas jugadores libres 9 1 día ventas instantáneas puja máxima vender venta ventas vendo comprar compra fichar",
+     "html": "<ul><li>Hay <strong>9 jugadores libres</strong> a la vez y cada uno está <strong>1 día</strong> en el mercado.</li><li>Puedes ver <strong>cuántas pujas</strong> tiene cada jugador.</li><li>No hay límite de puja máxima ni de precio de compra.</li><li>Los fichajes son <strong>instantáneos</strong>.</li><li>Las ventas instantáneas al mercado están <strong>desactivadas</strong>.</li></ul>"
+    },
+    {
+     "title": "Compras entre usuarios",
+     "icon": "users",
+     "keywords": "compras entre usuarios intercambios pujar jugadores de otros fuera de mercado valor de mercado límite compras ventas comprar vender venta pujar puja oferta",
+     "html": "<ul><li>Puedes pujar por jugadores de otros participantes <strong>aunque no estén en el mercado</strong>; tu puja tiene que superar su valor de mercado.</li><li>Se permiten los <strong>intercambios</strong> entre usuarios.</li><li>No hay límite de compras ni de ventas.</li></ul>"
+    },
+    {
+     "title": "Subastas",
+     "icon": "clock",
+     "keywords": "subastas subasta duración horas temporizador minutos puja mínima porcentaje públicas mahtuliga mahtwoliga diferencias",
+     "html": "<p>Las subastas están <strong>activadas y son públicas</strong>. Cambian según la liga:</p><ul><li><strong>Mahtuliga:</strong> duran 8 horas, con un temporizador de 5 minutos y una puja mínima del 10 %.</li><li><strong>Mahtwoliga:</strong> duran 12 horas, con un temporizador de 1 hora y una puja mínima del 5 %.</li></ul>"
+    },
+    {
+     "title": "Cesiones",
+     "icon": "calendar-clock",
+     "keywords": "cesiones préstamos prestar jugadores jornadas duración mínima máxima",
+     "html": "<p>Las cesiones (préstamos de jugadores entre participantes) están <strong>permitidas</strong>, con una duración de <strong>1 a 5 jornadas</strong>.</p>"
     },
     {
      "title": "Cláusulas",
      "icon": "gavel",
-     "keywords": "cláusula clausula rescisión porcentaje 14 días semana 300 250 200 175 150",
-     "html": "<p>Permiten fichar a un jugador de otro participante pagando el porcentaje de su valor que corresponda.</p><ul><li>Se pueden ejecutar a partir de <strong>14 días</strong> desde la compra.</li><li>Máximo <strong>2 cláusulas realizadas y 2 recibidas por semana</strong>.</li><li>Si te ejecutan una cláusula, recuperas el <strong>100 %</strong> de lo invertido.</li></ul><div class=\"rows\"><div class=\"row\"><span>Hasta 500.000 €</span><strong>300 %</strong></div><div class=\"row\"><span>500.000 € – 1 M€</span><strong>250 %</strong></div><div class=\"row\"><span>1 M€ – 5 M€</span><strong>200 %</strong></div><div class=\"row\"><span>5 M€ – 10 M€</span><strong>175 %</strong></div><div class=\"row\"><span>Más de 10 M€</span><strong>150 %</strong></div></div><p class=\"tip\">Ejemplo: un jugador valorado en 1 M€ tiene una cláusula de 2 M€ (200 %).</p>"
+     "keywords": "cláusula clausula rescisión porcentaje 10 días semana 300 250 200 175 150 blindar invertir bloqueo jornada ejecutar recibir recuperar",
+     "html": "<p>Permiten fichar a un jugador de otro participante pagando el porcentaje de su valor que corresponda.</p><ul><li>Se pueden ejecutar a partir de <strong>10 días</strong> desde la compra.</li><li>Se bloquean <strong>un día antes</strong> de que empiece cada jornada.</li><li>Máximo <strong>2 cláusulas realizadas y 2 recibidas por semana</strong>.</li><li>Si te ejecutan una cláusula, recuperas el <strong>100 %</strong> de lo invertido.</li><li>Puedes blindar a un jugador invirtiendo saldo en su cláusula: sube un 100 % de lo que inviertas.</li></ul><div class=\"rows\"><div class=\"row\"><span>Hasta 500.000 €</span><strong>300 %</strong></div><div class=\"row\"><span>500.000 € – 1 M€</span><strong>250 %</strong></div><div class=\"row\"><span>1 M€ – 5 M€</span><strong>200 %</strong></div><div class=\"row\"><span>5 M€ – 10 M€</span><strong>175 %</strong></div><div class=\"row\"><span>Más de 10 M€</span><strong>150 %</strong></div></div><p class=\"tip\">Ejemplo: un jugador valorado en 1 M€ tiene una cláusula de 2 M€ (200 %).</p>"
     }
    ]
   },
@@ -91,7 +127,7 @@
     {
      "title": "Cómo se paga",
      "icon": "smartphone",
-     "keywords": "bizum pago abono teléfono número revalotti administrador antes de entrar abandono devolución no se devuelve",
+     "keywords": "bizum pago abono teléfono número revalotti administrador antes de entrar abandono devolución no se devuelve pagar pagos pago abonar abono dinero transferencia",
      "html": "<p>El abono se paga por <strong>Bizum</strong> al administrador (Revalotti):</p><div class=\"pay\"><span class=\"pay-label\">Bizum · Revalotti</span><span class=\"pay-number\">+34 695 752 476</span></div><p class=\"tip\">El pago se realiza <strong>antes de entrar en la liga</strong>. Si un participante abandona, <strong>no se le devuelve nada</strong>.</p>"
     },
     {
@@ -103,7 +139,7 @@
     {
      "title": "Fianza",
      "icon": "shield",
-     "keywords": "fianza depósito 10 0,50 último jornada devolución descuento superan abona diferencia",
+     "keywords": "fianza depósito 10 0,50 último jornada devolución descuento superan abona diferencia dinero depósito deposito devolver devolución",
      "html": "<ul><li>Cada participante deja <strong>10 €</strong> en depósito al inicio.</li><li>Quedar último en una jornada descuenta <strong>0,50 €</strong>.</li><li>Al terminar la temporada se devuelve el saldo restante.</li><li>Lo descontado forma el premio a la mejor puntuación en una sola jornada.</li><li>Si los descuentos superan los 10 €, el participante <strong>abona la diferencia</strong>.</li></ul><p class=\"tip\">Ejemplo: 4 últimas posiciones → devolución de <strong>8 €</strong>.</p>"
     }
    ]
@@ -123,8 +159,8 @@
     {
      "title": "Jornadas aplazadas",
      "icon": "calendar",
-     "keywords": "aplazada aplazadas jornada partidos aplazados una sola jornada partidos pendientes terminan fianza último mejor jornada",
-     "html": "<ul><li>Si un partido se aplaza, esa jornada se cuenta como <strong>una sola</strong>: su primero, su último, la mejor jornada y la fianza se asignan <strong>cuando han terminado todos sus partidos</strong>.</li><li>Mientras tanto, sus puntos ya suman a la clasificación y la web la marca como «Partidos pendientes».</li><li>Biwenger muestra la jornada aplazada aparte, como copia de la original: en la web aparece con la etiqueta <strong>Aplazada</strong> y no suma puntos dos veces.</li></ul>"
+     "keywords": "aplazada aplazadas jornada partidos aplazados pendientes puntos distintos no coinciden tabla clasificación general",
+     "html": "<ul><li>Si un partido se aplaza, esa jornada cuenta como <strong>una sola</strong>: el primero, el último, la mejor jornada y la fianza se asignan cuando termina el último partido.</li><li>Mientras tanto, sus puntos ya suman a la clasificación y la web la marca como «Partidos pendientes».</li><li>Biwenger muestra la jornada aplazada aparte, como copia de la original. En la web aparece con la etiqueta <strong>Aplazada</strong> y no suma puntos dos veces.</li><li>Con partidos pendientes, la tabla de la jornada puede enseñar un número distinto al de la clasificación general. Es normal: la tabla suma las alineaciones tal como están y la clasificación general usa los puntos oficiales de Biwenger. Cuando se juega el último partido, vuelven a coincidir.</li></ul>"
     }
    ]
   },
@@ -134,6 +170,30 @@
    "title": "Preguntas frecuentes",
    "desc": "Aclaraciones que no cubren el resto de reglas.",
    "cards": [
+    {
+     "title": "¿Puedo cambiar mi alineación durante la jornada?",
+     "icon": "circle-help",
+     "keywords": "cambiar alineación durante jornada bloqueo progresivo partido empezado",
+     "html": "<p>Sí, pero solo los huecos de jugadores cuyo partido <strong>aún no ha empezado</strong>. Cada jugador se bloquea cuando arranca su partido.</p>"
+    },
+    {
+     "title": "¿Qué pasa si dejo una posición vacía?",
+     "icon": "circle-help",
+     "keywords": "posición vacía hueco sin jugador resta 4 puntos penalización alineación incompleta",
+     "html": "<p>Cada hueco sin jugador resta <strong>4 puntos</strong>. En el campo aparece como «Vacía −4».</p>"
+    },
+    {
+     "title": "¿Por qué los puntos de una jornada no coinciden con la clasificación?",
+     "icon": "circle-help",
+     "keywords": "puntos no coinciden jornada clasificación diferencia pendiente aplazado distinto",
+     "html": "<p>Solo ocurre en jornadas con partidos pendientes. La tabla de la jornada suma las alineaciones tal como están y la clasificación general usa los puntos oficiales de Biwenger. Cuando termina la jornada, vuelven a coincidir.</p>"
+    },
+    {
+     "title": "¿Qué diferencia hay entre Mahtuliga y Mahtwoliga?",
+     "icon": "circle-help",
+     "keywords": "diferencias ligas mahtuliga mahtwoliga subastas primas posición",
+     "html": "<p>Las reglas son las mismas salvo en dos cosas: las <strong>subastas</strong> (duración, temporizador y puja mínima) y las <strong>primas por posición en la jornada</strong>. Las dos están detalladas en Mercado y en Alineaciones y puntos.</p>"
+    },
     {
      "title": "¿La fianza forma parte de los premios de liga?",
      "icon": "circle-help",
@@ -160,20 +220,20 @@
    "id": "formato",
    "tag": "Formato",
    "title": "Clasificación y fases",
-   "desc": "Quién juega y cómo avanza la copa.",
+   "desc": "Quién juega y cómo se avanza hasta la final.",
    "open": true,
    "cards": [
     {
      "title": "Clasificación",
      "icon": "users",
      "keywords": "clasificados corte jornada 19 cuatro primeros ocho participantes ligas comun cruzan independientes renunciar renuncia sustituye siguiente clasificado desempate ultima jornada jugada",
-     "html": "<ul><li>Se disputa desde la temporada <strong>2023/24</strong>; sus campeones están en Palmarés.</li><li>Se clasifican los <strong>4 primeros de MAHTULIGA</strong> y los <strong>4 primeros de MAHTWOLIGA</strong>: ocho participantes. El corte se hace al terminar la <strong>jornada 19</strong>.</li><li>Es la <strong>única competición común</strong> a las dos ligas: los enfrentamientos cruzan a los clasificados de ambas y se disputa al margen de su clasificación.</li><li>Los clasificados <strong>no pueden renunciar</strong>: si alguno no juega, lo sustituye el siguiente clasificado de su liga regular.</li><li><strong>Desempates:</strong> igual que en la liga, decide quién hizo más puntos en la última jornada jugada.</li></ul>"
+     "html": "<ul><li>Se juega desde la temporada <strong>2023/24</strong>; sus campeones están en Palmarés.</li><li>Entran los <strong>4 primeros de Mahtuliga</strong> y los <strong>4 primeros de Mahtwoliga</strong>: ocho participantes. El corte se hace al terminar la <strong>jornada 19</strong>.</li><li>Es la <strong>única competición común</strong> a las dos ligas: los clasificados de ambas se cruzan entre sí, al margen de la clasificación de cada liga.</li><li>Los clasificados <strong>no pueden renunciar</strong>: si alguno no juega, entra el siguiente de su liga.</li><li><strong>Desempates:</strong> igual que en la liga, gana quien hizo más puntos en la última jornada jugada.</li></ul>"
     },
     {
      "title": "Fases",
      "icon": "list-ordered",
      "keywords": "fases formato liga dieciseisavos octavos cuartos semifinales final champions sorteo cruces eliminados avanzan enfrentamiento directo eliminatoria partido único campeón champions league ronda empieza arranca inicio fecha",
-     "html": "<p>La copa se divide en <strong>4 fases</strong>. Cada una arranca con su ronda de la Champions League.</p><ul><li><strong>Fase 1 · Dieciseisavos y octavos</strong> (formato liga): compiten los 8 clasificados. Avanzan del <strong>1.º al 6.º</strong>; el 7.º y el 8.º quedan eliminados.</li><li><strong>Fase 2 · Cuartos de final</strong> (formato liga): se mantiene el formato liga entre los 6 clasificados. Avanzan del <strong>1.º al 4.º</strong>; el 5.º y el 6.º quedan eliminados.</li><li><strong>Fase 3 · Semifinales</strong> (enfrentamiento directo): los 4 clasificados se enfrentan en eliminatoria directa y los cruces se deciden por <strong>sorteo</strong>.</li><li><strong>Fase 4 · Final Champions:</strong> <strong>partido único</strong> entre los ganadores de las semifinales para decidir al campeón.</li></ul><p class=\"tip\">Las fechas de cada fase se indicarán cuando Biwenger publique las eliminatorias de la Champions League.</p>"
+     "html": "<p>La copa tiene <strong>4 fases</strong> y cada una arranca con su ronda de la Champions League. Se va quedando gente por el camino:</p><ul><li><strong>Fase 1 · Dieciseisavos y octavos</strong> (formato liga): juegan los 8 clasificados. Avanzan del <strong>1.º al 6.º</strong>; el 7.º y el 8.º quedan eliminados.</li><li><strong>Fase 2 · Cuartos de final</strong> (formato liga): siguen los 6. Avanzan del <strong>1.º al 4.º</strong>; el 5.º y el 6.º quedan eliminados.</li><li><strong>Fase 3 · Semifinales</strong> (enfrentamiento directo): los 4 clasificados se enfrentan en eliminatoria directa y los cruces se deciden por <strong>sorteo</strong>.</li><li><strong>Fase 4 · Final Champions:</strong> <strong>partido único</strong> entre los ganadores de las semifinales. Quien gana es el campeón.</li></ul><p class=\"tip\">Las fechas de cada fase se indicarán cuando Biwenger publique las eliminatorias de la Champions League.</p>"
     }
    ]
   },
@@ -187,7 +247,7 @@
      "title": "Configuración de la copa",
      "icon": "settings",
      "keywords": "configuración fantasy sin mercado cualquier jugador presupuesto 300 millones capitán ariete 14 valor de mercado créditos vídeos premium canjear",
-     "html": "<ul><li>Modalidad <strong>fantasy (sin mercado)</strong>.</li><li>Todos los participantes pueden elegir <strong>cualquier jugador</strong>.</li><li><strong>Presupuesto máximo: 300 M€.</strong></li><li><strong>Capitán y Ariete</strong> permitidos, siempre que el jugador no supere los <strong>14 M€</strong> de valor de mercado (en las ligas el máximo es de 3 M€).</li><li>Sin Biwenger Premium, para activar el Capitán y el Ariete hay que <strong>canjear créditos</strong>, que se consiguen viendo vídeos dentro de la app.</li></ul>"
+     "html": "<ul><li>Modalidad <strong>fantasy, sin mercado</strong>: no hay fichajes.</li><li>Todos los participantes pueden elegir <strong>cualquier jugador</strong>.</li><li><strong>Presupuesto máximo: 300 M€.</strong></li><li><strong>Capitán y Ariete</strong> se pueden usar con jugadores de hasta <strong>14 M€</strong> de valor de mercado (en las ligas el máximo es de 3 M€).</li><li>Sin Biwenger Premium, para activarlos hay que <strong>canjear créditos</strong>, que se consiguen viendo vídeos dentro de la app.</li></ul>"
     }
    ]
   },
@@ -204,6 +264,90 @@
      "html": "<p><strong>{{cp}} €</strong> para el campeón. {{contrib}} de su reparto al bote de la copa.</p>"
     }
    ]
+  },
+  {
+   "id": "dudas",
+   "tag": "Dudas",
+   "title": "Preguntas frecuentes",
+   "desc": "Lo que más se pregunta sobre la copa.",
+   "cards": [
+    {
+     "title": "¿Qué pasa si me clasifico y no puedo jugar?",
+     "icon": "circle-help",
+     "keywords": "renunciar renuncia no puedo jugar sustituye siguiente clasificado",
+     "html": "<p>No se puede renunciar. Si alguien no juega, ocupa su plaza el siguiente clasificado de su liga.</p>"
+    },
+    {
+     "title": "¿Cuándo empieza cada fase?",
+     "icon": "circle-help",
+     "keywords": "cuando empieza fase fechas champions league ronda calendario",
+     "html": "<p>Cada fase arranca con su ronda de la Champions League. Las fechas se indicarán cuando Biwenger publique las eliminatorias.</p>"
+    },
+    {
+     "title": "¿Cómo se eligen los cruces de las semifinales?",
+     "icon": "circle-help",
+     "keywords": "cruces semifinales sorteo emparejamientos",
+     "html": "<p>Por sorteo entre los 4 clasificados.</p>"
+    }
+   ]
   }
- ]
+ ],
+ "quick": {
+  "liga": [
+   [
+    "Capitán y ariete",
+    "capitán"
+   ],
+   [
+    "Cambios",
+    "cambios"
+   ],
+   [
+    "Suplentes",
+    "suplentes"
+   ],
+   [
+    "Cláusulas",
+    "cláusulas"
+   ],
+   [
+    "Subastas",
+    "subastas"
+   ],
+   [
+    "Premios",
+    "premios"
+   ],
+   [
+    "Fianza",
+    "fianza"
+   ],
+   [
+    "Cómo se paga",
+    "bizum"
+   ]
+  ],
+  "champions": [
+   [
+    "Fases",
+    "fases"
+   ],
+   [
+    "Presupuesto",
+    "presupuesto"
+   ],
+   [
+    "Capitán y ariete",
+    "capitán"
+   ],
+   [
+    "Premio",
+    "premio"
+   ],
+   [
+    "Sorteo",
+    "sorteo"
+   ]
+  ]
+ }
 }
