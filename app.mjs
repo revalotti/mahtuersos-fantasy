@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs';
-import { mountField } from './lineup-field.mjs';
-import { normalize, IDS, META, CHAMPIONS_PHASES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs';
+import { icon, hydrateIcons } from './icons.mjs?v=mvassq8x';
+import { mountField } from './lineup-field.mjs?v=mvassq8x';
+import { normalize, IDS, META, CHAMPIONS_PHASES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvassq8x';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -11,10 +11,13 @@ const today = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.
 const initials = name => name.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
 // Publicación estática (GitHub Pages): export.mjs añade <meta name="static-base"> con la subcarpeta del sitio y los datos como archivos.
 const STATIC_BASE=document.querySelector('meta[name=static-base]'),BASE=(STATIC_BASE?.content||'').replace(/\/$/,'');
+// En la copia estática, cada publicación lleva su versión (`?v=`) en los datos y los módulos: el navegador nunca enseña una mezcla de versiones ni una caché antigua.
+const STATIC_VERSION=document.querySelector('meta[name=static-version]')?.content||'';
+const vq=u=>STATIC_VERSION?`${u}${u.includes('?')?'&':'?'}v=${STATIC_VERSION}`:u;
 const withBase=u=>BASE&&u.startsWith('/')&&!(u===BASE||u.startsWith(BASE+'/')||u.startsWith(BASE+'?'))?BASE+u:u;
 const unbase=u=>BASE&&(u===BASE||u.startsWith(BASE+'/')||u.startsWith(BASE+'?'))?u.slice(BASE.length)||'/':u;
 const assetUrl=u=>STATIC_BASE&&u.startsWith('/api/lineups/')?`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.webp`:withBase(u);
-const lineupDataUrl=u=>STATIC_BASE?`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.json`:withBase(`${u}.json`);
+const lineupDataUrl=u=>STATIC_BASE?vq(`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.json`):withBase(`${u}.json`);
 const rebase=root=>{if(BASE)$$('a[data-route]',root).forEach(a=>a.setAttribute('href',withBase(a.getAttribute('href'))));};
 let gallery={title:'',items:[]};   // alineaciones de la jornada abierta, para el visor de imágenes
 let preferredView='list';   // última vista elegida en Jornadas (Tabla o Alineaciones)
@@ -27,7 +30,7 @@ const empty = (title,text,iconName='info') => `<div class="empty"><div class="em
 let state, rules, currentId=null, currentTab='resumen', currentRound=null, currentPlayer=null, currentView='list', toastTimer;
 const main = $('#main');
 async function api(path,options={}) {
-  const res = await fetch(STATIC_BASE?(path==='/api/state'?`${BASE}/data/state.json`:withBase(path)):path,{...options,headers:{'Content-Type':'application/json',...options.headers}});
+  const res = await fetch(STATIC_BASE?vq(path==='/api/state'?`${BASE}/data/state.json`:withBase(path)):path,{...options,headers:{'Content-Type':'application/json',...options.headers}});
   const data = await res.json();
   if (!res.ok) { throw Error(data.error || 'No se ha podido completar la acción.'); }
   return data;
