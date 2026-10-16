@@ -19,8 +19,8 @@ const RELOJ = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="1
 const puntos = j => j.w ? `<span class="fv-pts wait" role="img" aria-label="Partido pendiente" title="Partido pendiente">${RELOJ}</span>` : `<span class="fv-pts ${clase(j.p)}">${vacio(j.p) ? '-' : j.p}</span>`;
 // Cambio de suplente, como en Biwenger: flecha verde hacia arriba en el que entra, roja hacia abajo en el que sale.
 const FLECHA = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
-const swap = j => j.si ? `<span class="fv-swap in" role="img" aria-label="Entra por ${esc(j.si)}" title="Entra por ${esc(j.si)}">${FLECHA('M12 19V6M6 11l6-6 6 6')}</span>`
-  : j.so ? `<span class="fv-swap out" role="img" aria-label="Sustituido por ${esc(j.so)}" title="Sustituido por ${esc(j.so)}">${FLECHA('M12 5v13M6 13l6 6 6-6')}</span>` : '';
+const swap = j => j.si ? `<span class="fv-badge swap in" role="img" aria-label="Entra por ${esc(j.si)}" title="Entra por ${esc(j.si)}">${FLECHA('M12 19V6M6 11l6-6 6 6')}</span>`
+  : j.so ? `<span class="fv-badge swap out" role="img" aria-label="Sustituido por ${esc(j.so)}" title="Sustituido por ${esc(j.so)}">${FLECHA('M12 5v13M6 13l6 6 6-6')}</span>` : '';
 const POS = { PT: 'Portero', DF: 'Defensa', MC: 'Centrocampista', DL: 'Delantero' };
 
 // Perspectiva del campo (como la vista de Biwenger): ancho arriba/abajo y altura que ocupa
@@ -100,10 +100,11 @@ export function mountField(host, data, { crestUrl }) {
   const crest = j => `<img class="fv-crest" alt="" src="${j.eq ? esc(crestUrl(j.eq)) : GENERICO}" data-fallback>`;
   const pill = j => {
     if (j.v) return `<span class="fv-pill vacia" title="Posición vacía: resta ${Math.abs(j.p)} puntos"><span class="fv-nm">Vacía</span><span class="fv-pts ${clase(j.p)}">${j.p}</span></span>`;
-    const b = (j.c ? 1 : 0) + (j.a ? 1 : 0);
+    const b = (j.c ? 1 : 0) + (j.a ? 1 : 0) + (j.si || j.so ? 1 : 0);
     return `<span class="fv-pill${b ? ' b' + b : ''}" title="${esc(j.n)}">` +
       (j.c ? '<span class="fv-badge" aria-label="Capitán">C</span>' : '') +
       (j.a ? `<span class="fv-badge" aria-label="Ariete">${BOTA}</span>` : '') +
+      swap(j) +
       `<span class="fv-nm">${esc(j.n)}</span>${puntos(j)}</span>`;
   };
   const banquillo = (data.banquillo || []).slice(0, 4);
@@ -113,18 +114,18 @@ export function mountField(host, data, { crestUrl }) {
   // Biwenger aún cuenta otros puntos que la suma de esta alineación (suele ser una jornada con partidos aplazados sin recalcular): se enseñan los dos.
   const nota = data.biwenger != null && data.biwenger !== sum
     ? `<p class="fv-note" role="note">Esta alineación suma <strong>${sum}</strong> puntos, pero en la clasificación general Biwenger cuenta <strong>${data.biwenger}</strong>. Un suplente no sustituye a un titular cuyo partido aún no se ha jugado.</p>` : '';
-  // Capitán / ariete que no jugó y fue sustituido: se indica junto al portero que esa ventaja se ha perdido (el suplente no la hereda).
+  // Capitán / ariete que no jugó y fue sustituido: se explica con una línea bajo el campo (el suplente que entra no hereda la ventaja).
   const perdidas = (data.perdidas || []).map(p => {
-    const txt = p.r === 'c' ? `El capitán ${p.n} no jugó: se pierde su doble puntuación` : `El ariete ${p.n} no jugó: se pierde su bonus por gol`;
-    return `<span class="fv-lostrow" title="${esc(txt)}" role="img" aria-label="${esc(txt)}"><span class="fv-badge lost">${p.r === 'c' ? 'C' : BOTA}</span><span class="fv-losttxt">${esc(p.n)}</span></span>`;
+    const txt = `Pierde el ${p.r === 'c' ? 'capitán' : 'ariete'}, ${p.n} no jugó`;
+    return `<p class="fv-lostnote" title="${esc(txt)}"><span class="fv-badge lost" aria-hidden="true">${p.r === 'c' ? 'C' : BOTA}</span><span class="fv-lostline">${esc(txt)}</span></p>`;
   }).join('');
-  host.innerHTML = nota + `<div class="fv-stage"><svg class="fv-lines" aria-hidden="true"></svg><div class="fv-players"></div>${perdidas ? `<div class="fv-lost">${perdidas}</div>` : ''}<span class="fv-chip"></span></div>` +
+  host.innerHTML = `<div class="fv-stage"><svg class="fv-lines" aria-hidden="true"></svg><div class="fv-players"></div><span class="fv-chip"></span></div>${perdidas}${nota}` +
     `<h3 class="bench-title">Suplentes</h3>` +
     (hayBanquillo
       // Suplentes con el mismo diseño que los jugadores del campo (escudo con la posición y píldora con nombre y puntos), en una franja.
       ? `<div class="fv-subs">${['PT', 'DF', 'MC', 'DL'].map((pos, k) => { const s = banquillo[k];
           return s
-            ? `<div class="fv-bsub" style="--d:${340 + k * 45}"><span class="fv-cab">${crest(s)}<span class="fv-pos ${pos}" title="${POS[pos]}">${pos}</span>${swap(s)}</span>${pill(s)}</div>`
+            ? `<div class="fv-bsub" style="--d:${340 + k * 45}"><span class="fv-cab">${crest(s)}<span class="fv-pos ${pos}" title="${POS[pos]}">${pos}</span></span>${pill(s)}</div>`
             : `<div class="fv-bsub empty" style="--d:${340 + k * 45}"><span class="fv-cab"><img class="fv-crest" alt="" src="${GENERICO}"><span class="fv-pos ${pos}" title="${POS[pos]}">${pos}</span></span><span class="fv-pill vacia sin" title="Sin suplente"><span class="fv-nm">Vacío</span></span></div>`; }).join('')}</div>`
       : '<p class="no-bench">Sin suplentes en esta jornada.</p>');
 
@@ -138,7 +139,7 @@ export function mountField(host, data, { crestUrl }) {
     const items = js.map((j, i) => {
       const el = document.createElement('div'); el.className = 'fv-pl' + (j.v ? ' vacia' : '');
       el.style.setProperty('--d', { PT: 0, DF: 80, MC: 160, DL: 240 }[k] + i * 30);   // aparecen en cascada desde la portería
-      el.innerHTML = `<span class="fv-cab">${crest(j)}<span class="fv-pos ${k}" title="${POS[k]}">${k}</span>${swap(j)}</span>` + pill(j); cont.appendChild(el);
+      el.innerHTML = `<span class="fv-cab">${crest(j)}<span class="fv-pos ${k}" title="${POS[k]}">${k}</span></span>` + pill(j); cont.appendChild(el);
       const pos = k === 'PT' ? PT_[0] : (plan && plan[k][i]) || [540 + (n === 1 ? 0 : (i / (n - 1) - .5)) * 560, { DL: 900, MC: 1150, DF: 1380 }[k]];
       return { el, ...relativo(pos) };
     });
@@ -198,8 +199,6 @@ export function mountField(host, data, { crestUrl }) {
     // si el portero o la defensa se salen por abajo, el campo crece lo justo (pantallas muy estrechas)
     const fondo = Math.max(...todos.map(o => o.y)) + PILL / 2 + 3;
     if (fondo > H + 1 && intentos < 6) { intentos++; stage.style.height = Math.ceil(H + (fondo - H) * 1.15 + 6) + 'px'; campo(stage, svg); colocar(); intentos--; return; }
-    const lostBox = stage.querySelector('.fv-lost'), gk = filas.find(f => f.k === 'PT')?.items[0];
-    if (lostBox && gk) lostBox.style.top = Math.round(gk.y - lostBox.offsetHeight / 2) + 'px';   // a la izquierda del portero, a su altura
     todos.forEach(o => { o.el.style.left = (o.x - (o.pw + 3 - o.oh) / 2) + 'px'; o.el.style.top = (o.y - 16 / 2 - SEP - ESC) + 'px';
       o.el.querySelector('.fv-cab').style.transform = `translateX(${(3 - o.oh) / 2 - 4}px)`; });
   }

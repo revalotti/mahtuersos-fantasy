@@ -848,16 +848,7 @@ body[data-theme=champions] .fv-note{color:#d6d8ff;background:rgba(0,0,100,.3)}bo
 .fv-badge.lost svg{fill:#ffffffa6}
 .fv-badge.lost+.fv-badge{left:12px}
 
-/* Ventaja perdida (capitán / ariete que no jugó): junto al portero, a su izquierda */
-.fv-lost{position:absolute;left:6px;z-index:3;display:flex;flex-direction:column;gap:4px;max-width:30%;pointer-events:auto}
-.fv-lostrow{display:inline-flex;align-items:center;gap:5px;height:18px;padding:0 8px 0 2px;border-radius:999px;background:rgba(20,24,30,.62);color:#ffffffd9;font-size:10px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-.fv-lostrow .fv-badge{position:relative;left:auto;top:auto;transform:none;flex:none}
-.fv-losttxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 
-/* Cambio de suplente (como en Biwenger): flecha verde en el que entra, roja en el que sale; a la izquierda del escudo, frente a la posición */
-.fv-swap{position:absolute;left:-8px;top:50%;margin-top:-7px;z-index:2;display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.45)}
-.fv-swap svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.fv-swap.in{background:#16a34a}.fv-swap.out{background:#dc2626}
 
 /* Reglas: temas frecuentes para buscar con un toque */
 .rules-chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
@@ -868,3 +859,25 @@ body[data-theme=champions] .fv-note{color:#d6d8ff;background:rgba(0,0,100,.3)}bo
 body[data-theme=champions] .rules-chip{background:rgba(255,255,255,.14);color:#fff}
 body[data-theme=champions] .rules-chip[aria-pressed=true]{background:#fff;color:#0004f4}
 @media (max-width:760px){.rules-chips{flex-wrap:nowrap;overflow-x:auto;margin:10px -16px 0;padding:0 16px 2px;scrollbar-width:none}.rules-chips::-webkit-scrollbar{display:none}.rules-chip{flex:none}}
+
+/* Ventaja perdida: línea de texto bajo el campo, con la etiqueta tachada, que explica quién no jugó */
+.fv-lostnote{display:flex;align-items:center;gap:8px;margin:0;padding:7px 14px;font-size:12.5px;line-height:1.4;white-space:nowrap;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--line)}
+.fv-lostnote .fv-badge{position:relative;left:auto;top:auto;transform:none;flex:none;width:18px;height:18px}
+body[data-theme=champions] .fv-lostnote{color:#d6d8ff;background:rgba(0,0,100,.3)}
+.fv-lostline{overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* Cambio de suplente (como en Biwenger): flecha verde en la píldora del que entra y roja en la del que sale, donde irían C / ariete (el suplente no los lleva) */
+.fv-badge.swap{border-color:#fff}
+.fv-badge.swap svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.fv-badge.swap.in{background:#16a34a}.fv-badge.swap.out{background:#dc2626}
+.fv-bsub .fv-pill.b1{padding-left:16px}
+
+/* Móvil: la cabecera del visor de alineaciones (nombre, flechas, puesto, puntos y jornada) se queda fija bajo las pestañas Tabla / Alineaciones, así las flechas
+   están siempre a mano al bajar por el campo y los suplentes. («clip» y no «hidden»: no crea un contenedor de scroll y deja funcionar el sticky.) */
+@media (max-width:760px){
+  .lineup-pane{overflow:clip}
+  .lineup-top{position:sticky;top:calc(var(--nav-h) + var(--tabs-h) + 24px + 59px);z-index:12;background:var(--surface)}
+  .lineup-top .lineup-head{padding:8px 12px}
+  .lineup-top .lineup-facts>div{flex-direction:row;justify-content:center;align-items:baseline;gap:7px;padding:5px 4px}
+  .lineup-top .lineup-facts dt{font-size:10px}
+  .lineup-top .lineup-facts dd{font-size:17px}
+}

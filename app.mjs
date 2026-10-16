@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvayfz6k';
-import { mountField } from './lineup-field.mjs?v=mvayfz6k';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvayfz6k';
+import { icon, hydrateIcons } from './icons.mjs?v=mvaz4al1';
+import { mountField } from './lineup-field.mjs?v=mvaz4al1';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvaz4al1';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -347,7 +347,7 @@ function lineupPane(c,round,ranks,selected) {
   const src=assetUrl(`/api/lineups/${currentId}/${roundKey(round)}/${selected.id}`);
   gallery={title:roundLabel(round),items:withLineup.map(r=>({name:r.name,rank:r.rank,points:r.points,src:assetUrl(`/api/lineups/${currentId}/${roundKey(round)}/${r.id}`)}))};
   const nav=(r,dir,label)=>r?`<a class="icon-btn ${dir}" data-route data-keep data-${dir} href="${roundUrl(roundKey(round),r.id,true)}" aria-label="${label}: ${esc(r.name)}">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</a>`:`<span class="icon-btn disabled ${dir}" aria-hidden="true">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</span>`;
-  return `<section class="panel lineup-pane" aria-label="Alineación de ${esc(selected.name)}"><div class="lineup-head">${nav(prev,'prev','Anterior')}<div class="lineup-title"><strong>${esc(selected.name)}</strong></div>${nav(next,'next','Siguiente')}</div><dl class="lineup-facts"><div><dt>Puesto</dt><dd>${selected.rank}.º</dd></div><div><dt>Puntos</dt><dd data-count="${selected.points}">${num(selected.points)}</dd></div><div><dt>Jornada</dt><dd>${round.number}${round.postponed?'a':''}</dd></div></dl>${round.fields?.includes(selected.id)?`<div data-field="${esc(`/api/lineups/${currentId}/${roundKey(round)}/${selected.id}`)}"></div>`:`<button type="button" class="field-link" data-gallery="${i}" aria-haspopup="dialog" aria-label="Ver la alineación completa de ${esc(selected.name)}" title="Ver imagen completa">${crop(src,FIELD_CROP,'field','')}<span class="field-zoom" aria-hidden="true">${icon('maximize-2',16)}</span></button><h3 class="bench-title">Suplentes</h3>${round.noBench?.includes(selected.id)?'<p class="no-bench">Sin suplentes en esta jornada.</p>':`<div class="bench">${BENCH_CROPS.map(([pos,box])=>crop(src,box,`bench-slot pos-${pos}`)).join('')}</div>`}`}</section>`;
+  return `<section class="panel lineup-pane" aria-label="Alineación de ${esc(selected.name)}"><div class="lineup-top"><div class="lineup-head">${nav(prev,'prev','Anterior')}<div class="lineup-title"><strong>${esc(selected.name)}</strong></div>${nav(next,'next','Siguiente')}</div><dl class="lineup-facts"><div><dt>Puesto</dt><dd>${selected.rank}.º</dd></div><div><dt>Puntos</dt><dd data-count="${selected.points}">${num(selected.points)}</dd></div><div><dt>Jornada</dt><dd>${round.number}${round.postponed?'a':''}</dd></div></dl></div>${round.fields?.includes(selected.id)?`<div data-field="${esc(`/api/lineups/${currentId}/${roundKey(round)}/${selected.id}`)}"></div>`:`<button type="button" class="field-link" data-gallery="${i}" aria-haspopup="dialog" aria-label="Ver la alineación completa de ${esc(selected.name)}" title="Ver imagen completa">${crop(src,FIELD_CROP,'field','')}<span class="field-zoom" aria-hidden="true">${icon('maximize-2',16)}</span></button><h3 class="bench-title">Suplentes</h3>${round.noBench?.includes(selected.id)?'<p class="no-bench">Sin suplentes en esta jornada.</p>':`<div class="bench">${BENCH_CROPS.map(([pos,box])=>crop(src,box,`bench-slot pos-${pos}`)).join('')}</div>`}`}</section>`;
 }
 // Desplegable propio (patrón listbox de WAI-ARIA): sustituye al <select> nativo para controlar su aspecto en todos los navegadores.
 // options: [{value, label, note?, selected?}]. Al elegir una opción se navega a su `value` (una URL).
@@ -475,7 +475,9 @@ function render() {
   // Entrada de página solo al cambiar de pantalla o pestaña; al pasar de jornada o de participante no se vuelve a animar todo.
   // 'page': otra liga o la portada (entra todo, encabezado incluido) · 'tab': otra pestaña de la misma liga (el encabezado con el logo se queda quieto) · 'swap': otra jornada o participante.
   const pageKey=`${currentId}|${currentTab}`;main.dataset.enter=pageKey===lastPageKey?'swap':lastPageKey?.split('|')[0]===String(currentId)?'tab':'page';lastPageKey=pageKey;
+  const keepY=scrollY;   // al pasar de alineación o de jornada la página se vuelve a pintar entera: se conserva la posición (el navegador, si no, la reajusta con saltos)
   const wasStuck=!!$('.tabs-bar.is-stuck');   // pulsar una pestaña vuelve a pintar la página: el nombre de la liga no debe parpadear
+  const keepH=main.dataset.enter==='swap'?main.offsetHeight:0;if(keepH)main.style.minHeight=keepH+'px';   // el campo se dibuja un instante después: sin este alto la página se encoge y el navegador recorta el scroll
   main.innerHTML=currentId?competition():home();
   if(wasStuck)$('.tabs-bar')?.classList.add('is-stuck');
   hydrateIcons(main);
@@ -484,6 +486,8 @@ function render() {
   initTabs();
   placeSliders(true);document.fonts?.ready.then(()=>placeSliders(false));
   $$('[data-count]',main).forEach(countUp);
+  if(main.dataset.enter==='swap'&&scrollY!==keepY)window.scrollTo({top:keepY,behavior:'instant'});
+  if(keepH)setTimeout(()=>{main.style.minHeight='';},900);
   initRulesSearch();
   document.body.dataset.theme=currentId==='mahtuchampions'?'champions':currentId?'':'home';
   document.querySelector('meta[name=theme-color]').content=currentId==='mahtuchampions'?'#04011f':currentId?'#1b2433':'#0b1020';
