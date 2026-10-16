@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvax5wdv';
-import { mountField } from './lineup-field.mjs?v=mvax5wdv';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvax5wdv';
+import { icon, hydrateIcons } from './icons.mjs?v=mvaxm1ld';
+import { mountField } from './lineup-field.mjs?v=mvaxm1ld';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvaxm1ld';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -95,8 +95,7 @@ function lastList(c,full=false) {
   return `${rows.filter(r=>full||r.last>0).map(r=>`<div class="list-row"><span class="player">${avatar(r.name)}<span>${esc(r.name)}</span></span><span class="value">${full&&currentId!=='mahtuchampions'?`<small>Devolución ${euro(Math.max(0,10-r.last*.5))}</small>`:''}<b>${r.last}</b></span></div>`).join('')}${full?`<p class="hint">${realRounds} jornadas registradas.${currentId!=='mahtuchampions'?' Cada última posición descuenta 0,50 € de la fianza de 10 €.':''} En caso de empate se usa el último puesto confirmado de Biwenger. Las jornadas con partidos pendientes cuentan cuando terminan.</p>`:''}`;
 }
 function qualificationPanel() {
-  const facts=[['users','8 plazas','4 por liga'],['calendar','Corte J19','cierre de ligas'],['trophy',`${championsPrize(state)} €`,'al campeón','gold']];
-  return `<div class="fact-strip">${facts.map(([i,a,b,tone=''])=>`<div class="fact ${tone}">${icon(i,20)}<span><strong>${a}</strong><small>${b}</small></span></div>`).join('')}</div><div class="qualifiers">${IDS.slice(0,2).map(id=>{
+  return `<div class="qualifiers">${IDS.slice(0,2).map(id=>{
     const c=state.competitions[id],max=maxRound(c);
     // A final cut needs every score through J19, either from the baseline or individual rounds.
     const base=c.baseline, canUseBase=base?.throughRound!==null&&base?.throughRound<=19;
@@ -281,7 +280,15 @@ function champSummary(c) {
     ?`<div class="phase-hero done"><span class="hero-icon">${icon('trophy',26)}</span><div><small>Copa finalizada</small><strong>Campeón: ${esc(c.bracket.winner)}</strong></div></div>`
     :cur?`<div class="phase-hero active"><span class="hero-icon">${icon('swords',26)}</span><div><small>Fase actual</small><strong>Fase ${cur.n} · ${cur.name}</strong></div>${stateChip('active')}<a class="button secondary" data-route href="/mahtuchampions?tab=${phaseTab(cur.n)}">Ver fase ${icon('arrow-right',16)}</a></div>`
     :next?`<div class="phase-hero"><span class="hero-icon">${icon('calendar',26)}</span><div><small>Estado de la copa</small><strong>${c.players.length} de ${META.mahtuchampions.capacity} plazas confirmadas</strong><span>La fase ${next.n} ${next.start?`empieza el ${date(next.start)}`:'empieza con su ronda de la Champions League, fecha por confirmar'}</span></div></div>`:'';
-  return hero+champFormat(progress);
+  // Datos útiles de un vistazo que no se repiten en otra parte del resumen: cuánto falta para el corte y cuánto se juega.
+  const lastDone=c2=>Math.max(roundCoverage(c2),0,...c2.rounds.filter(r=>!r.postponed&&!r.incomplete).map(r=>r.number)),
+    left=Math.max(0,19-Math.min(...IDS.slice(0,2).map(id=>lastDone(state.competitions[id])))),
+    facts=[
+      ...(!cur&&!progress.finished?[left>0?['calendar','Corte en la J19',`${left===1?'falta 1 jornada':`faltan ${left} jornadas`} · 4 primeros de cada liga`]:['check','Corte hecho','los 4 primeros de cada liga entran']]:[]),
+      ...(!progress.finished?[['trophy',`${championsPrize(state)} € al campeón`,'premio de la copa','gold']]:[]),
+    ];
+  const strip=facts.length?`<div class="fact-strip">${facts.map(([i,a,b,tone=''])=>`<div class="fact ${tone}">${icon(i,20)}<span><strong>${a}</strong><small>${b}</small></span></div>`).join('')}</div>`:'';
+  return hero+strip+champFormat(progress);
 }
 function champPhaseView(c,n) {
   const ph=CHAMPIONS_PHASES[n-1],ph0=championsProgress(c).phases[n-1],st=ph0.state,rounds=c.rounds.filter(r=>r.phase===n);
