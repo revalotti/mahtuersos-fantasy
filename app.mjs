@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvaz4al1';
-import { mountField } from './lineup-field.mjs?v=mvaz4al1';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvaz4al1';
+import { icon, hydrateIcons } from './icons.mjs?v=mvaz7r5v';
+import { mountField } from './lineup-field.mjs?v=mvaz7r5v';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvaz7r5v';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -457,15 +457,20 @@ let lastPageKey=null;
 
 // Campo dibujado con los datos de la alineación (si la jornada los tiene; si no, se ve la imagen de Biwenger).
 let stopField=null;const fieldCache=new Map();
+let lastFieldH=0;
 async function mountFields() {
   stopField?.();stopField=null;
   const host=$('[data-field]',main);if(!host)return;
+  if(lastFieldH&&main.dataset.enter==='swap')host.style.cssText=`padding:0;aspect-ratio:auto;height:${lastFieldH}px`;   // el hueco conserva el alto del campo anterior (con o sin suplentes) hasta dibujar el nuevo
   const url=lineupDataUrl(host.dataset.field);
   try {
     if(!fieldCache.has(url))fieldCache.set(url,fetch(url).then(r=>{if(!r.ok)throw Error(r.status);return r.json();}));
     const data=await fieldCache.get(url);
     if(!host.isConnected)return;   // mientras tanto se ha navegado a otra alineación
+    host.style.cssText='';
     stopField=mountField(host,data,{crestUrl:eq=>withBase(`/assets/escudos/${eq}.png`)});
+    lastFieldH=main.dataset.enter==='swap'?Math.max(lastFieldH,host.offsetHeight):host.offsetHeight;   // en un mismo visor el campo nunca encoge: sin suplentes queda hueco, pero la página no salta
+    host.style.minHeight=lastFieldH+'px';
   } catch { fieldCache.delete(url);if(host.isConnected)host.innerHTML='<p class="no-bench">No se ha podido cargar la alineación.</p>'; }
 }
 function render() {
