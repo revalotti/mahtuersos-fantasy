@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvay9heb';
-import { mountField } from './lineup-field.mjs?v=mvay9heb';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvay9heb';
+import { icon, hydrateIcons } from './icons.mjs?v=mvayfz6k';
+import { mountField } from './lineup-field.mjs?v=mvayfz6k';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvayfz6k';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

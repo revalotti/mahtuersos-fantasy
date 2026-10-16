@@ -854,8 +854,8 @@ body[data-theme=champions] .fv-note{color:#d6d8ff;background:rgba(0,0,100,.3)}bo
 .fv-lostrow .fv-badge{position:relative;left:auto;top:auto;transform:none;flex:none}
 .fv-losttxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 
-/* Cambio de suplente (como en Biwenger): flecha verde en el que entra, roja en el que sale */
-.fv-swap{position:absolute;left:-7px;top:-3px;z-index:2;display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.45)}
+/* Cambio de suplente (como en Biwenger): flecha verde en el que entra, roja en el que sale; a la izquierda del escudo, frente a la posición */
+.fv-swap{position:absolute;left:-8px;top:50%;margin-top:-7px;z-index:2;display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.45)}
 .fv-swap svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .fv-swap.in{background:#16a34a}.fv-swap.out{background:#dc2626}
 
