@@ -16,7 +16,9 @@ export function parseRoundKey(key) {
   return m ? { number: Number(m[1]), postponed: m[2] === undefined ? 0 : m[2] === '' ? 1 : Number(m[2]) } : null;
 }
 // Las jornadas aplazadas se muestran con los puntos de Biwenger, pero solo suman al total lo que añaden de verdad (`counted`).
-const countedScores = r => r.postponed ? (r.counted || []) : r.scores;
+// Una jornada normal también puede traer `counted`: lo que Biwenger cuenta en la clasificación general cuando difiere de lo que enseña su tabla
+// (la suma de las alineaciones, mientras Biwenger no ha recalculado una jornada con partidos aplazados).
+const countedScores = r => r.postponed ? (r.counted || []) : (r.counted || r.scores);
 export function standings(comp, rounds = comp.rounds) {
   const aggregate = rounds === comp.rounds;
   const base = aggregate ? comp.baseline : null;
@@ -103,13 +105,22 @@ export function validateRound(value, comp, id) {
   const lastPlayerId = last.length === 1 ? last[0].playerId : value.lastPlayerId;
   if (!last.some(s => s.playerId === lastPlayerId)) throw Error('Hay empate en el último puesto. Selecciona el último según Biwenger.');
   const out = { number: value.number, ...(phase ? { phase } : {}), date: value.date, scores: value.scores.map(s => ({ playerId: s.playerId, points: s.points })), lastPlayerId };
-  if (postponed) {
-    out.postponed = postponed;
+  if (postponed) out.postponed = postponed;
+  if (postponed || value.counted) {
     const counted = value.counted ?? [];
-    for (const c of counted) if (!comp.players.some(p => p.id === c.playerId) || typeof c.points !== 'number' || !Number.isFinite(c.points) || Math.abs(c.points) > 1000) throw Error('Puntos que suman de la jornada aplazada no válidos.');
+    for (const c of counted) if (!comp.players.some(p => p.id === c.playerId) || typeof c.points !== 'number' || !Number.isFinite(c.points) || Math.abs(c.points) > 1000) throw Error('Puntos que suman de la jornada no válidos.');
     out.counted = counted.map(c => ({ playerId: c.playerId, points: c.points }));
   }
   if (value.incomplete) out.incomplete = true;
+  if (value.pending !== undefined) {   // partidos que faltan por jugar (los pinta la web junto a «Partidos pendientes»)
+    const side = t => t && typeof t === 'object' && typeof t.eq === 'string' && /^[a-z0-9-]{0,40}$/.test(t.eq) && typeof t.n === 'string' && t.n.length <= 40 ? { eq: t.eq, n: t.n } : null;
+    if (!Array.isArray(value.pending) || value.pending.length > 20) throw Error('Partidos pendientes no válidos.');
+    out.pending = value.pending.map(g => {
+      const local = side(g?.local), visitante = side(g?.visitante);
+      if (!local || !visitante || !['pendiente', 'aplazado'].includes(g.estado) || (g.fecha !== undefined && !Number.isInteger(g.fecha))) throw Error('Partido pendiente no válido.');
+      return { local, visitante, estado: g.estado, ...(g.fecha !== undefined ? { fecha: g.fecha } : {}) };
+    });
+  }
   if (value.biwengerId !== undefined) { if (!Number.isInteger(value.biwengerId) || value.biwengerId < 1) throw Error('Identificador de Biwenger no válido.'); out.biwengerId = value.biwengerId; }
   return out;
 }
@@ -143,10 +154,10 @@ export function validateBracket(b) {
 
 // ---- MahtuChampions: fases (8 → 6 → 4 → 2 → campeón) --------------------------------------------
 export const CHAMPIONS_PHASES = [
-  { n: 1, name: 'Dieciseisavos y octavos', kind: 'liga', from: 8, to: 6, out: 2 },
-  { n: 2, name: 'Cuartos de final', kind: 'liga', from: 6, to: 4, out: 2 },
-  { n: 3, name: 'Semifinales', kind: 'directo', from: 4, to: 2, note: 'Enfrentamiento directo (sorteo)' },
-  { n: 4, name: 'Final', kind: 'directo', from: 2, to: 1, note: 'Enfrentamiento directo' },
+  { n: 1, name: 'Dieciseisavos y octavos', kind: 'liga', from: 8, to: 6, out: 2, desc: 'Formato liga entre los 8 clasificados. Avanzan del 1.º al 6.º; el 7.º y el 8.º quedan eliminados.' },
+  { n: 2, name: 'Cuartos de final', kind: 'liga', from: 6, to: 4, out: 2, desc: 'Se mantiene el formato liga entre los 6 clasificados. Avanzan del 1.º al 4.º; el 5.º y el 6.º quedan eliminados.' },
+  { n: 3, name: 'Semifinales', kind: 'directo', from: 4, to: 2, note: 'Enfrentamiento directo (sorteo)', desc: 'Los 4 clasificados se enfrentan en eliminatoria directa. Los cruces se deciden por sorteo.' },
+  { n: 4, name: 'Final Champions', kind: 'directo', from: 2, to: 1, note: 'Partido único', desc: 'Partido único entre los ganadores de las semifinales para decidir al campeón.' },
 ];
 // Fase actual: la indicada en los ajustes (`currentPhase`) o, si no, la más avanzada con jornadas publicadas.
 // current: 0 = sin empezar, 1–4 = fase en curso, 5 = copa terminada (hay campeón).

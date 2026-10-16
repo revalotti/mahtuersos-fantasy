@@ -1,4 +1,5 @@
 import { icon, hydrateIcons } from './icons.mjs';
+import { mountField } from './lineup-field.mjs';
 import { normalize, IDS, META, CHAMPIONS_PHASES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
@@ -13,6 +14,7 @@ const STATIC_BASE=document.querySelector('meta[name=static-base]'),BASE=(STATIC_
 const withBase=u=>BASE&&u.startsWith('/')&&!(u===BASE||u.startsWith(BASE+'/')||u.startsWith(BASE+'?'))?BASE+u:u;
 const unbase=u=>BASE&&(u===BASE||u.startsWith(BASE+'/')||u.startsWith(BASE+'?'))?u.slice(BASE.length)||'/':u;
 const assetUrl=u=>STATIC_BASE&&u.startsWith('/api/lineups/')?`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.webp`:withBase(u);
+const lineupDataUrl=u=>STATIC_BASE?`${BASE}/data/lineups/${u.slice('/api/lineups/'.length)}.json`:withBase(`${u}.json`);
 const rebase=root=>{if(BASE)$$('a[data-route]',root).forEach(a=>a.setAttribute('href',withBase(a.getAttribute('href'))));};
 let gallery={title:'',items:[]};   // alineaciones de la jornada abierta, para el visor de imágenes
 let preferredView='list';   // última vista elegida en Jornadas (Tabla o Alineaciones)
@@ -44,7 +46,12 @@ function navigate(url,noScroll=false) {
   const previous=currentId;rulesQuery='';rulesActive=null;url=unbase(url);history.pushState({},'',withBase(url));getRoute();render();
   const bar=$('.tabs-bar'),smooth=matchMedia('(prefers-reduced-motion: no-preference)').matches?'smooth':'instant';
   if(noScroll){/* teclado: la posición no cambia */}
-  else if(previous&&previous===currentId&&bar)window.scrollTo({top:$('.tabs-anchor').getBoundingClientRect().top+scrollY-$('.topbar').offsetHeight,behavior:smooth});   // misma competición: al inicio del contenido nuevo, justo bajo las pestañas
+  else if(previous&&previous===currentId&&bar) {
+    // Misma competición. Móvil: al inicio del contenido nuevo, justo bajo las pestañas. Escritorio: el encabezado (con el logo) se ve siempre, así que
+    // la página no se mueve al cambiar de pestaña; solo si se había bajado más allá del inicio del contenido, se vuelve a él.
+    const top=$('.tabs-anchor').getBoundingClientRect().top+scrollY-$('.topbar').offsetHeight;
+    if(matchMedia('(max-width:760px)').matches||scrollY>top)window.scrollTo({top,behavior:smooth});
+  }
   else window.scrollTo({top:0});
   main.focus({preventScroll:true});
 }
@@ -208,8 +215,16 @@ function applyRulesSearch() {
 DESKTOP.addEventListener('change',()=>applyRulesSearch());
 // Pestañas de cada página: barra fija bajo la cabecera, pestaña activa siempre a la vista, sombras en los bordes
 // cuando hay más pestañas fuera de pantalla y navegación con el teclado (← → Inicio Fin).
+// En móvil, al quedarse fija la barra de pestañas aparece sobre ella el nombre de la liga (clase is-stuck). Se calcula con la posición de la
+// marca donde empieza la barra, así también está al llegar tras pulsar una pestaña (la página se coloca justo ahí).
+const navHeight=()=>parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||0;
+const markStuck=()=>{const bar=$('.tabs-bar'),anchor=$('.tabs-anchor');if(bar&&anchor)bar.classList.toggle('is-stuck',anchor.getBoundingClientRect().top<=navHeight()+1);};
+let stuckFrame=0;
+window.addEventListener('scroll',()=>{if(!stuckFrame)stuckFrame=requestAnimationFrame(()=>{stuckFrame=0;markStuck();});},{passive:true});
+window.addEventListener('resize',markStuck);
 function initTabs() {
   const bar=$('.tabs-bar'),tabs=$('.tabs');if(!bar||!tabs)return;
+  markStuck();
   const update=()=>{const max=tabs.scrollWidth-tabs.clientWidth;bar.classList.toggle('fade-l',tabs.scrollLeft>2);bar.classList.toggle('fade-r',tabs.scrollLeft<max-2);};
   // La pestaña activa se centra al entrar; se repite cuando carga la tipografía, que cambia los anchos.
   const center=()=>{const active=$('.tab.active',tabs);if(!active||!tabs.isConnected)return;const a=active.getBoundingClientRect(),t=tabs.getBoundingClientRect();tabs.scrollTo({left:tabs.scrollLeft+(a.left-t.left)-(t.width-a.width)/2,behavior:'instant'});update();};
@@ -238,10 +253,10 @@ const stateChip=state=>state==='pending'?'':`<span class="chip ${state}">${state
 const startChip=p=>p.state==='pending'&&p.start?`<span class="chip start">Empieza el ${date(p.start)}</span>`:'';
 function champFormat(progress) {
   const tiles=p=>Array.from({length:p.from},(_,i)=>`<span class="tile ${i>=p.from-p.out?'out':''}">${i+1}</span>`).join('');
-  const body=p=>p.kind==='liga'?`<strong>Formato liga</strong><div class="tiles">${tiles(p)}</div>`
+  const body=p=>p.kind==='liga'?`<strong>Formato liga</strong><div class="tiles">${tiles(p)}</div><small>Avanzan del 1.º al ${p.to}.º · quedan eliminados el ${Array.from({length:p.out},(_,i)=>`${p.to+1+i}.º`).join(' y el ')}</small>`
     :p.n===3?`<strong>${p.note}</strong><div class="pairs">${[0,1].map(()=>`<span class="pair"><span class="tile wide">Clasificado</span><span class="vs">VS</span><span class="tile wide">Clasificado</span></span>`).join('')}</div><small>Los cruces se deciden por sorteo entre los 4 clasificados</small>`
-    :`<strong>${p.note}</strong><div class="pairs"><span class="pair"><span class="tile wide">Ganador<br>semifinal 1</span><span class="vs">VS</span><span class="tile wide">Ganador<br>semifinal 2</span></span></div><small>El ganador es el campeón</small>`;
-  return `<div class="phases">${progress.phases.map(p=>`<section class="phase state-${p.state}"><header><span class="phase-n">Fase ${p.n} ${stateChip(p.state)}${startChip(p)}</span><a class="phase-name" data-route href="/mahtuchampions?tab=${phaseTab(p.n)}">${p.name}</a><span class="phase-flow" title="Participantes al empezar y al terminar la fase">${p.from} <i>→</i> ${p.to}</span></header><div class="phase-body">${body(p)}</div></section>`).join('')}</div><p class="legend"><span class="tile out sm"></span>Eliminados en esa fase</p>`;
+    :`<strong>${p.note}</strong><div class="pairs"><span class="pair"><span class="tile wide">Ganador<br>semifinal 1</span><span class="vs">VS</span><span class="tile wide">Ganador<br>semifinal 2</span></span></div><small>Partido único entre los ganadores de las semifinales: el ganador es el campeón</small>`;
+  return `<div class="phases">${progress.phases.map(p=>`<section class="phase state-${p.state}"><header><span class="phase-n">Fase de Champions League ${stateChip(p.state)}${startChip(p)}</span><a class="phase-name" data-route href="/mahtuchampions?tab=${phaseTab(p.n)}">${p.name}</a><span class="phase-flow" title="Fase ${p.n} de MahtuChampions">Fase ${p.n}</span></header><div class="phase-body">${body(p)}</div></section>`).join('')}</div><p class="legend"><span class="tile out sm"></span>Eliminados en esa fase</p>`;
 }
 // Una fila por temporada entre la primera y la última con campeón; las que faltan quedan en blanco.
 function timeline(c) {
@@ -260,7 +275,7 @@ function champSummary(c) {
 }
 function champPhaseView(c,n) {
   const ph=CHAMPIONS_PHASES[n-1],ph0=championsProgress(c).phases[n-1],st=ph0.state,rounds=c.rounds.filter(r=>r.phase===n);
-  const head=`<div class="phase-intro"><div><span class="eyebrow">Fase ${n}</span><h2>${ph.name}</h2></div>${stateChip(st)}</div>`;
+  const head=`<div class="phase-intro"><div><span class="eyebrow">Fase ${n}</span><h2>${ph.name}</h2><p>${ph.desc}</p></div>${stateChip(st)}</div>`;
   if(!rounds.length)return `${head}<div class="panel">${empty('Todavía sin jornadas',ph0.start?`Empieza el ${date(ph0.start)}, con su ronda de la Champions League.`:'Empieza con su ronda de la Champions League.','calendar')}</div>`;
   const {rows}=phaseStandings(c,n);
   const table=`<section class="panel">${panelHead('Clasificación de la fase',{iconName:'list-ordered'})}${rankRows(rows,{outFrom:ph.to})}<div class="table-note"><i class="dot out"></i>Zona de eliminación (últimos ${ph.out})</div></section>`;
@@ -274,7 +289,7 @@ function champBracket(c) {
     return `<div class="rank-row team ${t?'':'tbd'} ${win?'win':''} ${lose?'dim':''}">${t?avatar(t.name):'<span class="avatar ghost" aria-hidden="true">?</span>'}<span class="name">${t?esc(t.name):placeholder}</span>${t?.points!=null?`<span class="pts">${num(t.points)}</span>`:''}${win?icon('check',16,'win-check'):''}</div>`;
   };
   const match=(m,pa,pb)=>`<article class="panel match">${team(m?.a,pa,m?.b)}${team(m?.b,pb,m?.a)}</article>`;
-  return `<div class="bracket"><h2 class="stage-title c1">Semifinales ${live(3)}</h2><h2 class="stage-title c3">Final ${live(4)}</h2><h2 class="stage-title c5">Campeón</h2><div class="semis">${match(semis[0],'Por sortear','Por sortear')}${match(semis[1],'Por sortear','Por sortear')}</div><div class="conn conn-semis" aria-hidden="true"></div><div class="final-cell">${match(fin,'Ganador semifinal 1','Ganador semifinal 2')}</div><div class="conn conn-final" aria-hidden="true"></div><div class="panel champion ${b?.winner?'set':''}"><div class="rank-row">${icon('trophy',22)}<span class="name">${b?.winner?esc(b.winner):'Por decidir'}</span></div></div></div>`;
+  return `<div class="bracket"><h2 class="stage-title c1">Semifinales ${live(3)}</h2><h2 class="stage-title c3">Final Champions ${live(4)}</h2><h2 class="stage-title c5">Campeón</h2><div class="semis">${match(semis[0],'Por sortear','Por sortear')}${match(semis[1],'Por sortear','Por sortear')}</div><div class="conn conn-semis" aria-hidden="true"></div><div class="final-cell">${match(fin,'Ganador semifinal 1','Ganador semifinal 2')}</div><div class="conn conn-final" aria-hidden="true"></div><div class="panel champion ${b?.winner?'set':''}"><div class="rank-row">${icon('trophy',22)}<span class="name">${b?.winner?esc(b.winner):'Por decidir'}</span></div></div></div><p class="bracket-note">${CHAMPIONS_PHASES[2].desc} ${CHAMPIONS_PHASES[3].desc}</p>`;
 }
 function competition() {
   const c=state.competitions[currentId],m=META[currentId],isChamp=currentId==='mahtuchampions';
@@ -301,7 +316,7 @@ function competition() {
     content=`${sectionHeading('Palmarés')}${hall.length?`<div class="hall-grid">${hall.map(r=>`<article class="hall-card">${icon('trophy',26,'gold')}<h3>${esc(r.name)}</h3><strong>${r.count}</strong><div class="subtle">${r.count===1?'título':'títulos'}</div></article>`).join('')}</div>${timeline(c)}`:`<div class="panel">${empty('La historia está por escribir','Los campeones de cada temporada tendrán su sitio aquí.','trophy')}</div>`}`;
   }
   const status=`<span class="pill"><i class="dot"></i>${isChamp?(progress.finished?'Finalizada':progress.current?`Fase ${progress.current} en curso`:'Próximamente'):(maxRound(c)?'En juego':'Próximamente')}</span>`;
-  return `<div class="page" style="--accent:${m.color}"><header class="competition-heading">${crest(currentId,'xl')}<div class="competition-title">${isChamp?'':'<span class="eyebrow">Liga</span>'}<h1>${m.name}</h1></div>${isChamp?status:''}</header><span class="tabs-anchor"></span><div class="tabs-bar"><nav class="tabs" aria-label="Secciones de ${m.name}">${tabs.map(([id,label,live])=>`<a class="tab ${id===currentTab?'active':''}" href="/${currentId}?tab=${id}" data-route ${id===currentTab?'aria-current="page"':''}>${label}${live?'<i class="live-dot" title="Fase en curso"></i>':''}</a>`).join('')}</nav></div><div class="section-space">${content}</div></div>`;
+  return `<div class="page" style="--accent:${m.color}"><header class="competition-heading">${crest(currentId,'xl')}<div class="competition-title">${isChamp?'':'<span class="eyebrow">Liga</span>'}<h1>${m.name}</h1></div>${isChamp?status:''}</header><span class="tabs-anchor"></span><div class="tabs-bar"><div class="tabs-title" aria-hidden="true">${crest(currentId,'sm')}<span>${m.name}</span></div><nav class="tabs" aria-label="Secciones de ${m.name}">${tabs.map(([id,label,live])=>`<a class="tab ${id===currentTab?'active':''}" href="/${currentId}?tab=${id}" data-route ${id===currentTab?'aria-current="page"':''}>${label}${live?'<i class="live-dot" title="Fase en curso"></i>':''}</a>`).join('')}</nav></div><div class="section-space">${content}</div></div>`;
 }
 // Recortes de la imagen de alineación de Biwenger (1080×1080): solo el campo y los 4 suplentes.
 const LINEUP_IMG=1080;
@@ -315,7 +330,7 @@ function lineupPane(c,round,ranks,selected) {
   const src=assetUrl(`/api/lineups/${currentId}/${roundKey(round)}/${selected.id}`);
   gallery={title:roundLabel(round),items:withLineup.map(r=>({name:r.name,rank:r.rank,points:r.points,src:assetUrl(`/api/lineups/${currentId}/${roundKey(round)}/${r.id}`)}))};
   const nav=(r,dir,label)=>r?`<a class="icon-btn ${dir}" data-route data-keep data-${dir} href="${roundUrl(roundKey(round),r.id,true)}" aria-label="${label}: ${esc(r.name)}">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</a>`:`<span class="icon-btn disabled ${dir}" aria-hidden="true">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</span>`;
-  return `<section class="panel lineup-pane" aria-label="Alineación de ${esc(selected.name)}"><div class="lineup-head">${nav(prev,'prev','Anterior')}<div class="lineup-title"><strong>${esc(selected.name)}</strong></div>${nav(next,'next','Siguiente')}</div><dl class="lineup-facts"><div><dt>Puesto</dt><dd>${selected.rank}.º</dd></div><div><dt>Puntos</dt><dd>${num(selected.points)}</dd></div><div><dt>Jornada</dt><dd>${round.number}${round.postponed?'a':''}</dd></div></dl><button type="button" class="field-link" data-gallery="${i}" aria-haspopup="dialog" aria-label="Ver la alineación completa de ${esc(selected.name)}" title="Ver imagen completa">${crop(src,FIELD_CROP,'field','')}<span class="field-zoom" aria-hidden="true">${icon('maximize-2',16)}</span></button><h3 class="bench-title">Suplentes</h3>${round.noBench?.includes(selected.id)?'<p class="no-bench">Sin suplentes en esta jornada.</p>':`<div class="bench">${BENCH_CROPS.map(([pos,box])=>crop(src,box,`bench-slot pos-${pos}`)).join('')}</div>`}</section>`;
+  return `<section class="panel lineup-pane" aria-label="Alineación de ${esc(selected.name)}"><div class="lineup-head">${nav(prev,'prev','Anterior')}<div class="lineup-title"><strong>${esc(selected.name)}</strong></div>${nav(next,'next','Siguiente')}</div><dl class="lineup-facts"><div><dt>Puesto</dt><dd>${selected.rank}.º</dd></div><div><dt>Puntos</dt><dd data-count="${selected.points}">${num(selected.points)}</dd></div><div><dt>Jornada</dt><dd>${round.number}${round.postponed?'a':''}</dd></div></dl>${round.fields?.includes(selected.id)?`<div data-field="${esc(`/api/lineups/${currentId}/${roundKey(round)}/${selected.id}`)}"></div>`:`<button type="button" class="field-link" data-gallery="${i}" aria-haspopup="dialog" aria-label="Ver la alineación completa de ${esc(selected.name)}" title="Ver imagen completa">${crop(src,FIELD_CROP,'field','')}<span class="field-zoom" aria-hidden="true">${icon('maximize-2',16)}</span></button><h3 class="bench-title">Suplentes</h3>${round.noBench?.includes(selected.id)?'<p class="no-bench">Sin suplentes en esta jornada.</p>':`<div class="bench">${BENCH_CROPS.map(([pos,box])=>crop(src,box,`bench-slot pos-${pos}`)).join('')}</div>`}`}</section>`;
 }
 // Desplegable propio (patrón listbox de WAI-ARIA): sustituye al <select> nativo para controlar su aspecto en todos los navegadores.
 // options: [{value, label, note?, selected?}]. Al elegir una opción se navega a su `value` (una URL).
@@ -352,6 +367,20 @@ function galleryOpen(i,opener) {
   const dlg=galleryDialog();galleryOpener=opener;galleryShow(i);
   document.documentElement.classList.add('gallery-open');if(!dlg.open)dlg.showModal();
 }
+const gameDate=new Intl.DateTimeFormat('es-ES',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'});
+// Partidos que faltan por jugar de una jornada incompleta: en la etiqueta «Partidos pendientes» se apilan sus escudos (solapados, en una sola línea)
+// y el detalle sale en su globo (al pasar el ratón, enfocar o pulsar), así la sección no crece aunque haya varios.
+const crestImg=(t,size)=>t.eq?`<img src="${withBase(`/assets/escudos/${esc(t.eq)}.png`)}" alt="" width="${size}" height="${size}" onerror="this.remove()">`:'';
+const gameWhen=g=>g.estado==='aplazado'?'Aplazado':g.fecha?gameDate.format(new Date(g.fecha*1000)).replace(/\./g,''):'';
+function pendingStack(round) {
+  if(!round.incomplete||!round.pending?.length)return '';
+  const teams=[...new Map(round.pending.flatMap(g=>[g.local,g.visitante]).filter(t=>t.eq).map(t=>[t.eq,t])).values()],shown=teams.slice(0,4),more=teams.length-shown.length;
+  return `<span class="pg-stack" aria-hidden="true">${shown.map(t=>crestImg(t,18)).join('')}${more>0?`<b>+${more}</b>`:''}</span>`;
+}
+function pendingList(round) {
+  if(!round.incomplete||!round.pending?.length)return '';
+  return `<span class="pg-head">Faltan por jugar</span><ul class="pg-list" aria-label="Partidos que faltan por jugar">${round.pending.map(g=>`<li>${crestImg(g.local,18)}${crestImg(g.visitante,18)}<span class="pg-teams">${esc(g.local.n)} – ${esc(g.visitante.n)}</span><span class="pg-when">${esc(gameWhen(g))}</span></li>`).join('')}</ul>`;
+}
 function roundSelect(c,round) {
   const asc=[...c.rounds].sort((a,b)=>roundOrder(a)-roundOrder(b)),i=asc.findIndex(r=>roundKey(r)===roundKey(round));
   const keep=[null,preferredView==='lineup'];   // al cambiar de jornada se mantiene la vista; el participante pasa a ser el primero
@@ -371,9 +400,10 @@ function roundsView(c) {
   const tabs=selected?`<div class="view-tabs" role="tablist" aria-label="Vista de la jornada"><a role="tab" data-route data-keep href="${roundUrl(roundKey(round))}" class="${view==='list'?'active':''}" aria-selected="${view==='list'}">${icon('list-ordered',16)}Tabla</a><a role="tab" data-route data-keep href="${roundUrl(roundKey(round),selected.id,true)}" class="${view==='lineup'?'active':''}" aria-selected="${view==='lineup'}">${icon('users',16)}Alineaciones</a></div>`:'';
   // Una sola etiqueta de estado: pendientes de partidos, o cierre de una jornada aplazada ya disputada entera.
   const state=round.incomplete?'pending':round.postponed?'final':'';
-  const hint={pending:'Sus puntos ya suman. El primero, el último, la fianza y los récords se deciden al terminar todos sus partidos.',final:'Todos los partidos disputados. En la clasificación general solo suma lo que añade a lo ya contado.'}[state];
-  const badge=state?`<span class="status-wrap"><button type="button" class="status-badge is-${state}" aria-expanded="false" aria-controls="round-hint">${icon(state==='final'?'check':'clock',14)}${state==='final'?'Clasificación final':'Partidos pendientes'}${icon('info',13,'status-info')}</button><span class="status-hint" id="round-hint" role="tooltip">${hint}</span></span>`:'';
-  return `<div class="round-toolbar"><div class="round-pick">${roundSelect(c,round)}${badge}</div>${tabs}</div><div class="round-split ${selected?'with-lineup':''}" data-view="${view}"><section class="panel ranking-pane">${rankRows(ranks,{href:selected?r=>round.lineups.includes(r.id)?roundUrl(roundKey(round),r.id,true):null:null,activeId:selected?.id,mark:r=>round.incomplete?null:r.id===round.lastPlayerId?'last':r.rank===1?'first':null})}</section>${selected?lineupPane(c,round,ranks,selected):''}</div>`;
+  const reprogrammed=round.pending?.some(g=>g.estado==='pendiente');   // con fecha nueva: los titulares de esos partidos no se sustituyen hasta que se jueguen
+  const hint={pending:`Faltan partidos por jugar de esta jornada. Los puntos de cada participante ya suman a la clasificación, pero el mejor y el último de la jornada, la fianza y los récords no se deciden hasta que termine el último partido.${reprogrammed?' Un suplente no sustituye a un titular cuyo partido pendiente aún no se ha jugado: el cambio se hace cuando se dispute. Si el titular ya jugó su partido y no participó, el cambio se hace ya.':''}`,final:'Todos los partidos disputados. En la clasificación general solo suma lo que añade a lo ya contado.'}[state];
+  const badge=state?`<span class="status-wrap"><button type="button" class="status-badge is-${state}" aria-expanded="false" aria-haspopup="true" aria-controls="round-hint" title="Ver detalle">${icon(state==='final'?'check':'clock',14)}${state==='final'?'Clasificación final':'Partidos pendientes'}${state==='pending'?pendingStack(round):''}${icon('chevron-down',14,'status-chev')}</button><span class="status-hint" id="round-hint" role="tooltip">${state==='pending'?pendingList(round):''}${hint}</span></span>`:'';
+  return `<div class="round-toolbar"><div class="round-pick">${roundSelect(c,round)}${badge}</div></div>${tabs?`<div class="view-tabs-bar">${tabs}</div>`:''}<div class="round-split ${selected?'with-lineup':''}" data-view="${view}"><section class="panel ranking-pane">${rankRows(ranks,{href:selected?r=>round.lineups.includes(r.id)?roundUrl(roundKey(round),r.id,true):null:null,activeId:selected?.id,mark:r=>round.incomplete?null:r.id===round.lastPlayerId?'last':r.rank===1?'first':null})}</section>${selected?lineupPane(c,round,ranks,selected):''}</div>`;
 }
 // Pie de página: sin enlaces ni datos, solo el nombre y el número de participantes (la temporada ya va en la cabecera).
 function renderFooter() {
@@ -381,13 +411,61 @@ function renderFooter() {
   const seen=new Set();for(const id of ['mahtuliga','mahtwoliga'])for(const p of state.competitions[id]?.players||[])seen.add(normalize(p.name));
   footer.innerHTML=`<p>Mahtuersos Fantasy · ${seen.size} participantes</p>`;
 }
+// ---- Microinteracciones ----------------------------------------------------------------
+const calm=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Los números de la alineación suben hasta su valor, siempre en enteros (en Biwenger no hay decimales).
+function countUp(el) {
+  const to=Number(el.dataset.count);if(!Number.isFinite(to)||calm())return;
+  const t0=performance.now(),dur=600;el.textContent='0';
+  const step=now=>{const k=Math.min(1,(now-t0)/dur);el.textContent=num(k<1?Math.round(to*(1-Math.pow(1-k,3))):to);if(k<1&&el.isConnected)requestAnimationFrame(step);};
+  requestAnimationFrame(step);
+}
+// Indicador que se desliza hasta la pestaña activa. La página se vuelve a pintar entera al cambiar, así que se recuerda dónde estaba el anterior
+// y el nuevo arranca desde ahí.
+const sliderMemory={};
+function slider(container,key,animate=true) {
+  if(!container||!container.offsetWidth)return;
+  const active=$('.active',container);if(!active)return;
+  let el=$('.slider',container);
+  if(!el){el=document.createElement('span');el.className='slider';el.setAttribute('aria-hidden','true');container.appendChild(el);}
+  const to={x:active.offsetLeft,w:active.offsetWidth},from=animate&&!calm()&&sliderMemory[key]||to;
+  el.style.transition='none';el.style.transform=`translateX(${from.x}px)`;el.style.width=from.w+'px';
+  el.getBoundingClientRect();
+  el.style.transition='';el.style.transform=`translateX(${to.x}px)`;el.style.width=to.w+'px';
+  sliderMemory[key]=to;container.classList.add('has-slider');
+}
+const placeSliders=animate=>{slider($('.tabs',main),`tabs|${currentId}`,animate);slider($('.view-tabs',main),`view|${currentId}`,animate);};
+window.addEventListener('resize',()=>placeSliders(false));
+let lastPageKey=null;
+
+// Campo dibujado con los datos de la alineación (si la jornada los tiene; si no, se ve la imagen de Biwenger).
+let stopField=null;const fieldCache=new Map();
+async function mountFields() {
+  stopField?.();stopField=null;
+  const host=$('[data-field]',main);if(!host)return;
+  const url=lineupDataUrl(host.dataset.field);
+  try {
+    if(!fieldCache.has(url))fieldCache.set(url,fetch(url).then(r=>{if(!r.ok)throw Error(r.status);return r.json();}));
+    const data=await fieldCache.get(url);
+    if(!host.isConnected)return;   // mientras tanto se ha navegado a otra alineación
+    stopField=mountField(host,data,{crestUrl:eq=>withBase(`/assets/escudos/${eq}.png`)});
+  } catch { fieldCache.delete(url);if(host.isConnected)host.innerHTML='<p class="no-bench">No se ha podido cargar la alineación.</p>'; }
+}
 function render() {
   renderFooter();
   document.title=currentId?`${META[currentId].name} · Mahtuersos Fantasy`:'Mahtuersos Fantasy';
+  // Entrada de página solo al cambiar de pantalla o pestaña; al pasar de jornada o de participante no se vuelve a animar todo.
+  // 'page': otra liga o la portada (entra todo, encabezado incluido) · 'tab': otra pestaña de la misma liga (el encabezado con el logo se queda quieto) · 'swap': otra jornada o participante.
+  const pageKey=`${currentId}|${currentTab}`;main.dataset.enter=pageKey===lastPageKey?'swap':lastPageKey?.split('|')[0]===String(currentId)?'tab':'page';lastPageKey=pageKey;
+  const wasStuck=!!$('.tabs-bar.is-stuck');   // pulsar una pestaña vuelve a pintar la página: el nombre de la liga no debe parpadear
   main.innerHTML=currentId?competition():home();
+  if(wasStuck)$('.tabs-bar')?.classList.add('is-stuck');
   hydrateIcons(main);
   rebase(main);
+  mountFields();
   initTabs();
+  placeSliders(true);document.fonts?.ready.then(()=>placeSliders(false));
+  $$('[data-count]',main).forEach(countUp);
   initRulesSearch();
   document.body.dataset.theme=currentId==='mahtuchampions'?'champions':currentId?'':'home';
   document.querySelector('meta[name=theme-color]').content=currentId==='mahtuchampions'?'#04011f':currentId?'#1b2433':'#0b1020';
@@ -396,7 +474,7 @@ function render() {
 document.addEventListener('click',e=>{
   const gal=e.target.closest('[data-gallery]');if(gal){galleryOpen(Number(gal.dataset.gallery),gal);return;}
   const link=e.target.closest('a[data-route]');
-  if(link&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey&&e.button===0){e.preventDefault();navigate(link.getAttribute('href'));}
+  if(link&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey&&!e.altKey&&e.button===0){e.preventDefault();navigate(link.getAttribute('href'),link.hasAttribute('data-prev')||link.hasAttribute('data-next'));}   // las flechas de la alineación no mueven la página
 });
 document.addEventListener('click',e=>{
   const open=document.querySelector('.status-wrap.open'),btn=e.target.closest('.status-badge');

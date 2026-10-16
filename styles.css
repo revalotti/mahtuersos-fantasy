@@ -154,7 +154,7 @@ body[data-theme=home] main{display:flex;flex-direction:column}
 .competition-title p{margin:0;color:var(--muted);font-size:14px}
 .tabs-anchor{display:block;height:0}   /* marca dónde empieza la barra (la barra es fija, así que su posición cambia al hacer scroll) */
 .tabs-bar{position:sticky;top:var(--nav-h);z-index:15;margin:0 -20px 20px;padding:0 20px;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.tabs-bar::before,.tabs-bar::after{content:'';position:absolute;top:0;bottom:0;width:34px;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s}
+.tabs-bar::before,.tabs-bar::after{content:'';position:absolute;bottom:0;height:var(--tabs-h);width:34px;z-index:2;pointer-events:none;opacity:0;transition:opacity .2s}
 .tabs-bar::before{left:0;background:linear-gradient(90deg,var(--tabs-fade),transparent)}
 .tabs-bar::after{right:0;background:linear-gradient(270deg,var(--tabs-fade),transparent)}
 .tabs-bar.fade-l::before,.tabs-bar.fade-r::after{opacity:1}
@@ -517,7 +517,7 @@ body[data-theme=champions] .pay-number,body[data-theme=champions] .money .value{
 .phase>header{display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;padding:14px 18px;background:var(--band)}
 .phase-n{grid-column:1;font:700 14px/1 var(--display);letter-spacing:1.6px;text-transform:uppercase;color:var(--accent-ink)}
 .phase-name{grid-column:1;margin-top:4px;font:700 28px/1 var(--display);text-transform:uppercase;letter-spacing:.3px}
-.phase-flow{grid-column:2;grid-row:1/3;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--band-dark);font:700 24px/1 var(--display)}
+.phase-flow{grid-column:2;grid-row:1/3;display:inline-flex;align-items:center;padding:8px 14px;background:var(--band-dark);font:700 24px/1 var(--display);text-transform:uppercase;white-space:nowrap}
 .phase-flow i{font-style:normal;color:var(--accent-ink);font-size:18px}
 .phase-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 18px;text-align:center}
 .phase-body strong{font:600 22px/1.1 var(--display);text-transform:uppercase;letter-spacing:.4px}
@@ -541,7 +541,7 @@ body[data-theme=champions] .pay-number,body[data-theme=champions] .money .value{
 @keyframes pulse{70%{box-shadow:0 0 0 7px #22c55e00}100%{box-shadow:0 0 0 0 #22c55e00}}
 .phase.state-active{outline:2px solid #fff;outline-offset:-2px;box-shadow:0 8px 26px #0004f466}
 .phase.state-done{opacity:.8}
-.phase-n{display:flex;align-items:center;gap:10px}
+.phase-n{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
 .phase-name{text-decoration:none}
 .phase-name:hover{text-decoration:underline;text-underline-offset:4px}
 .phase-hero{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:18px 20px;background:var(--surface);border-radius:var(--radius)}
@@ -670,3 +670,191 @@ body[data-theme=champions] .pay-number,body[data-theme=champions] .money .value{
   .toast{bottom:84px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* Campo de la alineación dibujado con datos (public/lineup-field.mjs). Formato del diseño aprobado; colores de puntos y posiciones propios del campo. */
+.fv{--fv-navy:#1c2333;--fv-navy-2:#121826;--fv-grass-a:#5aa832;--fv-grass-b:#4e9b2b;--fv-neg:#e0322a;--fv-low:#ec8a00;--fv-mid:#1f9a3a;--fv-high:#1683d1;--fv-none:#4a5163;--fv-pt:#f5c400;--fv-df:#1e9be6;--fv-mc:#2fae45;--fv-dl:#ec3a2f}
+.fv-stage{position:relative;width:100%;aspect-ratio:10/9;overflow:hidden;background:radial-gradient(ellipse 34% 26% at 0% 6%,rgba(255,255,255,.55),transparent 70%),radial-gradient(ellipse 34% 26% at 100% 6%,rgba(255,255,255,.55),transparent 70%),linear-gradient(180deg,var(--fv-navy) 0%,var(--fv-navy-2) 100%)}
+.fv-lines{position:absolute;inset:0;width:100%;height:100%}
+.fv-lines .ga{fill:var(--fv-grass-a)}.fv-lines .gb{fill:var(--fv-grass-b)}
+.fv-lines .ln{fill:none;stroke:rgba(255,255,255,.85);stroke-width:1.5;stroke-linejoin:round}
+.fv-lines .net{fill:rgba(255,255,255,.22);stroke:rgba(255,255,255,.9);stroke-width:1.2}
+.fv-lines .dw{fill:#fff}.fv-lines .soil{fill:#6b4a2b}
+.fv-lines .valla{fill:#20242c;stroke:rgba(255,255,255,.12)}
+.fv-lines .vtxt{fill:#fff;font-family:var(--display);font-weight:800;letter-spacing:.04em}
+.fv-lines .vst{fill:#ef4136;font-size:.7em;letter-spacing:.1em}
+.fv-lines .shade{fill:url(#fv-sh)}
+.fv-players{position:absolute;inset:0}
+.fv-chip{position:absolute;right:3%;bottom:7.5%;z-index:3;padding:3px 10px;border-radius:999px;background:rgba(18,52,14,.82);color:#fff;font:800 16px/1.25 var(--display);letter-spacing:.02em}
+.fv-pl{position:absolute;display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap}
+.fv-crest{width:26px;height:26px;object-fit:contain;position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))}
+.fv-cab{position:relative;z-index:1;display:block;width:26px;height:26px}
+.fv-cab .fv-pos{position:absolute;right:-8px;bottom:-1px;width:15px;height:15px;font-size:7px;letter-spacing:-.02em;box-shadow:0 1px 3px rgba(0,0,0,.45)}
+.fv-cab .fv-pos.PT{background:#f2c200;color:#1a1a1a}.fv-cab .fv-pos.DF{background:#1170b5}.fv-cab .fv-pos.MC{background:#0f7a33}.fv-cab .fv-pos.DL{background:#c8261d}
+.fv-pill{position:relative;z-index:2;display:inline-flex;align-items:center;box-sizing:border-box;max-width:100%;height:16px;padding:0 18px 0 7px;border-radius:999px;background:rgba(20,24,30,.62);color:#fff;font-size:10px;font-weight:600;letter-spacing:0;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.fv-pill.b1{padding-left:16px}.fv-pill.b2{padding-left:30px}
+.fv-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.fv-pts{position:absolute;right:-3px;top:50%;transform:translateY(-50%);min-width:17px;height:17px;padding:0 4px;border-radius:999px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;line-height:1;box-shadow:0 0 0 1px rgba(255,255,255,.85),0 1px 2px rgba(0,0,0,.3);text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.fv-pts.neg{background:var(--fv-neg)}.fv-pts.low{background:var(--fv-low)}.fv-pts.mid{background:var(--fv-mid)}.fv-pts.high{background:var(--fv-high)}.fv-pts.none{background:var(--fv-none)}
+.fv-badge{position:absolute;left:-3px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:#1d1f24;color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;border:1px solid rgba(255,255,255,.85)}
+.fv-badge+.fv-badge{left:12px}
+.fv-badge svg{width:11px;height:11px;fill:#fff}
+.fv-pos{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}
+.fv-pos.PT{background:var(--fv-pt);color:#1a1a1a}.fv-pos.DF{background:var(--fv-df)}.fv-pos.MC{background:var(--fv-mc)}.fv-pos.DL{background:var(--fv-dl)}
+.fv-subs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:0 12px 14px;padding:10px 4px 12px;border-radius:14px;background:radial-gradient(ellipse 80% 55% at 50% 0,rgba(255,255,255,.2),transparent 70%),linear-gradient(180deg,#2a3449,#141a28)}
+.fv-bsub{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:0;padding:0 6px 0 2px}
+.fv-bsub .fv-cab{transform:translateX(-4px)}
+.fv-bsub .fv-pill{max-width:100%;padding-left:7px}
+.fv-bsub .fv-pill .fv-nm{font-size:10px}
+.fv-bsub.empty>*{opacity:.5}
+.fv-bsub.empty .fv-crest{filter:grayscale(1) brightness(.7)}
+.fv-pill.vacia.sin{padding-right:7px}
+.fv .bench-title{padding:10px 16px 6px}
+/* Posición sin jugador: escudo apagado y píldora discontinua con el -4 que resta */
+.fv-pl.vacia .fv-crest{filter:grayscale(1) brightness(.75) drop-shadow(0 1px 2px rgba(0,0,0,.55));opacity:.7}
+.fv-pill.vacia{background:rgba(20,24,30,.4);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);color:rgba(255,255,255,.85)}
+/* Jugador sin puntos porque su partido aún no se ha jugado: como la etiqueta «Partidos pendientes» (fondo azul claro, reloj y contorno azules), para no confundirlo con el azul de los 10+ puntos */
+.fv-pts.wait{background:#dbe6ff;color:#2563eb;box-shadow:0 0 0 1px #2563eb,0 1px 2px rgba(0,0,0,.3)}
+.fv-pts.wait svg{width:11px;height:11px;stroke:#2563eb;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+/* Partidos que faltan, junto a la etiqueta «Partidos pendientes» */
+body[data-theme=champions] /* Mientras llegan los datos de la alineación, el hueco ya ocupa el alto del campo: así la página no se encoge y salta al pasar de una a otra */
+.lineup-pane [data-field]:not(.fv){box-sizing:content-box;aspect-ratio:10/9;padding-bottom:177px;background:#0b1220;background-clip:content-box}   /* campo + suplentes */
+
+/* Móvil: al quedarse fijas las pestañas aparece sobre ellas el nombre de la liga, y las de Tabla / Alineaciones también se quedan fijas */
+.tabs-title{display:none}
+@media (max-width:760px){
+  /* La fila del nombre de la liga existe siempre (alto fijo): al fijarse la barra solo se desliza y aparece, sin mover el contenido,
+     y el hueco bajo la barra es siempre el mismo. Sobre la página sin fijar hace de separación con el encabezado. */
+  .tabs-title{display:flex;align-items:center;gap:8px;height:24px;padding:0 0 0 2px;opacity:0;transform:translateY(-8px);pointer-events:none;font:800 17px/1 var(--display);letter-spacing:.6px;text-transform:uppercase;
+    transition:opacity .26s ease-out,transform .38s cubic-bezier(.22,.9,.28,1)}
+  .tabs-title .crest{width:18px;height:18px;flex:none;transform:scale(.7);transition:transform .45s cubic-bezier(.34,1.4,.64,1)}
+  .tabs-bar.is-stuck .tabs-title{opacity:1;transform:none}
+  .tabs-bar.is-stuck .tabs-title .crest{transform:none}
+  .competition-heading{margin-bottom:0}
+  .view-tabs-bar{position:sticky;top:calc(var(--nav-h) + var(--tabs-h) + 24px);z-index:14;margin:0 -16px 12px;padding:6px 16px;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  body[data-theme=champions] .view-tabs-bar{background:rgba(3,0,150,.55)}
+}
+@media (min-width:761px){.view-tabs-bar{display:contents}}
+@media (prefers-reduced-motion:reduce){.tabs-title,.tabs-title .crest{transition:none}}
+
+/* Partidos pendientes sin crecer en alto: escudos apilados dentro de la etiqueta y lista en su globo (al pasar el ratón en escritorio, al pulsar en móvil) */
+.pg-stack{display:inline-flex;align-items:center;margin-left:2px}
+.pg-stack img{width:18px;height:18px;object-fit:contain;margin-left:-7px;border-radius:50%;background:#e7eeff;box-shadow:0 0 0 1.5px #e7eeff}
+.pg-stack img:first-child{margin-left:0}
+.pg-stack b{margin-left:3px;font-size:11px;font-weight:800;letter-spacing:.2px}
+body[data-theme=champions] .pg-stack img{background:#1a1fb3;box-shadow:0 0 0 1.5px #1a1fb3}
+.pg-head{display:block;margin-bottom:2px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#aeb8cc}
+.pg-list{display:block;list-style:none;margin:0 0 8px;padding:0 0 8px;border-bottom:1px solid #ffffff26}
+.pg-list li{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:2px 6px;padding:5px 0}
+.pg-list img{width:18px;height:18px;object-fit:contain}
+.pg-list img+img{margin-left:-6px}
+.pg-list .pg-teams{font-size:13px;font-weight:600;color:#fff;margin-left:2px;min-width:0}
+.pg-list .pg-when{grid-column:3;font-size:12px;color:#aeb8cc}
+
+/* Móvil: alto mínimo del contenido de cada pestaña. Aunque haya poco, la página tiene recorrido para que las pestañas se queden fijas arriba al
+   pulsarlas, y no hay salto al pasar de una pestaña larga a una corta. En escritorio no: con poco contenido la página no se mueve ni se fijan las pestañas.
+   (alto de pantalla − barra superior − pestañas, hueco, pie y márgenes, medidos) */
+@media (max-width:760px){.section-space{min-height:calc(100dvh - var(--nav-h) - 232px - env(safe-area-inset-bottom))}}
+
+/* La etiqueta de estado es un botón: se nota (flecha que gira, relieve y pulsación) */
+.status-badge{transition:background .15s,box-shadow .15s,transform .1s;box-shadow:0 1px 2px color-mix(in srgb,var(--sb) 25%,transparent)}
+.status-badge .status-chev{opacity:.85;margin-left:1px;transition:transform .22s cubic-bezier(.22,.9,.28,1)}
+.status-wrap.open .status-chev{transform:rotate(180deg)}
+@media (hover:hover){.status-badge:hover{background:color-mix(in srgb,var(--sb) 22%,transparent)}}
+.status-badge:active{transform:scale(.97)}
+.status-wrap.open .status-badge{background:color-mix(in srgb,var(--sb) 24%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--sb) 45%,transparent)}
+
+/* ================= Microinteracciones =================
+   Las animaciones de entrada usan «backwards» (nunca «both»/«forwards»): una animación que sigue «en efecto» al terminar deja el bloque como contexto de
+   apilamiento y tapa los desplegables que salen de él (el selector de jornadas quedaba por debajo del contenido).
+   Todo lo que se mueve va en «no-preference»: con «reducir movimiento» la página se ve igual, sin animaciones. */
+:root{--ease:cubic-bezier(.22,.9,.28,1);--spring:cubic-bezier(.34,1.45,.64,1)}
+.tabs{position:relative}
+.tabs .slider{position:absolute;left:0;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--accent);transition:transform .42s var(--ease),width .42s var(--ease);pointer-events:none}
+.tabs.has-slider .tab.active{border-bottom-color:transparent}
+@media (max-width:760px){
+  .view-tabs{position:relative}
+  .view-tabs a{position:relative;z-index:1;transition:color .2s}
+  .view-tabs .slider{position:absolute;top:4px;bottom:4px;left:0;border-radius:9px;background:var(--surface);box-shadow:0 1px 3px #0002;transition:transform .42s var(--ease),width .42s var(--ease);pointer-events:none}
+  .view-tabs.has-slider a.active{background:transparent;box-shadow:none}
+  body[data-theme=champions] .view-tabs .slider{background:var(--white)}
+  body[data-theme=champions] .view-tabs.has-slider a.active{background:transparent}
+}
+@media (prefers-reduced-motion:no-preference){
+  @keyframes mx-rise{from{opacity:0;transform:translateY(12px)}}
+  @keyframes mx-row{from{opacity:0;transform:translateX(-8px)}}
+  @keyframes mx-pop{from{opacity:0;transform:scale(.55)}}
+  @keyframes mx-fade{from{opacity:0}}
+  @keyframes mx-wait{0%{box-shadow:0 0 0 1px #2563eb,0 0 0 0 #2563eb70}70%,100%{box-shadow:0 0 0 1px #2563eb,0 0 0 7px #2563eb00}}
+  /* entrada de página: encabezado y bloques suben y aparecen en escalera; las filas de las listas, una a una. Al cambiar de pestaña solo entra el contenido: el encabezado con el logo no se mueve */
+  #main[data-enter=page] .competition-heading{animation:mx-rise .5s var(--ease) backwards}
+  #main:is([data-enter=page],[data-enter=tab]) .section-space>*{animation:mx-rise .5s var(--ease) backwards;animation-delay:.1s}
+  #main:is([data-enter=page],[data-enter=tab]) .section-space>:nth-child(2){animation-delay:0.18s}
+  #main:is([data-enter=page],[data-enter=tab]) .section-space>:nth-child(3){animation-delay:0.24s}
+  #main:is([data-enter=page],[data-enter=tab]) .section-space>:nth-child(4){animation-delay:0.30s}
+  #main:is([data-enter=page],[data-enter=tab]) .section-space>:nth-child(5){animation-delay:0.36s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row{animation:mx-row .42s var(--ease) backwards;animation-delay:.2s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(1){animation-delay:0.148s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(2){animation-delay:0.176s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(3){animation-delay:0.204s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(4){animation-delay:0.232s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(5){animation-delay:0.260s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(6){animation-delay:0.288s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(7){animation-delay:0.316s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(8){animation-delay:0.344s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(9){animation-delay:0.372s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(10){animation-delay:0.400s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(11){animation-delay:0.428s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(12){animation-delay:0.456s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(13){animation-delay:0.484s}
+  #main:is([data-enter=page],[data-enter=tab]) .rank-list>.rank-row:nth-child(14){animation-delay:0.512s}
+  #main[data-enter=page] .portal{animation:mx-rise .55s var(--ease) backwards}
+  #main[data-enter=page] .portal:nth-of-type(2){animation-delay:.08s}
+  #main[data-enter=page] .portal:nth-of-type(3){animation-delay:.16s}
+  /* campo: se funde y los jugadores aparecen en cascada desde la portería; los suplentes al final */
+  .fv-stage{animation:mx-fade .35s ease-out backwards}
+  .fv-pl,.fv-bsub{animation:mx-pop .5s var(--spring) backwards;animation-delay:calc(var(--d,0) * 1ms)}
+  .fv-pts.wait{animation:mx-wait 2.6s ease-out infinite}
+  /* el jugador que se señala crece un poco y pasa por delante */
+  @media (hover:hover){
+    .fv-pl .fv-pill,.fv-pl .fv-crest{transition:transform .2s var(--spring)}
+    .fv-pl:hover{z-index:5}
+    .fv-pl:hover .fv-pill{transform:scale(1.07)}
+    .fv-pl:hover .fv-crest{transform:translateY(-2px) scale(1.1)}
+    .stat,.hall-card{transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+    .stat:hover,.hall-card:hover{transform:translateY(-2px);box-shadow:0 10px 24px #1b24331a}
+    .rank-row.link .avatar{transition:transform .2s var(--spring)}
+    .rank-row.link:hover .avatar{transform:scale(1.1)}
+    .rank-row.link .chev{transition:transform .2s var(--ease)}
+    .rank-row.link:hover .chev{transform:translateX(3px)}
+  }
+}
+/* respuesta al pulsar: los botones se hunden un poco */
+.icon-btn,.round-step,.dd-trigger,.tab,.view-tabs a,.gallery-btn,.rank-row.link{transition:background .15s}
+@media (prefers-reduced-motion:no-preference){
+  a.icon-btn:active,a.round-step:active,.dd-trigger:active,.view-tabs a:active,.gallery-btn:active,.tab:active{transform:scale(.95)}
+  .rank-row.link:active{background:color-mix(in srgb,var(--ink) 7%,var(--surface))}
+}
+
+.bracket-note{margin:14px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
+
+/* Aviso cuando Biwenger cuenta otros puntos que la suma de la alineación */
+.fv-note{margin:0;padding:9px 16px;font-size:12.5px;line-height:1.45;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--line)}
+.fv-note strong{color:var(--ink)}
+body[data-theme=champions] .fv-note{color:#d6d8ff;background:rgba(0,0,100,.3)}body[data-theme=champions] .fv-note strong{color:#fff}
+
+/* Ventaja perdida: el capitán o ariete de este hueco no jugó y lo sustituyó un suplente (que no hereda la etiqueta) */
+.fv-badge.lost{background:#1d1f24b3;border:1px dashed rgba(255,255,255,.75);color:#ffffffa6;opacity:.85;overflow:hidden}
+.fv-badge.lost::after{content:'';position:absolute;left:-2px;right:-2px;top:50%;height:1.5px;background:#ef4444;transform:rotate(-45deg)}
+.fv-badge.lost svg{fill:#ffffffa6}
+.fv-badge.lost+.fv-badge{left:12px}
+
+/* Ventaja perdida (capitán / ariete que no jugó): junto al portero, a su izquierda */
+.fv-lost{position:absolute;left:6px;z-index:3;display:flex;flex-direction:column;gap:4px;max-width:30%;pointer-events:auto}
+.fv-lostrow{display:inline-flex;align-items:center;gap:5px;height:18px;padding:0 8px 0 2px;border-radius:999px;background:rgba(20,24,30,.62);color:#ffffffd9;font-size:10px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.fv-lostrow .fv-badge{position:relative;left:auto;top:auto;transform:none;flex:none}
+.fv-losttxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+
+/* Cambio de suplente (como en Biwenger): flecha verde en el que entra, roja en el que sale */
+.fv-swap{position:absolute;left:-7px;top:-3px;z-index:2;display:flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1.5px #fff,0 1px 3px rgba(0,0,0,.45)}
+.fv-swap svg{width:10px;height:10px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.fv-swap.in{background:#16a34a}.fv-swap.out{background:#dc2626}

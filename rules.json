@@ -157,10 +157,10 @@
  ],
  "champions": [
   {
-   "id": "copa",
-   "tag": "Copa",
-   "title": "Reglas de la copa",
-   "desc": "Clasificación, fases y premio.",
+   "id": "formato",
+   "tag": "Formato",
+   "title": "Clasificación y fases",
+   "desc": "Quién juega y cómo avanza la copa.",
    "open": true,
    "cards": [
     {
@@ -172,9 +172,31 @@
     {
      "title": "Fases",
      "icon": "list-ordered",
-     "keywords": "fases formato liga dieciseisavos octavos cuartos semifinales final sorteo cruces eliminados enfrentamiento champions league ronda empieza arranca inicio fecha",
-     "html": "<ul><li>Cada fase arranca con su ronda de la Champions League.</li><li><strong>Fases 1 y 2:</strong> formato liga. Quedan eliminados el 7.º y el 8.º, y después el 5.º y el 6.º.</li><li><strong>Fase 3:</strong> semifinales con enfrentamiento directo; los cruces se sortean entre los 4 clasificados.</li><li><strong>Fase 4:</strong> final entre los ganadores de las semifinales.</li><li>Las fechas de cada fase se indicarán cuando Biwenger publique las eliminatorias de la Champions League.</li></ul>"
-    },
+     "keywords": "fases formato liga dieciseisavos octavos cuartos semifinales final champions sorteo cruces eliminados avanzan enfrentamiento directo eliminatoria partido único campeón champions league ronda empieza arranca inicio fecha",
+     "html": "<p>La copa se divide en <strong>4 fases</strong>. Cada una arranca con su ronda de la Champions League.</p><ul><li><strong>Fase 1 · Dieciseisavos y octavos</strong> (formato liga): compiten los 8 clasificados. Avanzan del <strong>1.º al 6.º</strong>; el 7.º y el 8.º quedan eliminados.</li><li><strong>Fase 2 · Cuartos de final</strong> (formato liga): se mantiene el formato liga entre los 6 clasificados. Avanzan del <strong>1.º al 4.º</strong>; el 5.º y el 6.º quedan eliminados.</li><li><strong>Fase 3 · Semifinales</strong> (enfrentamiento directo): los 4 clasificados se enfrentan en eliminatoria directa y los cruces se deciden por <strong>sorteo</strong>.</li><li><strong>Fase 4 · Final Champions:</strong> <strong>partido único</strong> entre los ganadores de las semifinales para decidir al campeón.</li></ul><p class=\"tip\">Las fechas de cada fase se indicarán cuando Biwenger publique las eliminatorias de la Champions League.</p>"
+    }
+   ]
+  },
+  {
+   "id": "configuracion",
+   "tag": "Juego",
+   "title": "Configuración",
+   "desc": "Modalidad, presupuesto, Capitán y Ariete.",
+   "cards": [
+    {
+     "title": "Configuración de la copa",
+     "icon": "settings",
+     "keywords": "configuración fantasy sin mercado cualquier jugador presupuesto 300 millones capitán ariete 14 valor de mercado créditos vídeos premium canjear",
+     "html": "<ul><li>Modalidad <strong>fantasy (sin mercado)</strong>.</li><li>Todos los participantes pueden elegir <strong>cualquier jugador</strong>.</li><li><strong>Presupuesto máximo: 300 M€.</strong></li><li><strong>Capitán y Ariete</strong> permitidos, siempre que el jugador no supere los <strong>14 M€</strong> de valor de mercado (en las ligas el máximo es de 3 M€).</li><li>Sin Biwenger Premium, para activar el Capitán y el Ariete hay que <strong>canjear créditos</strong>, que se consiguen viendo vídeos dentro de la app.</li></ul>"
+    }
+   ]
+  },
+  {
+   "id": "premio",
+   "tag": "Economía",
+   "title": "Premio",
+   "desc": "Lo que se lleva el campeón.",
+   "cards": [
     {
      "title": "Premio",
      "icon": "trophy",
