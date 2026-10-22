@@ -61,7 +61,8 @@ export function standingsWithMovement(comp) {
   const hasPrevious = ordered.length >= 2 || (ordered.length === 1 && !!comp.baseline);
   const previous = hasPrevious ? Object.fromEntries(standings({ ...comp, rounds: ordered.slice(0, -1) }).map(r => [r.id, r.rank])) : null;
   return {
-    last: ordered.at(-1) ?? null,
+    last: ordered.at(-1) ?? null,   // la jornada que mueve la clasificación (de ahí salen las flechas)
+    shown: chronological(comp.rounds).at(-1) ?? null,   // la última jornada jugada, en orden cronológico (puede ser una parte aplazada)
     hasPrevious,
     rows: rows.map((r, i) => ({
       ...r,

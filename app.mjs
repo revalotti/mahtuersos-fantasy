@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvjp8vpz';
-import { mountField } from './lineup-field.mjs?v=mvjp8vpz';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, chronological, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvjp8vpz';
+import { icon, hydrateIcons } from './icons.mjs?v=mvjpe1m7';
+import { mountField } from './lineup-field.mjs?v=mvjpe1m7';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, chronological, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvjpe1m7';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -160,7 +160,7 @@ function lastView(c,isChamp) {
 
 // ---- Clasificación general con movimiento y diferencias, como la tabla de Biwenger ----------------
 function standingsView(c) {
-  const {rows,last,hasPrevious}=standingsWithMovement(c);
+  const {rows,last,shown,hasPrevious}=standingsWithMovement(c);
   if(!rows.length)return `<div class="panel">${empty('Sin participantes','Aparecerán cuando se confirmen.')}</div>`;
   const move=r=>{
     if(!hasPrevious)return '';
@@ -170,7 +170,7 @@ function standingsView(c) {
   };
   const gap=r=>r.gap===null?'<small class="gap leader">Líder</small>':r.gap===0?'<small class="gap">Empate</small>':`<small class="gap">−${num(r.gap)}</small>`;
   // Columnas de apoyo: puntos de la última jornada, mejor jornada de cada uno y veces que ha sido último.
-  const lastScores=Object.fromEntries((last?.scores||[]).map(x=>[x.playerId,x.points]));
+  const lastScores=Object.fromEntries((shown?.scores||[]).map(x=>[x.playerId,x.points]));
   const top=Math.max(...Object.values(lastScores),-Infinity);
   const best=Object.fromEntries(c.players.map(p=>{
     let found=null;
@@ -179,10 +179,10 @@ function standingsView(c) {
   }));
   const lastCell=r=>{
     if(!(r.id in lastScores))return '<span class="cell muted">–</span>';
-    const tag=last.incomplete?'':r.id===last.lastPlayerId?`<span class="mark last" title="Último de la jornada">${icon('thumbs-down',12)}</span>`:lastScores[r.id]===top?`<span class="mark first" title="Mejor de la jornada">${icon('crown',12)}</span>`:'';
+    const tag=shown.incomplete?'':r.id===shown.lastPlayerId?`<span class="mark last" title="Último de la jornada">${icon('thumbs-down',12)}</span>`:lastScores[r.id]===top?`<span class="mark first" title="Mejor de la jornada">${icon('crown',12)}</span>`:'';
     return `<span class="cell"><b>${num(lastScores[r.id])}</b>${tag}</span>`;
   };
-  const head=`<div class="rank-row standing standing-head" aria-hidden="true"><span class="pos-cell">#</span><span class="who">Participante</span><span class="cell" ${last?`title="${roundLabel(last)}"`:''}><span class="lbl-long">Última jornada</span><span class="lbl-short">Última</span></span><span class="cell c-best">Mejor jornada</span><span class="cell c-lost">Veces último</span><span class="pts-col">Puntos</span></div>`;
+  const head=`<div class="rank-row standing standing-head" aria-hidden="true"><span class="pos-cell">#</span><span class="who">Participante</span><span class="cell" ${shown?`title="${roundLabel(shown)}"`:''}><span class="lbl-long">Última jornada</span><span class="lbl-short">Última</span></span><span class="cell c-best">Mejor jornada</span><span class="cell c-lost">Veces último</span><span class="pts-col">Puntos</span></div>`;
   return `<section class="panel standings-panel">${panelHead('Clasificación general',{iconName:'list-ordered',action:hasPrevious&&last?`<span class="subtle">Cambios desde la ${roundLabel(last).toLowerCase()}</span>`:''})}<div class="rank-list">${head}${rows.map(r=>`<div class="rank-row standing ${r.rank<=4?'qualifying':''}"><span class="pos pos-cell"><b>${r.rank}</b>${move(r)}</span><span class="who">${avatar(r.name)}<span class="name">${esc(r.name)}</span></span>${lastCell(r)}<span class="cell c-best">${best[r.id]?`<b>${num(best[r.id].points)}</b><small>J${best[r.id].number}</small>`:'–'}</span><span class="cell c-lost ${r.last?'':'muted'}"><b>${r.last}</b></span><span class="pts-col"><b>${num(r.points)}</b>${gap(r)}</span></div>`).join('')}</div><div class="table-note legend-note"><span><i class="move up">${icon('arrow-up',11)}</i><i class="move down">${icon('arrow-down',11)}</i> Puestos que ha subido o bajado</span><span><small class="gap">−N</small> Puntos hasta el puesto de arriba</span><span><i class="dot champ"></i>Top 4: acceso a MahtuChampions</span></div></section>`;
 }
 
