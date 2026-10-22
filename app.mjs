@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvjkseud';
-import { mountField } from './lineup-field.mjs?v=mvjkseud';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvjkseud';
+import { icon, hydrateIcons } from './icons.mjs?v=mvjp8vpz';
+import { mountField } from './lineup-field.mjs?v=mvjp8vpz';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, chronological, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvjp8vpz';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -494,7 +494,7 @@ function pendingList(round) {
   return `<span class="pg-head">Faltan por jugar</span><ul class="pg-list" aria-label="Partidos que faltan por jugar">${round.pending.map(g=>`<li>${crestImg(g.local,18)}${crestImg(g.visitante,18)}<span class="pg-teams">${esc(g.local.n)} – ${esc(g.visitante.n)}</span><span class="pg-when">${esc(gameWhen(g))}</span></li>`).join('')}</ul>`;
 }
 function roundSelect(c,round) {
-  const asc=[...c.rounds].sort((a,b)=>roundOrder(a)-roundOrder(b)),i=asc.findIndex(r=>roundKey(r)===roundKey(round));
+  const asc=chronological(c.rounds),i=asc.findIndex(r=>roundKey(r)===roundKey(round));
   const keep=[null,preferredView==='lineup'];   // al cambiar de jornada se mantiene la vista; el participante pasa a ser el primero
   const label=r=>roundLabel(r)+(r.incomplete&&!r.postponed?' · pendiente':'');
   const step=(r,dir,text)=>r?`<a class="round-step" data-route href="${roundUrl(roundKey(r),...keep)}" aria-label="${text}: ${esc(label(r))}" title="${text}">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</a>`:`<span class="round-step disabled" aria-hidden="true">${icon(dir==='prev'?'chevron-left':'chevron-right',20)}</span>`;
@@ -503,7 +503,7 @@ function roundSelect(c,round) {
 }
 function roundsView(c) {
   if(!c.rounds.length)return `<div class="panel">${empty('Cada jornada cuenta','Las jornadas aparecerán aquí en cuanto se publiquen sus resultados.','calendar')}</div>`;
-  const round={lineups:[],noBench:[],...(c.rounds.find(r=>roundKey(r)===currentRound)||[...c.rounds].sort((a,b)=>roundOrder(a)-roundOrder(b)).at(-1))};
+  const round={lineups:[],noBench:[],...(c.rounds.find(r=>roundKey(r)===currentRound)||chronological(c.rounds).at(-1))};
   const ranks=standings(c,[round]).filter(r=>round.scores.some(x=>x.playerId===r.id));
   const hasLineups=ranks.some(r=>round.lineups.includes(r.id));
   const selected=hasLineups?(ranks.find(r=>r.id===currentPlayer&&round.lineups.includes(r.id))||ranks.find(r=>round.lineups.includes(r.id))):null;

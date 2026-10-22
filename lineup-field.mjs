@@ -113,7 +113,7 @@ export function mountField(host, data, { crestUrl }) {
   const sum = [...data.PT, ...data.DF, ...data.MC, ...data.DL].reduce((t, j) => t + (j.p ?? 0) + (j.c ? (j.p ?? 0) : 0) + (j.a ? (j.ab ?? 0) : 0), 0);
   // Biwenger aún cuenta otros puntos que la suma de esta alineación (suele ser una jornada con partidos aplazados sin recalcular): se enseñan los dos.
   const nota = data.biwenger != null && data.biwenger !== sum
-    ? `<p class="fv-note" role="note">Esta alineación suma <strong>${sum}</strong> puntos, pero en la clasificación general Biwenger cuenta <strong>${data.biwenger}</strong>. Un suplente no sustituye a un titular cuyo partido aún no se ha jugado.</p>` : '';
+    ? `<p class="fv-note" role="note">Esta alineación suma <strong>${sum}</strong> puntos, pero en la clasificación general Biwenger cuenta <strong>${data.biwenger}</strong>. ${data.aplazado ? 'Biwenger no cuenta a algunos jugadores de un partido aplazado de esta jornada («No cuenta para los puntos de la alineación»).' : 'Un suplente no sustituye a un titular cuyo partido aún no se ha jugado.'}</p>` : '';
   // Capitán / ariete que no jugó y fue sustituido: se explica con una línea bajo el campo (el suplente que entra no hereda la ventaja).
   const perdidas = (data.perdidas || []).map(p => {
     const txt = `Pierde el ${p.r === 'c' ? 'capitán' : 'ariete'}, ${p.n} no jugó`;

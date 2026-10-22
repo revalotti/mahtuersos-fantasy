@@ -10,6 +10,22 @@ export function initialState() {
 // Identidad de una jornada: número y, si es una jornada aplazada, su ordinal (1.ª, 2.ª aplazada de ese número).
 export const roundKey = r => `${r.number}${r.postponed ? (r.postponed === 1 ? 'a' : 'a' + r.postponed) : ''}`;
 export const roundOrder = r => r.number * 10 + (r.postponed || 0);
+// Orden cronológico de las jornadas: el normal (jornada y parte), salvo que una parte aplazada que se juega después de empezar jornadas posteriores
+// (p. ej. la «Jornada 6 aplazada 2», con partidos tras la J9) se coloca tras la última de ellas que ya había empezado. Usa la fecha propia de la parte.
+export function chronological(rounds) {
+  const asc = [...rounds].sort((a, b) => roundOrder(a) - roundOrder(b));
+  const base = p => asc.find(r => !r.postponed && r.number === p.number);
+  // Solo cuentan jornadas posteriores con fechas coherentes (las de las jornadas antiguas importadas no siempre lo son).
+  const anchor = p => p.postponed && p.date ? asc.filter(r => !r.postponed && r.number > p.number && r.date && r.date <= p.date && base(p)?.date && r.date >= base(p).date).at(-1) : undefined;
+  const moved = asc.filter(r => anchor(r));
+  const out = asc.filter(r => !moved.includes(r));
+  for (const p of moved) {
+    let i = out.indexOf(anchor(p)) + 1;
+    while (i < out.length && moved.includes(out[i]) && anchor(out[i]) === anchor(p)) i++;
+    out.splice(i, 0, p);
+  }
+  return out;
+}
 export const roundLabel = r => `Jornada ${r.number}${r.postponed ? ` · aplazada${r.postponed > 1 ? ' ' + r.postponed : ''}` : ''}`;
 export function parseRoundKey(key) {
   const m = /^(\d{1,2})(?:a(\d?))?$/.exec(String(key));
