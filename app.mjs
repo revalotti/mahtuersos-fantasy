@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvgtybp8';
-import { mountField } from './lineup-field.mjs?v=mvgtybp8';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvgtybp8';
+import { icon, hydrateIcons } from './icons.mjs?v=mvjkseud';
+import { mountField } from './lineup-field.mjs?v=mvjkseud';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvjkseud';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -59,8 +59,10 @@ function navigate(url,noScroll=false) {
   main.focus({preventScroll:true});
 }
 function roundCoverage(c) { return c.baseline?.throughRound || 0; }
+// Fecha de la última jornada jugada (la más alta que no sea aplazada); vacío si no hay ninguna.
+function lastRoundDate(c) { const r=[...c.rounds].filter(x=>!x.postponed&&x.date).sort((a,b)=>roundOrder(b)-roundOrder(a))[0]; return r?date(r.date):''; }
 function maxRound(c) { return Math.max(roundCoverage(c),0,...c.rounds.map(r=>r.number)); }
-function stat({label,value,suffix='',player=false,iconName,tone,sub=''}) { return `<div class="stat t-${tone}"><span class="stat-icon">${icon(iconName,22)}</span><div class="stat-body"><small>${label}</small><strong class="${player?'player-stat':''}">${value}</strong>${suffix?`<em>${suffix}</em>`:''}${sub?`<span class="stat-sub">${sub}</span>`:''}</div></div>`; }
+function stat({label,value,suffix='',player=false,iconName,tone,sub='',aside=''}) { return `<div class="stat t-${tone}"><span class="stat-icon">${icon(iconName,22)}</span><div class="stat-body"><small>${label}</small>${aside?'<span class="stat-fig">':''}<strong class="${player?'player-stat':''}">${value}</strong>${suffix?`<em>${suffix}</em>`:''}${aside}${aside?'</span>':''}${sub?`<span class="stat-sub">${sub}</span>`:''}</div></div>`; }
 // ---- Componentes compartidos -------------------------------------------------
 const panelHead = (title,{iconName,action}={}) => `<div class="panel-head"><h2>${iconName?icon(iconName,18):''}${title}</h2>${action||''}</div>`;
 const moreLink = (href,label='Ver todo') => `<a href="${href}" data-route class="text-link">${label}${icon('chevron-right',16)}</a>`;
@@ -83,16 +85,16 @@ function table(c,rows=standings(c),options={}) {
   if(!rows.length)return empty('Plazas por decidir','Los participantes aparecerán cuando se confirmen los clasificados.');
   return rankRows(rows,{qualify:!options.round&&currentId!=='mahtuchampions'?4:0,unit:''});
 }
-function podium(c,maxRank=3) {
+function podium(c,maxRank=3,meta=r=>rchips([rchip(jr(r.number))])) {
   const data=records(c,maxRank);
   if(!data.length)return empty('Sin récords todavía','Se calcula con las puntuaciones de las jornadas publicadas.','star');
-  return rankRows(data,{meta:r=>`Jornada ${r.number}`});
+  return rankRows(data,{meta});
 }
 function lastList(c,full=false) {
   const realRounds=c.rounds.filter(r=>!r.postponed&&!r.incomplete).length;
   if(!c.rounds.length)return empty('Contador pendiente','Se actualizará al publicar los resultados de cada jornada.','arrow-down-to-line');
   const rows=standings(c).sort((a,b)=>b.last-a.last||a.name.localeCompare(b.name,'es'));
-  return `${rows.filter(r=>full||r.last>0).map(r=>`<div class="list-row"><span class="player">${avatar(r.name)}<span>${esc(r.name)}</span></span><span class="value">${full&&currentId!=='mahtuchampions'?`<small>Devolución ${euro(Math.max(0,10-r.last*.5))}</small>`:''}<b>${r.last}</b></span></div>`).join('')}${full?`<p class="hint">${realRounds} jornadas registradas.${currentId!=='mahtuchampions'?' Cada última posición descuenta 0,50 € de la fianza de 10 €.':''} En caso de empate se usa el último puesto confirmado de Biwenger. Las jornadas con partidos pendientes cuentan cuando terminan.</p>`:''}`;
+  return `${rows.filter(r=>full||r.last>0).map(r=>`<div class="list-row"><span class="player">${avatar(r.name)}<span>${esc(r.name)}</span></span><span class="value">${full&&currentId!=='mahtuchampions'?rchips([rchip('Devolución',euro(Math.max(0,10-r.last*.5)),{plain:true})]):''}<b>${r.last}</b></span></div>`).join('')}${full?`<p class="hint">${realRounds} jornadas registradas.${currentId!=='mahtuchampions'?' Cada última posición descuenta 0,50 € de la fianza de 10 €.':''} En caso de empate se usa el último puesto confirmado de Biwenger. Las jornadas con partidos pendientes cuentan cuando terminan.</p>`:''}`;
 }
 function qualificationPanel() {
   return `<div class="qualifiers">${IDS.slice(0,2).map(id=>{
@@ -108,14 +110,52 @@ function qualificationPanel() {
 }
 // ---- Récords y últimos puestos: lista principal + panel de apoyo ------------------------------
 const realRoundsOf=c=>c.rounds.filter(r=>!r.postponed&&!r.incomplete);
+// Chips de las jornadas. La etiqueta lleva dos textos ({s: «J7», l: «Jornada 7»}): se enseña el largo cuando hay sitio (fitChips).
+const jr=n=>({s:`J${n}`,l:`Jornada ${n}`});
+const PLACE_NAME={1:'1.º puesto',2:'2.º puesto',3:'3.º puesto'};
+const placeIcon=(place,size)=>place?icon(place===1?'crown':'medal',size):'';
+const rchip=(label,value,{place=0,plain=false}={})=>{const t=typeof label==='string'?{s:label,l:label}:label;return `<span class="rchip${place?` place-${place}`:''}${plain?' plain':''}"${place?` title="${PLACE_NAME[place]}"`:''}>${placeIcon(place,11)}<i data-s="${esc(t.s)}" data-l="${esc(t.l)}">${esc(t.l)}</i>${value===undefined?'':`<b>${typeof value==='number'?num(value):esc(value)}</b>`}</span>`;};
+// more: {title, rounds:[{number,place}]} → si no caben en una línea, se ocultan los últimos y aparece «+N», que abre la lista completa.
+const rchips=(items,more)=>`<span class="rchips"${more?' data-fit="more"':' data-fit'}>${items.join('')}${more?`<button type="button" class="rchip more" data-more-title="${esc(more.title)}" data-more-rounds="${more.rounds.map(r=>r.place?`${r.number}:${r.place}`:r.number).join(',')}" hidden></button>`:''}</span>`;
+const RECORD_TABS=[['mejores','Mejores','medal'],['forma','Forma','flame'],['ganadas','Ganadas','trophy'],['holgadas','Holgadas','chevrons-up'],['podios','Podios','award'],['rachas','Rachas','trending-up'],['peores','Peores','arrow-down-to-line']];
 function recordsView(c,isChamp) {
-  const real=realRoundsOf(c),lows=records(c,5,true);
-  return `${sectionHeading('Récords',`<span class="subtle">${real.length} jornadas registradas</span>`)}<div class="two-col"><section class="panel">${panelHead('Mejores jornadas',{iconName:'medal'})}${podium(c,5)}</section><div class="stack"><section class="panel">${panelHead('Peores jornadas',{iconName:'arrow-down-to-line'})}${lows.length?rankRows(lows,{meta:r=>`Jornada ${r.number}`}):empty('Sin datos todavía','Se calcula con las jornadas publicadas.','arrow-down-to-line')}</section></div></div>`;
+  const real=realRoundsOf(c),lows=records(c,5,true),wins=roundWins(c),pods=podiums(c),fm=form(c,3),streaks=bestStreaks(c,3,3),margins=biggestMargins(c,3);
+  const none=icon_=>empty('Sin datos todavía','Se calcula con las jornadas publicadas.',icon_);
+  const jchip=r=>rchips([rchip(jr(r.number))]);
+  const panel=(id,title,iconName,body)=>`<section class="panel rec-panel" id="rec-${id}">${panelHead(title,{iconName})}${body}</section>`;
+  const panels={
+    mejores:panel('mejores','Mejores jornadas','medal',podium(c,5,jchip)),
+    forma:panel('forma',`Estado de forma · últimas ${fm.numbers.length||3} jornadas`,'flame',fm.rows.length?`${rankRows(fm.rows,{meta:r=>rchips(r.rounds.map(x=>rchip(jr(x.number),x.points)))})}<p class="hint">Suma de los puntos de ${fm.numbers.length===1?'la última jornada':`las últimas ${fm.numbers.length} jornadas (${fm.numbers.map(n=>'J'+n).join(', ')})`}.${fm.provisional.length?` ${fm.provisional.map(n=>'J'+n).join(' y ')} ${fm.provisional.length===1?'tiene':'tienen'} partidos pendientes: los puntos pueden variar.`:''}</p>`:none('flame')),
+    ganadas:panel('ganadas','Jornadas ganadas','trophy',wins.length?rankRows(wins.slice(0,5),{meta:r=>rchips(r.rounds.map(n=>rchip(jr(n))),{title:`${r.name} · Jornadas ganadas`,rounds:r.rounds.map(number=>({number}))})}):none('trophy')),
+    holgadas:panel('holgadas','Victorias más holgadas','chevrons-up',margins.length?rankRows(margins,{meta:r=>rchips([rchip(jr(r.number)),rchip('Gana con',r.top,{plain:true})])}):none('chevrons-up')),
+    podios:panel('podios','Más veces en el podio','award',pods.length?`${rankRows(pods.slice(0,5),{meta:r=>rchips(r.rounds.map(x=>rchip(jr(x.number),undefined,{place:x.place})),{title:`${r.name} · Jornadas en el podio`,rounds:r.rounds})})}<p class="hint">Veces que ha quedado entre los tres mejores de una jornada. Oro, plata y bronce indican si fue 1.º, 2.º o 3.º de esa jornada.</p>`:none('award')),
+    rachas:panel('rachas','Mejor racha de 3 jornadas','trending-up',streaks.length?rankRows(streaks,{meta:r=>rchips([rchip({s:`J${r.from}–${r.to}`,l:`Jornadas ${r.from}–${r.to}`})])}):none('trending-up')),
+    peores:panel('peores','Peores jornadas','arrow-down-to-line',lows.length?rankRows(lows,{meta:jchip}):none('arrow-down-to-line')),
+  };
+  const nav=`<nav class="rec-nav" aria-label="Ir a un récord">${RECORD_TABS.map(([id,label,ic])=>`<button type="button" class="rec-jump" data-jump="rec-${id}">${icon(ic,15)}${label}</button>`).join('')}</nav>`;
+  return `${sectionHeading('Récords',`<span class="subtle">${real.length} jornadas registradas</span>`)}${nav}<div class="rec-cols">${RECORD_TABS.map(([id])=>panels[id]).join('')}</div>`;
+}
+// «Último de cada jornada»: lista paginada de 10 en 10 (la más reciente primero). La página se conserva mientras se está en la pestaña.
+const HISTORY_PAGE=10;
+let historyPage=1,historyOwner=null;
+function historyHtml(c) {
+  const real=realRoundsOf(c),pending=c.rounds.filter(r=>!r.postponed&&r.incomplete);
+  const rows=[...real,...pending].sort((a,b)=>roundOrder(b)-roundOrder(a)).map(r=>{
+    const chip=`<span class="value">${rchips([rchip(jr(r.number))])}</span>`;
+    if(r.incomplete)return `<div class="list-row"><span class="player muted-row"><span class="avatar ghost" aria-hidden="true">?</span><span>Pendiente de partidos aplazados</span></span>${chip}</div>`;
+    const p=c.players.find(x=>x.id===r.lastPlayerId);
+    return p?`<div class="list-row"><span class="player">${avatar(p.name)}<span>${esc(p.name)}</span></span>${chip}</div>`:'';
+  }).filter(Boolean);
+  if(!rows.length)return empty('Sin datos todavía','Se actualizará al publicar las jornadas.','calendar');
+  const pages=Math.ceil(rows.length/HISTORY_PAGE);historyPage=Math.min(Math.max(historyPage,1),pages);
+  const from=(historyPage-1)*HISTORY_PAGE;
+  const pager=pages>1?`<nav class="pager" aria-label="Páginas de últimos por jornada"><button type="button" class="icon-btn" data-history-page="${historyPage-1}" aria-label="Página anterior" ${historyPage===1?'disabled':''}>${icon('chevron-left',18)}</button><span class="pager-label"><b>${from+1}–${Math.min(from+HISTORY_PAGE,rows.length)}</b> de ${rows.length} · Página ${historyPage} de ${pages}</span><button type="button" class="icon-btn" data-history-page="${historyPage+1}" aria-label="Página siguiente" ${historyPage===pages?'disabled':''}>${icon('chevron-right',18)}</button></nav>`:'';
+  return `${rows.slice(from,from+HISTORY_PAGE).join('')}${pager}`;
 }
 function lastView(c,isChamp) {
-  const real=realRoundsOf(c),pending=c.rounds.filter(r=>!r.postponed&&r.incomplete);
-  const history=[...real,...pending].sort((a,b)=>roundOrder(b)-roundOrder(a)).map(r=>{if(r.incomplete)return `<div class="list-row"><span class="player muted-row"><span class="avatar ghost" aria-hidden="true">?</span><span>Pendiente de partidos aplazados</span></span><span class="value"><small>Jornada ${r.number}</small></span></div>`;const p=c.players.find(x=>x.id===r.lastPlayerId);return p?`<div class="list-row"><span class="player">${avatar(p.name)}<span>${esc(p.name)}</span></span><span class="value"><small>Jornada ${r.number}</small></span></div>`:'';}).join('');
-  return `${sectionHeading('Últimos puestos',`<span class="subtle">${real.length} jornadas registradas</span>`)}<div class="two-col"><section class="panel">${panelHead('Por participante',{iconName:'users'})}${lastList(c,true)}</section><div class="stack"><section class="panel">${panelHead('Último de cada jornada',{iconName:'calendar'})}${history||empty('Sin datos todavía','Se actualizará al publicar las jornadas.','calendar')}</section></div></div>`;
+  const real=realRoundsOf(c);
+  if(historyOwner!==currentId){historyOwner=currentId;historyPage=1;}
+  return `${sectionHeading('Últimos puestos',`<span class="subtle">${real.length} jornadas registradas</span>`)}<div class="two-col"><section class="panel">${panelHead('Por participante',{iconName:'users'})}${lastList(c,true)}</section><div class="stack"><section class="panel" id="history-panel">${panelHead('Último de cada jornada',{iconName:'calendar'})}<div id="history-body">${historyHtml(c)}</div></section></div></div>`;
 }
 
 // ---- Clasificación general con movimiento y diferencias, como la tabla de Biwenger ----------------
@@ -244,6 +284,61 @@ function initTabs() {
   };
 }
 window.addEventListener('resize',()=>$('.tabs')?.dispatchEvent(new Event('scroll')));
+// Chips de una línea. Cada tabla se ajusta como un conjunto: «Jornada 7» si todas las filas lo admiten; si alguna no cabe, todas pasan a «J7» (mismo formato en toda la tabla).
+// Si aun así una fila no cabe, se ocultan sus últimos chips y aparece «+N», que abre la lista completa.
+function fitGroup(boxes) {
+  const items=boxes.filter(b=>b.offsetParent).map(box=>({chips:[...box.querySelectorAll('.rchip:not(.more)')],more:box.querySelector('.rchip.more')})).filter(x=>x.chips.length);
+  const label=(x,long)=>x.chips.forEach(c=>{const i=c.querySelector('i[data-s]');if(i)i.textContent=long?i.dataset.l:i.dataset.s;});
+  const wraps=(x,el)=>el.offsetTop>x.chips[0].offsetTop+2;
+  items.forEach(x=>{x.chips.forEach(c=>{c.hidden=false;});if(x.more)x.more.hidden=true;label(x,true);});
+  if(items.some(x=>x.chips.some(c=>wraps(x,c))))items.forEach(x=>label(x,false));
+  items.forEach(x=>{
+    if(!x.more||!x.chips.some(c=>wraps(x,c)))return;
+    x.more.hidden=false;let n=x.chips.length;
+    do{n--;x.chips.forEach((c,i)=>{c.hidden=i>=n;});x.more.textContent=`+${x.chips.length-n}`;x.more.setAttribute('aria-label',`Ver ${x.chips.length-n} más`);}while(n>1&&wraps(x,x.more));
+  });
+}
+const fitAllChips=()=>{const groups=new Map();$$('.rchips[data-fit]',main).forEach(b=>{const g=b.closest('.panel')||main;groups.set(g,[...(groups.get(g)||[]),b]);});groups.forEach(fitGroup);};
+window.addEventListener('resize',fitAllChips);
+let moreOpener=null;
+function showRounds(btn) {
+  let dlg=$('#rounds-dialog');
+  if(!dlg){dlg=document.createElement('dialog');dlg.id='rounds-dialog';dlg.className='rounds-dialog';document.body.append(dlg);dlg.addEventListener('click',e=>{if(e.target===dlg||e.target.closest('[data-close]'))dlg.close();});dlg.addEventListener('close',()=>moreOpener?.focus({preventScroll:true}));}
+  const rounds=btn.dataset.moreRounds.split(',').filter(Boolean).map(x=>{const [number,place]=x.split(':').map(Number);return {number,place:place||0};});
+  dlg.setAttribute('aria-label',btn.dataset.moreTitle);
+  dlg.innerHTML=`<div class="rounds-head"><h2>${esc(btn.dataset.moreTitle)}</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">${icon('x',18)}</button></div><div class="rounds-body">${rounds.map(r=>`<span class="rchip big${r.place?` place-${r.place}`:''}"${r.place?` title="${PLACE_NAME[r.place]}"`:''}>${placeIcon(r.place,12)}<i>Jornada ${r.number}</i></span>`).join('')}</div><p class="rounds-count">${rounds.length} ${rounds.length===1?'jornada':'jornadas'}</p>`;
+  moreOpener=btn;dlg.showModal();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('.rchip.more');if(b)showRounds(b);});
+// Paginación de «Último de cada jornada»: solo se vuelve a pintar la lista; la cabecera del panel no se mueve.
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('[data-history-page]');if(!btn||btn.disabled||!currentId)return;
+  const body=$('#history-body');if(!body)return;
+  const top=$('#history-panel').getBoundingClientRect().top;
+  historyPage=Number(btn.dataset.historyPage);
+  body.innerHTML=historyHtml(state.competitions[currentId]);
+  hydrateIcons(body);fitAllChips();
+  const delta=$('#history-panel').getBoundingClientRect().top-top;if(delta)window.scrollBy({top:delta,behavior:'instant'});   // la lista cambia de alto: el panel se queda donde estaba
+  $('.pager [data-history-page]:not([disabled])',body)?.focus?.({preventScroll:true});
+});
+// Récords: chips fijos bajo las pestañas que llevan a cada récord (scroll suave) y marcan el que se está viendo.
+const recOffset=()=>navHeight()+($('.tabs-bar')?.offsetHeight||0)+($('.rec-nav')?.offsetHeight||0)+12;
+let recCurrent=null,recFrame=0;
+function markRecord(force) {
+  const nav=$('.rec-nav');if(!nav)return;
+  const panels=$$('.rec-panel',main);if(!panels.length)return;
+  const y=recOffset()+4;let cur=panels[0];
+  panels.forEach(p=>{if(p.getBoundingClientRect().top<=y)cur=p;});
+  if(innerHeight+scrollY>=document.documentElement.scrollHeight-2)cur=panels.at(-1);
+  if(cur.id===recCurrent&&!force)return;
+  recCurrent=cur.id;
+  $$('.rec-jump',nav).forEach(b=>{const on=b.dataset.jump===cur.id;b.classList.toggle('active',on);if(on){b.setAttribute('aria-current','true');nav.scrollTo({left:b.offsetLeft-(nav.clientWidth-b.offsetWidth)/2,behavior:'smooth'});}else b.removeAttribute('aria-current');});
+}
+window.addEventListener('scroll',()=>{if(!recFrame)recFrame=requestAnimationFrame(()=>{recFrame=0;markRecord();});},{passive:true});
+document.addEventListener('click',e=>{
+  const jump=e.target.closest('[data-jump]'),target=jump&&document.getElementById(jump.dataset.jump);if(!target)return;
+  window.scrollTo({top:Math.max(0,target.getBoundingClientRect().top+scrollY-recOffset()),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+});
 function initRulesSearch() {
   const input=$('#rules-search');if(!input)return;
   input.oninput=()=>{rulesQuery=input.value;applyRulesSearch();};
@@ -319,7 +414,7 @@ function competition() {
   if(currentTab==='resumen') {
     const ranking=standings(c),best=records(c)[0],tiedBest=records(c).filter(r=>r.rank===1).length-1;
     if(isChamp)content=champSummary(c);
-    else content=`<div class="stat-grid">${stat({label:'Líder',value:ranking[0]?esc(ranking[0].name):'Por decidir',player:true,iconName:'crown',tone:'leader'})}${stat({label:'Última jornada',value:maxRound(c)||'—',suffix:isChamp?'':'/ 38',iconName:'calendar',tone:'round'})}${stat({label:'Mejor jornada',value:best?num(best.points):'—',suffix:best?'pts':'',iconName:'medal',tone:'best',sub:best?`${esc(best.name)} · J${best.number}${tiedBest>0?` +${tiedBest}`:''}`:''})}</div>${c.baseline?`<div class="notice">${icon('info',16)}<span>Clasificación inicial hasta la <strong>J${c.baseline.throughRound??'?'}</strong>. ${c.rounds.filter(r=>r.number<=c.baseline.throughRound).length< c.baseline.throughRound?'Récords y últimos puestos incluyen solo las jornadas registradas.':'Historial de jornadas inicial completo.'}</span></div>`:''}<div class="content-grid"><section class="panel">${panelHead('Clasificación',{iconName:'list-ordered'})}${table(c,isChamp?undefined:standings(c).slice(0,5))}<div class="table-note">${isChamp?'Puntos de las jornadas de MahtuChampions.':'<i class="dot champ"></i>Top 4 · Acceso a MahtuChampions en la J19.'}</div>${isChamp?'':`<a class="panel-link" href="/${currentId}?tab=clasificacion" data-route>Clasificación completa ${icon('arrow-right',16)}</a>`}</section><aside class="stack"><section class="panel">${panelHead('Mejores jornadas',{iconName:'medal',action:moreLink(`/${currentId}?tab=records`)})}${podium(c)}</section><section class="panel">${panelHead('Últimos puestos',{iconName:'arrow-down-to-line',action:moreLink(`/${currentId}?tab=ultimos`)})}${lastList(c)}</section></aside></div>`;
+    else content=`<div class="stat-grid">${stat({label:'Líder',value:ranking[0]?esc(ranking[0].name):'Por decidir',player:true,iconName:'crown',tone:'leader'})}${stat({label:'Última jornada',value:maxRound(c)||'—',suffix:isChamp?'':'/ 38',iconName:'calendar',tone:'round',sub:lastRoundDate(c)})}${stat({label:'Mejor jornada',value:best?num(best.points):'—',suffix:best?'pts':'',iconName:'medal',tone:'best',sub:best?`<span class="who-name">${esc(best.name)}${tiedBest>0?` · +${tiedBest} ${tiedBest===1?'empate':'empates'}`:''}</span><span class="who-photo">${avatar(best.name)}</span>`:'',aside:best?rchips([rchip(`J${best.number}`)]):''})}</div>${c.baseline?`<div class="notice">${icon('info',16)}<span>Clasificación inicial hasta la <strong>J${c.baseline.throughRound??'?'}</strong>. ${c.rounds.filter(r=>r.number<=c.baseline.throughRound).length< c.baseline.throughRound?'Récords y últimos puestos incluyen solo las jornadas registradas.':'Historial de jornadas inicial completo.'}</span></div>`:''}<div class="content-grid"><section class="panel">${panelHead('Clasificación',{iconName:'list-ordered'})}${table(c,isChamp?undefined:standings(c).slice(0,5))}<div class="table-note">${isChamp?'Puntos de las jornadas de MahtuChampions.':'<i class="dot champ"></i>Top 4 · Acceso a MahtuChampions en la J19.'}</div>${isChamp?'':`<a class="panel-link" href="/${currentId}?tab=clasificacion" data-route>Clasificación completa ${icon('arrow-right',16)}</a>`}</section><aside class="stack"><section class="panel">${panelHead('Mejores jornadas',{iconName:'medal',action:moreLink(`/${currentId}?tab=records`)})}${podium(c)}</section><section class="panel">${panelHead('Últimos puestos',{iconName:'arrow-down-to-line',action:moreLink(`/${currentId}?tab=ultimos`)})}${lastList(c)}</section></aside></div>`;
   } else if(currentTab==='jornadas') content=roundsView(c);
   else if(currentTab==='clasificacion') content=standingsView(c);
   else if(currentTab==='clasificados') content=qualificationPanel();
@@ -493,7 +588,7 @@ function render() {
   $$('[data-count]',main).forEach(countUp);
   if(main.dataset.enter==='swap'&&scrollY!==keepY)window.scrollTo({top:keepY,behavior:'instant'});
   if(keepH)setTimeout(()=>{main.style.minHeight='';},900);
-  initRulesSearch();
+  initRulesSearch();recCurrent=null;fitAllChips();document.fonts?.ready.then(fitAllChips);markRecord(true);
   document.body.dataset.theme=currentId==='mahtuchampions'?'champions':currentId?'':'home';
   document.querySelector('meta[name=theme-color]').content=currentId==='mahtuchampions'?'#04011f':currentId?'#1b2433':'#0b1020';
   $$('[data-nav]').forEach(a=>{const active=a.dataset.nav===(currentId||'inicio');a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});

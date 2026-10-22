@@ -59,6 +59,59 @@ export function records(comp, maxRank = 3, ascending = false) {
   all.forEach((r,i) => { r.rank = i && all[i-1].points === r.points ? all[i-1].rank : i+1; });
   return all.filter(r => r.rank <= maxRank);
 }
+// ---- Estadísticas de récords (solo jornadas terminadas: sin aplazadas ni abiertas) ------------------
+const finishedRounds = comp => comp.rounds.filter(r => !r.postponed && !r.incomplete).sort((a, b) => roundOrder(a) - roundOrder(b));
+const nameOf = (comp, id) => comp.players.find(p => p.id === id)?.name || 'Participante';
+const ranked = (rows, key = 'points') => { rows.forEach((row, i) => { row.rank = i && rows[i - 1][key] === row[key] ? rows[i - 1].rank : i + 1; }); return rows; };
+const byPointsThenName = (a, b) => b.points - a.points || a.name.localeCompare(b.name, 'es');
+// Posición de cada participante en una jornada (1 = mejor; los empates comparten puesto).
+const roundPlaces = round => {
+  const sorted = [...round.scores].sort((a, b) => b.points - a.points);
+  return sorted.map((s, i) => ({ playerId: s.playerId, place: 1 + sorted.filter(o => o.points > s.points).length, points: s.points, i }));
+};
+// Quién ha ganado más jornadas (con empate en lo más alto, ganan todos los empatados).
+export function roundWins(comp) {
+  const wins = new Map();
+  for (const r of finishedRounds(comp)) for (const x of roundPlaces(r).filter(p => p.place === 1)) wins.set(x.playerId, [...(wins.get(x.playerId) || []), r.number]);
+  return ranked([...wins].map(([id, rounds]) => ({ id, name: nameOf(comp, id), points: rounds.length, rounds })).sort(byPointsThenName));
+}
+// Veces que cada participante ha quedado entre los tres primeros de una jornada.
+export function podiums(comp) {
+  const rounds = new Map();
+  for (const r of finishedRounds(comp)) for (const x of roundPlaces(r).filter(p => p.place <= 3)) rounds.set(x.playerId, [...(rounds.get(x.playerId) || []), { number: r.number, place: x.place, won: x.place === 1 }]);
+  return ranked([...rounds].map(([id, list]) => ({ id, name: nameOf(comp, id), points: list.length, rounds: list })).sort(byPointsThenName));
+}
+// Estado de forma: puntos en las últimas `size` jornadas (las abiertas por partidos pendientes cuentan, marcadas como provisionales).
+export function form(comp, size = 3) {
+  const recent = comp.rounds.filter(r => !r.postponed).sort((a, b) => roundOrder(a) - roundOrder(b)).slice(-size);
+  const rows = comp.players.map(p => {
+    const rounds = recent.flatMap(r => r.scores.filter(s => s.playerId === p.id).map(s => ({ number: r.number, points: s.points })));
+    return { id: p.id, name: p.name, rounds, points: Math.round(rounds.reduce((t, x) => t + x.points, 0) * 100) / 100 };
+  }).filter(r => r.rounds.length).sort((a, b) => b.points - a.points || (b.rounds.at(-1)?.points ?? 0) - (a.rounds.at(-1)?.points ?? 0) || a.name.localeCompare(b.name, 'es'));
+  return { numbers: recent.map(r => r.number), provisional: recent.filter(r => r.incomplete).map(r => r.number), rows: ranked(rows) };
+}
+// Mejor racha: más puntos en `size` jornadas terminadas y consecutivas (una por participante).
+export function bestStreaks(comp, size = 3, maxRank = 3) {
+  const rounds = finishedRounds(comp), out = [];
+  for (const p of comp.players) for (let i = 0; i + size <= rounds.length; i++) {
+    const win = rounds.slice(i, i + size), scores = win.map(r => r.scores.find(s => s.playerId === p.id)?.points);
+    if (scores.some(x => x === undefined) || win.some((r, k) => r.number !== win[0].number + k)) continue;
+    const entry = { id: p.id, name: p.name, points: Math.round(scores.reduce((a, b) => a + b, 0) * 100) / 100, from: win[0].number, to: win.at(-1).number };
+    const own = out.find(o => o.id === p.id);
+    if (!own) out.push(entry); else if (entry.points > own.points) Object.assign(own, entry);
+  }
+  return ranked(out.sort((a, b) => b.points - a.points || a.from - b.from || a.name.localeCompare(b.name, 'es'))).filter(r => r.rank <= maxRank);
+}
+// Victorias más holgadas: diferencia entre el primero y el segundo de una jornada (sin empate arriba).
+export function biggestMargins(comp, maxRank = 3) {
+  const out = [];
+  for (const r of finishedRounds(comp)) {
+    const sorted = [...r.scores].sort((a, b) => b.points - a.points);
+    if (sorted.length < 2 || sorted[0].points === sorted[1].points) continue;
+    out.push({ id: sorted[0].playerId, name: nameOf(comp, sorted[0].playerId), number: r.number, points: Math.round((sorted[0].points - sorted[1].points) * 100) / 100, top: sorted[0].points });
+  }
+  return ranked(out.sort((a, b) => b.points - a.points || a.number - b.number)).filter(r => r.rank <= maxRank);
+}
 export function hallOfFame(comp) {
   const wins = new Map();
   for (const h of comp.honours) {
