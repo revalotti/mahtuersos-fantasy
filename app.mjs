@@ -1,6 +1,6 @@
-import { icon, hydrateIcons } from './icons.mjs?v=mvqww2fw';
-import { mountField } from './lineup-field.mjs?v=mvqww2fw';
-import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, chronological, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvqww2fw';
+import { icon, hydrateIcons } from './icons.mjs?v=mvqxwhgi';
+import { mountField } from './lineup-field.mjs?v=mvqxwhgi';
+import { normalize, IDS, META, CHAMPIONS_PHASES, ENTRY_FEE, PREMIUM_COST, FULL_LEAGUE, BASE_PRIZES, prizeTable, championsPrize, standings, standingsWithMovement, records, roundWins, podiums, form, bestStreaks, biggestMargins, hallOfFame, chronological, roundKey, roundOrder, roundLabel, championsProgress, phaseStandings } from './domain.mjs?v=mvqxwhgi';
 const $ = (s,root=document) => root.querySelector(s);
 const $$ = (s,root=document) => [...root.querySelectorAll(s)];
 const esc = value => String(value ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -505,6 +505,9 @@ function roundsView(c) {
   if(!c.rounds.length)return `<div class="panel">${empty('Cada jornada cuenta','Las jornadas aparecerán aquí en cuanto se publiquen sus resultados.','calendar')}</div>`;
   const round={lineups:[],noBench:[],...(c.rounds.find(r=>roundKey(r)===currentRound)||chronological(c.rounds).at(-1))};
   const ranks=standings(c,[round]).filter(r=>round.scores.some(x=>x.playerId===r.id));
+  // En un empate por abajo, el último de la jornada (el que decide la fianza) va el último de la tabla, no donde le toque por nombre.
+  const lastAt=round.incomplete?-1:ranks.findIndex(r=>r.id===round.lastPlayerId);
+  if(lastAt>=0){const [last]=ranks.splice(lastAt,1);ranks.splice(ranks.findLastIndex(r=>r.points===last.points)+1,0,last);}
   const hasLineups=ranks.some(r=>round.lineups.includes(r.id));
   const selected=hasLineups?(ranks.find(r=>r.id===currentPlayer&&round.lineups.includes(r.id))||ranks.find(r=>round.lineups.includes(r.id))):null;
   const view=selected&&currentView==='lineup'?'lineup':'list';
